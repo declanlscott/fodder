@@ -106,26 +106,26 @@ type Restaurant struct {
 	Slug        string  `json:"slug"`
 }
 
-func getRestaurants(externalApiUrl string, client HttpClient) ([]byte, error) {
-	request, err := http.NewRequest("GET", externalApiUrl, nil)
+func getRestaurants(externalApiUrl string, client HttpClient) (string, error) {
+	req, err := http.NewRequest("GET", externalApiUrl, nil)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
-	response, err := client.Do(request)
+	res, err := client.Do(req)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
-	defer response.Body.Close()
+	defer res.Body.Close()
 
-	body, err := io.ReadAll(response.Body)
+	body, err := io.ReadAll(res.Body)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	var externalApiResponse ExternalApiResponse
 	if err := json.Unmarshal(body, &externalApiResponse); err != nil {
-		return nil, err
+		return "", err
 	}
 
 	var restaurants []Restaurant
@@ -159,15 +159,15 @@ func getRestaurants(externalApiUrl string, client HttpClient) ([]byte, error) {
 
 	restaurantsJson, err := json.Marshal(restaurants)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
-	return restaurantsJson, nil
+	return string(restaurantsJson), nil
 }
 
 const EXTERNAL_API_BASE_URL = "https://www.culvers.com/api"
 
-func byZipCode(zipCode string, radius uint64) ([]byte, error) {
+func byZipCode(zipCode string, radius uint64) (string, error) {
 	externalApiUrl := fmt.Sprintf(
 		"%s/locate/address/json?address=%s&proximitySearchMethod=drivetime&cuttoff=100&limit=1000&searchRadius=%d",
 		EXTERNAL_API_BASE_URL,
@@ -178,7 +178,7 @@ func byZipCode(zipCode string, radius uint64) ([]byte, error) {
 	return getRestaurants(externalApiUrl, http.DefaultClient)
 }
 
-func byCoordinates(latitude float64, longitude float64, radius uint64) ([]byte, error) {
+func byCoordinates(latitude float64, longitude float64, radius uint64) (string, error) {
 	externalApiUrl := fmt.Sprintf(
 		"%s/locate/latlong/json?latitude=%f&longitude=%f&proximitySearchMethod=drivetime&cuttoff=100&limit=1000&searchRadius=%d",
 		EXTERNAL_API_BASE_URL,
@@ -218,13 +218,13 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 		if err != nil {
 			return events.APIGatewayProxyResponse{
 				StatusCode: 500,
-				Body:       "Internal server error",
+				Body:       err.Error(),
 			}, err
 		}
 
 		return events.APIGatewayProxyResponse{
 			StatusCode: 200,
-			Body:       string(restaurantsJson),
+			Body:       restaurantsJson,
 		}, nil
 	}
 
@@ -241,13 +241,13 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 	if err != nil {
 		return events.APIGatewayProxyResponse{
 			StatusCode: 500,
-			Body:       "Internal server error",
+			Body:       err.Error(),
 		}, err
 	}
 
 	return events.APIGatewayProxyResponse{
 		StatusCode: 200,
-		Body:       string(restaurantsJson),
+		Body:       restaurantsJson,
 	}, nil
 }
 

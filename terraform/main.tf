@@ -89,6 +89,19 @@ resource "aws_apigatewayv2_route" "restaurants" {
   route_key = "GET /restaurants"
   target    = "integrations/${aws_apigatewayv2_integration.restaurants.id}"
 }
+resource "aws_apigatewayv2_integration" "restaurant" {
+  api_id                 = aws_apigatewayv2_api.fodder.id
+  integration_type       = "AWS_PROXY"
+  integration_method     = "POST"
+  integration_uri        = aws_lambda_function.restaurant.invoke_arn
+  payload_format_version = "2.0"
+  description            = "Get upcoming flavors by restaurant"
+}
+resource "aws_apigatewayv2_route" "restaurant" {
+  api_id    = aws_apigatewayv2_api.fodder.id
+  route_key = "GET /restaurant/{slug}"
+  target    = "integrations/${aws_apigatewayv2_integration.restaurant.id}"
+}
 
 data "aws_iam_policy_document" "assume_role" {
   statement {
@@ -121,10 +134,33 @@ resource "aws_lambda_function" "restaurants" {
   handler          = "bootstrap"
   runtime          = "provided.al2"
   architectures    = ["arm64"]
+  timeout          = 15
 }
 resource "aws_lambda_permission" "allow_restaurants_api" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.restaurants.function_name
   principal     = "apigateway.amazonaws.com"
-  source_arn    = "${aws_apigatewayv2_api.fodder.execution_arn}/*/*/restaurants"
+  source_arn    = "${aws_apigatewayv2_api.fodder.execution_arn}/*/GET/restaurants"
+}
+
+data "archive_file" "restaurant_lambda_zip" {
+  type        = "zip"
+  source_file = "${path.module}/../backend/lambdas/restaurant/bin/bootstrap"
+  output_path = "${path.module}/../backend/lambdas/restaurant/bin/lambda_function_payload.zip"
+}
+resource "aws_lambda_function" "restaurant" {
+  function_name    = "fodder-restaurant"
+  filename         = data.archive_file.restaurant_lambda_zip.output_path
+  source_code_hash = data.archive_file.restaurant_lambda_zip.output_base64sha256
+  role             = aws_iam_role.iam_for_lambda.arn
+  handler          = "bootstrap"
+  runtime          = "provided.al2"
+  architectures    = ["arm64"]
+  timeout          = 15
+}
+resource "aws_lambda_permission" "allow_restaurant_api" {
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.restaurant.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_apigatewayv2_api.fodder.execution_arn}/*/GET/restaurant/*"
 }
