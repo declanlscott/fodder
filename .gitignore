@@ -286,3 +286,4 @@ terraform.rc
 # End of https://www.toptal.com/developers/gitignore/api/terraform,react,go,goland,visualstudiocode,webstorm
 
 **/bin/*
+*.mock.html
