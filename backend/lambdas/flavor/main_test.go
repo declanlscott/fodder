@@ -85,8 +85,8 @@ func getMockResponse(fileName string) ([]byte, error) {
 	}
 }
 
-func TestScrapeRestaurant(t *testing.T) {
-	contents, err := getMockResponse("restaurant.mock.html")
+func TestScrapeFlavor(t *testing.T) {
+	contents, err := getMockResponse("flavor.mock.html")
 	if err != nil {
 		t.Error(err)
 		return
@@ -97,20 +97,19 @@ func TestScrapeRestaurant(t *testing.T) {
 			StatusCode: 200,
 			Body:       io.NopCloser(bytes.NewReader(contents)),
 		},
-		Error: nil,
 	}
 
-	restaurant, err := scrapeRestaurant("marion", mockClient)
+	flavor, err := scrapeFlavor("devils-food-cake", mockClient)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 		return
 	}
 
-	expectedJson := `{"location":"Marion, IA - Red Fox Way","flavors":[{"date":"Tuesday, September 19","name":"Chocolate Covered Strawberry","imageUrl":"https:./test_response_files/img-Chocolate-Covered-Strawberry1(1).png"},{"date":"Wednesday, September 20","name":"Dulce de Leche Cheesecake","imageUrl":"https:./test_response_files/img-Dulce-de-Leche1.png"},{"date":"Thursday, September 21","name":"Georgia Peach","imageUrl":"https:./test_response_files/img-Georgia-Peach1.png"},{"date":"Friday, September 22","name":"Espresso Toffee Bar","imageUrl":"https:./test_response_files/img-Espresso-Toffee-Bar.Waffle-Cone.png"},{"date":"Saturday, September 23","name":"Turtle Cheesecake","imageUrl":"https:./test_response_files/img-Turtle-Cheesecake.Cake-Cone2.png"}]}`
+	expectedJson := `{"name":"Devil’s Food Cake","description":"Dark Chocolate Fresh Frozen Custard swirled with chocolate cake and novelty chocolate.","imageUrl":"https:./flavor_files/img-Devils-Food-Cake.png","allergens":["Soy","Milk","Egg","Wheat/Gluten"]}`
 
-	actualJson, err := json.Marshal(restaurant)
+	actualJson, err := json.Marshal(flavor)
 	if err != nil {
-		t.Errorf("Unexpected error: %v", err)
+		t.Errorf("Expected no error, but got %v", err)
 		return
 	}
 
@@ -125,7 +124,7 @@ func TestHandler(t *testing.T) {
 
 	res, err := handler(ctx, events.APIGatewayProxyRequest{
 		PathParameters: map[string]string{
-			"slug": "marion",
+			"slug": "devils-food-cake",
 		},
 	})
 	if err != nil {
