@@ -115,6 +115,19 @@ resource "aws_apigatewayv2_route" "flavor" {
   route_key = "GET /flavor/{slug}"
   target    = "integrations/${aws_apigatewayv2_integration.flavor.id}"
 }
+resource "aws_apigatewayv2_integration" "flavors" {
+  api_id                 = aws_apigatewayv2_api.fodder.id
+  integration_type       = "AWS_PROXY"
+  integration_method     = "POST"
+  integration_uri        = aws_lambda_function.flavors.invoke_arn
+  payload_format_version = "2.0"
+  description            = "Get all flavors"
+}
+resource "aws_apigatewayv2_route" "flavors" {
+  api_id    = aws_apigatewayv2_api.fodder.id
+  route_key = "GET /flavors"
+  target    = "integrations/${aws_apigatewayv2_integration.flavors.id}"
+}
 
 data "aws_iam_policy_document" "assume_role" {
   statement {
@@ -198,6 +211,28 @@ resource "aws_lambda_permission" "allow_flavor_api" {
   function_name = aws_lambda_function.flavor.function_name
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${aws_apigatewayv2_api.fodder.execution_arn}/*/GET/flavor/*"
+}
+
+data "archive_file" "flavors_lambda_zip" {
+  type        = "zip"
+  source_file = "${path.module}/../backend/lambdas/flavors/bin/bootstrap"
+  output_path = "${path.module}/../backend/lambdas/flavors/bin/lambda_function_payload.zip"
+}
+resource "aws_lambda_function" "flavors" {
+  function_name    = "fodder-flavors"
+  filename         = data.archive_file.flavors_lambda_zip.output_path
+  source_code_hash = data.archive_file.flavors_lambda_zip.output_base64sha256
+  role             = aws_iam_role.iam_for_lambda.arn
+  handler          = "bootstrap"
+  runtime          = "provided.al2"
+  architectures    = ["arm64"]
+  timeout          = 15
+}
+resource "aws_lambda_permission" "allow_flavors_api" {
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.flavors.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_apigatewayv2_api.fodder.execution_arn}/*/GET/flavors"
 }
 
 # Bucket for test files

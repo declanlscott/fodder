@@ -16,20 +16,16 @@ type HttpClient interface {
 	Do(req *http.Request) (*http.Response, error)
 }
 
-const EXTERNAL_API_BASE_URL = "https://www.culvers.com/flavor-of-the-day"
+const API_URL = "https://www.culvers.com/flavor-of-the-day"
 const LOGO_SVG_SRC = "//cdn.culvers.com/layout/logo.svg"
 
 type Flavor struct {
-	Name        string   `json:"name"`
-	Description string   `json:"description"`
-	ImageUrl    string   `json:"imageUrl"`
-	Allergens   []string `json:"allergens"`
+	Name     string `json:"name"`
+	ImageUrl string `json:"imageUrl"`
 }
 
-func scrapeFlavor(slug string, client HttpClient) (*Flavor, error) {
-	url := fmt.Sprintf("%s/%s", EXTERNAL_API_BASE_URL, slug)
-
-	req, err := http.NewRequest("GET", url, nil)
+func scrapeFlavors(client HttpClient) ([]Flavor, error) {
+	req, err := http.NewRequest("GET", API_URL, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -49,36 +45,30 @@ func scrapeFlavor(slug string, client HttpClient) (*Flavor, error) {
 		return nil, err
 	}
 
-	flavor := Flavor{
-		Name:        doc.Find(".fotd-detail-copy h1").Text(),
-		Description: doc.Find(".ModuleFotdDetail-description p").Text(),
-		ImageUrl: fmt.Sprintf("https:%s", func() string {
-			if src, exists := doc.Find(".fotd-detail-image img").Attr("src"); exists {
-				return src
-			}
+	var flavors []Flavor
+	flavorSelector := doc.Find("ul.ModuleFotdAllFlavors li")
+	for index := range flavorSelector.Nodes {
+		selection := flavorSelector.Eq(index)
 
-			return LOGO_SVG_SRC
-		}()),
-		Allergens: func() []string {
-			var allergens []string
-			allergenSelector := doc.Find(".ModuleMenuItemDetail-allergens .col-xs-10 ul li")
-			for index := range allergenSelector.Nodes {
-				selection := allergenSelector.Eq(index)
+		flavor := Flavor{
+			Name: selection.Find("span").Text(),
+			ImageUrl: fmt.Sprintf("https:%s", func() string {
+				if src, exists := selection.Find("img").Attr("src"); exists {
+					return strings.Replace(src, "180", "400", 1)
+				}
 
-				allergens = append(allergens, strings.TrimSpace(selection.Text()))
-			}
+				return LOGO_SVG_SRC
+			}()),
+		}
 
-			return allergens
-		}(),
+		flavors = append(flavors, flavor)
 	}
 
-	return &flavor, nil
+	return flavors, nil
 }
 
 func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	slug := request.PathParameters["slug"]
-
-	flavor, err := scrapeFlavor(slug, &http.Client{
+	flavors, err := scrapeFlavors(&http.Client{
 		CheckRedirect: func(req *http.Request, via []*http.Request) error {
 			return http.ErrUseLastResponse
 		},
@@ -87,15 +77,15 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 		return events.APIGatewayProxyResponse{
 			StatusCode: 500,
 			Body:       err.Error(),
-		}, err
+		}, nil
 	}
 
-	body, err := json.Marshal(flavor)
+	body, err := json.Marshal(flavors)
 	if err != nil {
 		return events.APIGatewayProxyResponse{
 			StatusCode: 500,
 			Body:       err.Error(),
-		}, err
+		}, nil
 	}
 
 	return events.APIGatewayProxyResponse{
