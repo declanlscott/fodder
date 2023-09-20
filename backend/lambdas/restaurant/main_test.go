@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
@@ -99,15 +100,20 @@ func TestScrapeRestaurant(t *testing.T) {
 		Error: nil,
 	}
 
-	actualJson, err := scrapeRestaurant("marion", mockClient)
+	restaurant, err := scrapeRestaurant("marion", mockClient)
 	if err != nil {
 		t.Errorf("Expected no error, but %v", err)
 	}
 
 	expectedJson := `{"location":"Marion, IA - Red Fox Way","flavors":[{"date":"Tuesday, September 19","name":"Chocolate Covered Strawberry","imageUrl":"https:./test_response_files/img-Chocolate-Covered-Strawberry1(1).png"},{"date":"Wednesday, September 20","name":"Dulce de Leche Cheesecake","imageUrl":"https:./test_response_files/img-Dulce-de-Leche1.png"},{"date":"Thursday, September 21","name":"Georgia Peach","imageUrl":"https:./test_response_files/img-Georgia-Peach1.png"},{"date":"Friday, September 22","name":"Espresso Toffee Bar","imageUrl":"https:./test_response_files/img-Espresso-Toffee-Bar.Waffle-Cone.png"},{"date":"Saturday, September 23","name":"Turtle Cheesecake","imageUrl":"https:./test_response_files/img-Turtle-Cheesecake.Cake-Cone2.png"}]}`
 
-	if !reflect.DeepEqual(actualJson, expectedJson) {
-		t.Errorf("Expected JSON: %v\nActual JSON: %v", expectedJson, actualJson)
+	actualJson, err := json.Marshal(restaurant)
+	if err != nil {
+		t.Errorf("Expected no error, but %v", err)
+	}
+
+	if !reflect.DeepEqual(string(actualJson), expectedJson) {
+		t.Errorf("Expected JSON: %v\nActual JSON: %v", expectedJson, string(actualJson))
 	}
 }
 

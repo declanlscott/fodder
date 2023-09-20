@@ -30,27 +30,27 @@ type Flavor struct {
 	ImageUrl string `json:"imageUrl"`
 }
 
-func scrapeRestaurant(slug string, client HttpClient) (string, error) {
+func scrapeRestaurant(slug string, client HttpClient) (*Restaurant, error) {
 	url := fmt.Sprintf("%s/%s", EXTERNAL_API_BASE_URL, slug)
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	res, err := client.Do(req)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	defer res.Body.Close()
 
 	if res.StatusCode != 200 {
-		return "", fmt.Errorf("received status code %d", res.StatusCode)
+		return nil, fmt.Errorf("received status code %d", res.StatusCode)
 	}
 
 	doc, err := goquery.NewDocumentFromReader(res.Body)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	today := Flavor{
@@ -88,18 +88,13 @@ func scrapeRestaurant(slug string, client HttpClient) (string, error) {
 		Flavors:  append([]Flavor{today}, upcoming...),
 	}
 
-	restaurantJson, err := json.Marshal(restaurant)
-	if err != nil {
-		return "", err
-	}
-
-	return string(restaurantJson), nil
+	return &restaurant, nil
 }
 
 func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	slug := request.PathParameters["slug"]
 
-	restaurantJson, err := scrapeRestaurant(slug, &http.Client{
+	restaurant, err := scrapeRestaurant(slug, &http.Client{
 		CheckRedirect: func(req *http.Request, via []*http.Request) error {
 			return http.ErrUseLastResponse
 		},
@@ -111,9 +106,17 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 		}, err
 	}
 
+	body, err := json.Marshal(restaurant)
+	if err != nil {
+		return events.APIGatewayProxyResponse{
+			StatusCode: 500,
+			Body:       err.Error(),
+		}, err
+	}
+
 	return events.APIGatewayProxyResponse{
 		StatusCode: 200,
-		Body:       restaurantJson,
+		Body:       string(body),
 	}, nil
 }
 

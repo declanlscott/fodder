@@ -106,26 +106,26 @@ type Restaurant struct {
 	Slug        string  `json:"slug"`
 }
 
-func getRestaurants(externalApiUrl string, client HttpClient) (string, error) {
+func getRestaurants(externalApiUrl string, client HttpClient) ([]Restaurant, error) {
 	req, err := http.NewRequest("GET", externalApiUrl, nil)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	res, err := client.Do(req)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	defer res.Body.Close()
 
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	var externalApiResponse ExternalApiResponse
 	if err := json.Unmarshal(body, &externalApiResponse); err != nil {
-		return "", err
+		return nil, err
 	}
 
 	var restaurants []Restaurant
@@ -157,17 +157,12 @@ func getRestaurants(externalApiUrl string, client HttpClient) (string, error) {
 		restaurants = append(restaurants, restaurant)
 	}
 
-	restaurantsJson, err := json.Marshal(restaurants)
-	if err != nil {
-		return "", err
-	}
-
-	return string(restaurantsJson), nil
+	return restaurants, nil
 }
 
 const EXTERNAL_API_BASE_URL = "https://www.culvers.com/api"
 
-func byZipCode(zipCode string, radius uint64) (string, error) {
+func byZipCode(zipCode string, radius uint64) ([]Restaurant, error) {
 	externalApiUrl := fmt.Sprintf(
 		"%s/locate/address/json?address=%s&proximitySearchMethod=drivetime&cuttoff=100&limit=1000&searchRadius=%d",
 		EXTERNAL_API_BASE_URL,
@@ -178,7 +173,7 @@ func byZipCode(zipCode string, radius uint64) (string, error) {
 	return getRestaurants(externalApiUrl, http.DefaultClient)
 }
 
-func byCoordinates(latitude float64, longitude float64, radius uint64) (string, error) {
+func byCoordinates(latitude float64, longitude float64, radius uint64) ([]Restaurant, error) {
 	externalApiUrl := fmt.Sprintf(
 		"%s/locate/latlong/json?latitude=%f&longitude=%f&proximitySearchMethod=drivetime&cuttoff=100&limit=1000&searchRadius=%d",
 		EXTERNAL_API_BASE_URL,
@@ -214,7 +209,15 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 			}, nil
 		}
 
-		restaurantsJson, err := byZipCode(zipCode, radius)
+		restaurants, err := byZipCode(zipCode, radius)
+		if err != nil {
+			return events.APIGatewayProxyResponse{
+				StatusCode: 500,
+				Body:       err.Error(),
+			}, err
+		}
+
+		body, err := json.Marshal(restaurants)
 		if err != nil {
 			return events.APIGatewayProxyResponse{
 				StatusCode: 500,
@@ -224,7 +227,7 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 
 		return events.APIGatewayProxyResponse{
 			StatusCode: 200,
-			Body:       restaurantsJson,
+			Body:       string(body),
 		}, nil
 	}
 
@@ -237,7 +240,15 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 		}, nil
 	}
 
-	restaurantsJson, err := byCoordinates(latitude, longitude, radius)
+	restaurants, err := byCoordinates(latitude, longitude, radius)
+	if err != nil {
+		return events.APIGatewayProxyResponse{
+			StatusCode: 500,
+			Body:       err.Error(),
+		}, err
+	}
+
+	body, err := json.Marshal(restaurants)
 	if err != nil {
 		return events.APIGatewayProxyResponse{
 			StatusCode: 500,
@@ -247,7 +258,7 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 
 	return events.APIGatewayProxyResponse{
 		StatusCode: 200,
-		Body:       restaurantsJson,
+		Body:       string(body),
 	}, nil
 }
 
