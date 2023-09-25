@@ -9,6 +9,11 @@ terraform {
       source  = "hashicorp/archive"
       version = "2.4.0"
     }
+
+    upstash = {
+      source  = "upstash/upstash"
+      version = "1.4.1"
+    }
   }
 
   ###################################################################
@@ -32,6 +37,11 @@ provider "aws" {
 
 provider "archive" {
   # Configuration options
+}
+
+provider "upstash" {
+  email   = var.upstash_email
+  api_key = var.upstash_api_key
 }
 
 # Terraform remote backend bootstrap resources
@@ -259,4 +269,11 @@ resource "aws_s3_object" "mock_responses" {
   key          = "mock-responses/"
   content_type = "application/x-directory"
   acl          = "private"
+}
+
+# Upstash redis
+resource "upstash_redis_database" "fodder" {
+  database_name = "fodder-cache"
+  region        = var.upstash_redis_region
+  tls           = "true"
 }
