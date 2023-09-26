@@ -193,6 +193,12 @@ resource "aws_lambda_function" "restaurant" {
   runtime          = "provided.al2"
   architectures    = ["arm64"]
   timeout          = 15
+
+  environment {
+    variables = {
+      UPSTASH_REDIS_URL = "rediss://${var.upstash_redis_user}:${var.upstash_redis_password}@${upstash_redis_database.fodder.endpoint}:${var.upstash_redis_port}"
+    }
+  }
 }
 resource "aws_lambda_permission" "allow_restaurant_api" {
   action        = "lambda:InvokeFunction"

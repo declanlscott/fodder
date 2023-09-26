@@ -15,3 +15,18 @@ variable "upstash_redis_region" {
   type        = string
   default     = "us-east-1"
 }
+
+variable "upstash_redis_user" {
+  type      = string
+  sensitive = true
+}
+
+variable "upstash_redis_password" {
+  type      = string
+  sensitive = true
+}
+
+variable "upstash_redis_port" {
+  type      = string
+  sensitive = true
+}

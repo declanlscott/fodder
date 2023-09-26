@@ -4,12 +4,15 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/PuerkitoBio/goquery"
 	"net/http"
+	"os"
 	"strings"
+	"time"
 
+	"github.com/PuerkitoBio/goquery"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
+	"github.com/redis/go-redis/v9"
 )
 
 type HttpClient interface {
@@ -91,22 +94,64 @@ func scrapeRestaurant(slug string, client HttpClient) (*Restaurant, error) {
 	return &restaurant, nil
 }
 
+func getExpirationDuration(currentTime time.Time) time.Duration {
+	expirationDate := time.Date(
+		currentTime.Year(),
+		currentTime.Month(),
+		currentTime.Day(),
+		7,
+		30,
+		0,
+		0,
+		time.UTC,
+	)
+
+	if currentTime.After(expirationDate) {
+		expirationDate = expirationDate.Add(24 * time.Hour)
+	}
+
+	expirationDuration := expirationDate.Sub(currentTime)
+
+	return expirationDuration
+}
+
+func getResponseBody(ctx context.Context, slug string) ([]byte, error) {
+	opt, err := redis.ParseURL(os.Getenv("UPSTASH_REDIS_URL"))
+	if err != nil {
+		return nil, err
+	}
+
+	rdb := redis.NewClient(opt)
+
+	body, err := rdb.Get(ctx, slug).Bytes()
+	if err == redis.Nil {
+		// Key does not exist
+		restaurant, err := scrapeRestaurant(slug, &http.Client{
+			CheckRedirect: func(req *http.Request, via []*http.Request) error {
+				return http.ErrUseLastResponse
+			},
+		})
+		if err != nil {
+			return nil, err
+		}
+
+		body, err := json.Marshal(restaurant)
+		if err != nil {
+			return nil, err
+		}
+
+		rdb.Set(ctx, slug, body, getExpirationDuration(time.Now().UTC()))
+
+		return body, nil
+	}
+
+	return body, nil
+}
+
 func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	slug := request.PathParameters["slug"]
 
-	restaurant, err := scrapeRestaurant(slug, &http.Client{
-		CheckRedirect: func(req *http.Request, via []*http.Request) error {
-			return http.ErrUseLastResponse
-		},
-	})
-	if err != nil {
-		return events.APIGatewayProxyResponse{
-			StatusCode: 500,
-			Body:       err.Error(),
-		}, err
-	}
-
-	body, err := json.Marshal(restaurant)
+	body, err := getResponseBody(ctx, slug)
 	if err != nil {
 		return events.APIGatewayProxyResponse{
 			StatusCode: 500,
