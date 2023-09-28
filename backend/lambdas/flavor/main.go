@@ -76,6 +76,14 @@ func scrapeFlavor(slug string, client HttpClient) (*Flavor, error) {
 }
 
 func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+	headers := map[string]string{
+		"Content-Type":                     "application/json",
+		"Access-Control-Allow-Origin":      "*",
+		"Access-Control-Allow-Headers":     "Content-Type",
+		"Access-Control-Allow-Methods":     "GET",
+		"Access-Control-Allow-Credentials": "true",
+	}
+
 	slug := request.PathParameters["slug"]
 
 	flavor, err := scrapeFlavor(slug, &http.Client{
@@ -85,21 +93,24 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 	})
 	if err != nil {
 		return events.APIGatewayProxyResponse{
-			StatusCode: 500,
-			Body:       err.Error(),
+			StatusCode: http.StatusInternalServerError,
+			Headers:    headers,
+			Body:       fmt.Sprintf("{\"message\": \"%s\"}", err.Error()),
 		}, err
 	}
 
 	body, err := json.Marshal(flavor)
 	if err != nil {
 		return events.APIGatewayProxyResponse{
-			StatusCode: 500,
-			Body:       err.Error(),
+			StatusCode: http.StatusInternalServerError,
+			Headers:    headers,
+			Body:       fmt.Sprintf("{\"message\": \"%s\"}", err.Error()),
 		}, err
 	}
 
 	return events.APIGatewayProxyResponse{
-		StatusCode: 200,
+		StatusCode: http.StatusOK,
+		Headers:    headers,
 		Body:       string(body),
 	}, nil
 }

@@ -129,7 +129,7 @@ func TestHandler(t *testing.T) {
 
 	res, err := handler(ctx, events.APIGatewayProxyRequest{
 		QueryStringParameters: map[string]string{
-			"zipCode": "52302",
+			"address": "marion, ia",
 			"radius":  "10",
 		},
 	})

@@ -151,16 +151,26 @@ func getResponseBody(ctx context.Context, slug string) ([]byte, error) {
 func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	slug := request.PathParameters["slug"]
 
+	headers := map[string]string{
+		"Content-Type":                     "application/json",
+		"Access-Control-Allow-Origin":      "*",
+		"Access-Control-Allow-Headers":     "Content-Type",
+		"Access-Control-Allow-Methods":     "GET",
+		"Access-Control-Allow-Credentials": "true",
+	}
+
 	body, err := getResponseBody(ctx, slug)
 	if err != nil {
 		return events.APIGatewayProxyResponse{
-			StatusCode: 500,
-			Body:       err.Error(),
+			StatusCode: http.StatusInternalServerError,
+			Headers:    headers,
+			Body:       fmt.Sprintf("{\"message\": \"%s\"}", err.Error()),
 		}, err
 	}
 
 	return events.APIGatewayProxyResponse{
-		StatusCode: 200,
+		StatusCode: http.StatusOK,
+		Headers:    headers,
 		Body:       string(body),
 	}, nil
 }

@@ -76,6 +76,10 @@ resource "aws_dynamodb_table" "terraform_locks" {
 resource "aws_apigatewayv2_api" "fodder" {
   name          = "fodder-http-api"
   protocol_type = "HTTP"
+  cors_configuration {
+    allow_origins = ["*"]
+    allow_methods = ["GET"]
+  }
 }
 resource "aws_apigatewayv2_stage" "v1" {
   api_id      = aws_apigatewayv2_api.fodder.id

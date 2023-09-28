@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"regexp"
 	"strconv"
 	"strings"
 
@@ -162,11 +161,11 @@ func getRestaurants(externalApiUrl string, client HttpClient) ([]Restaurant, err
 
 const EXTERNAL_API_BASE_URL = "https://www.culvers.com/api"
 
-func byZipCode(zipCode string, radius uint64) ([]Restaurant, error) {
+func byAddress(address string, radius uint64) ([]Restaurant, error) {
 	externalApiUrl := fmt.Sprintf(
 		"%s/locate/address/json?address=%s&proximitySearchMethod=drivetime&cuttoff=100&limit=1000&searchRadius=%d",
 		EXTERNAL_API_BASE_URL,
-		zipCode,
+		address,
 		radius,
 	)
 
@@ -185,48 +184,53 @@ func byCoordinates(latitude float64, longitude float64, radius uint64) ([]Restau
 	return getRestaurants(externalApiUrl, http.DefaultClient)
 }
 
-func isValidZipCode(zipCode string) bool {
-	regex := regexp.MustCompile(`^\d{5}$`)
-
-	return regex.MatchString(zipCode)
-}
-
 func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+	headers := map[string]string{
+		"Content-Type":                     "application/json",
+		"Access-Control-Allow-Origin":      "*",
+		"Access-Control-Allow-Headers":     "Content-Type",
+		"Access-Control-Allow-Methods":     "GET",
+		"Access-Control-Allow-Credentials": "true",
+	}
+
 	radius, err := strconv.ParseUint(request.QueryStringParameters["radius"], 10, 0)
 	if err != nil {
 		return events.APIGatewayProxyResponse{
-			StatusCode: 400,
-			Body:       "Invalid radius",
+			StatusCode: http.StatusBadRequest,
+			Headers:    headers,
+			Body:       "{\"message\": \"Invalid radius\"}",
 		}, nil
 	}
 
-	zipCode := request.QueryStringParameters["zipCode"]
-	if strings.TrimSpace(zipCode) != "" {
-		if !isValidZipCode(zipCode) {
-			return events.APIGatewayProxyResponse{
-				StatusCode: 400,
-				Body:       "Invalid zip code",
-			}, nil
-		}
-
-		restaurants, err := byZipCode(zipCode, radius)
+	address := request.QueryStringParameters["address"]
+	if strings.TrimSpace(address) != "" {
+		restaurants, err := byAddress(address, radius)
 		if err != nil {
 			return events.APIGatewayProxyResponse{
-				StatusCode: 500,
-				Body:       err.Error(),
+				StatusCode: http.StatusInternalServerError,
+				Headers:    headers,
+				Body:       fmt.Sprintf("{\"message\": \"%s\"}", err.Error()),
 			}, err
+		}
+		if restaurants == nil {
+			return events.APIGatewayProxyResponse{
+				StatusCode: http.StatusNoContent,
+				Headers:    headers,
+			}, nil
 		}
 
 		body, err := json.Marshal(restaurants)
 		if err != nil {
 			return events.APIGatewayProxyResponse{
-				StatusCode: 500,
-				Body:       err.Error(),
+				StatusCode: http.StatusInternalServerError,
+				Headers:    headers,
+				Body:       fmt.Sprintf("{\"message\": \"%s\"}", err.Error()),
 			}, err
 		}
 
 		return events.APIGatewayProxyResponse{
 			StatusCode: 200,
+			Headers:    headers,
 			Body:       string(body),
 		}, nil
 	}
@@ -235,29 +239,39 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 	longitude, longitudeErr := strconv.ParseFloat(request.QueryStringParameters["longitude"], 64)
 	if latitudeErr != nil || longitudeErr != nil {
 		return events.APIGatewayProxyResponse{
-			StatusCode: 400,
-			Body:       "Invalid latitude/longitude",
+			StatusCode: http.StatusBadRequest,
+			Headers:    headers,
+			Body:       "{\"message\": \"Invalid latitude/longitude\"}",
 		}, nil
 	}
 
 	restaurants, err := byCoordinates(latitude, longitude, radius)
 	if err != nil {
 		return events.APIGatewayProxyResponse{
-			StatusCode: 500,
-			Body:       err.Error(),
+			StatusCode: http.StatusInternalServerError,
+			Headers:    headers,
+			Body:       fmt.Sprintf("{\"message\": \"%s\"}", err.Error()),
 		}, err
+	}
+	if restaurants == nil {
+		return events.APIGatewayProxyResponse{
+			StatusCode: http.StatusNoContent,
+			Headers:    headers,
+		}, nil
 	}
 
 	body, err := json.Marshal(restaurants)
 	if err != nil {
 		return events.APIGatewayProxyResponse{
-			StatusCode: 500,
-			Body:       err.Error(),
+			StatusCode: http.StatusInternalServerError,
+			Headers:    headers,
+			Body:       fmt.Sprintf("{\"message\": \"%s\"}", err.Error()),
 		}, err
 	}
 
 	return events.APIGatewayProxyResponse{
-		StatusCode: 200,
+		StatusCode: http.StatusOK,
+		Headers:    headers,
 		Body:       string(body),
 	}, nil
 }
