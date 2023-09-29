@@ -180,8 +180,7 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 	} else {
 		params := url.Values{}
 
-		params.Add("radius", radius)
-
+		params.Add("searchRadius", radius)
 		params.Add("proximitySearchMethod", "drivetime")
 		params.Add("cuttoff", "100")
 		params.Add("limit", "1000")
