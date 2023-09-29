@@ -83,6 +83,7 @@ export function useLocate() {
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
+    mutationKey: ["restaurants"],
     mutationFn: locate,
     onSuccess: (restaurants, data) => {
       queryClient.setQueryData(["restaurants", data], restaurants);
@@ -120,7 +121,7 @@ export function useRestaurants() {
     queryKey: ["restaurants"],
     queryFn: ({ queryKey }) => {
       const restaurants =
-        queryClient.getQueryData<Restaurant[]>(queryKey) ?? [];
+        queryClient.getQueryData<Restaurant[]>(queryKey) ?? null;
 
       return restaurants;
     },
