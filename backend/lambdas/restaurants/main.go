@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 
@@ -161,29 +162,6 @@ func getRestaurants(externalApiUrl string, client HttpClient) ([]Restaurant, err
 
 const EXTERNAL_API_BASE_URL = "https://www.culvers.com/api"
 
-func byAddress(address string, radius uint64) ([]Restaurant, error) {
-	externalApiUrl := fmt.Sprintf(
-		"%s/locate/address/json?address=%s&proximitySearchMethod=drivetime&cuttoff=100&limit=1000&searchRadius=%d",
-		EXTERNAL_API_BASE_URL,
-		address,
-		radius,
-	)
-
-	return getRestaurants(externalApiUrl, http.DefaultClient)
-}
-
-func byCoordinates(latitude float64, longitude float64, radius uint64) ([]Restaurant, error) {
-	externalApiUrl := fmt.Sprintf(
-		"%s/locate/latlong/json?latitude=%f&longitude=%f&proximitySearchMethod=drivetime&cuttoff=100&limit=1000&searchRadius=%d",
-		EXTERNAL_API_BASE_URL,
-		latitude,
-		longitude,
-		radius,
-	)
-
-	return getRestaurants(externalApiUrl, http.DefaultClient)
-}
-
 func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	headers := map[string]string{
 		"Content-Type":                     "application/json",
@@ -193,24 +171,58 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 		"Access-Control-Allow-Credentials": "true",
 	}
 
-	radius, err := strconv.ParseUint(request.QueryStringParameters["radius"], 10, 0)
-	if err != nil {
+	if radius, ok := request.QueryStringParameters["radius"]; !ok {
 		return events.APIGatewayProxyResponse{
 			StatusCode: http.StatusBadRequest,
 			Headers:    headers,
-			Body:       "{\"message\": \"Invalid radius\"}",
+			Body:       "{\"message\": \"Missing radius\"}",
 		}, nil
-	}
+	} else {
+		params := url.Values{}
 
-	address := request.QueryStringParameters["address"]
-	if strings.TrimSpace(address) != "" {
-		restaurants, err := byAddress(address, radius)
-		if err != nil {
+		params.Add("radius", radius)
+
+		params.Add("proximitySearchMethod", "drivetime")
+		params.Add("cuttoff", "100")
+		params.Add("limit", "1000")
+
+		var restaurants []Restaurant
+		var restaurantsErr error
+
+		if address, ok := request.QueryStringParameters["address"]; ok {
+			params.Add("address", address)
+
+			restaurants, restaurantsErr = getRestaurants(
+				fmt.Sprintf("%s/locate/address/json?%s", EXTERNAL_API_BASE_URL, params.Encode()),
+				http.DefaultClient,
+			)
+		} else {
+			latitude, latOk := request.QueryStringParameters["latitude"]
+			longitude, longOk := request.QueryStringParameters["longitude"]
+
+			if !latOk || !longOk {
+				return events.APIGatewayProxyResponse{
+					StatusCode: http.StatusBadRequest,
+					Headers:    headers,
+					Body:       "{\"message\": \"Missing latitude/longitude\"}",
+				}, nil
+			}
+
+			params.Add("latitude", latitude)
+			params.Add("longitude", longitude)
+
+			restaurants, restaurantsErr = getRestaurants(
+				fmt.Sprintf("%s/locate/latlong/json?%s", EXTERNAL_API_BASE_URL, params.Encode()),
+				http.DefaultClient,
+			)
+		}
+
+		if restaurantsErr != nil {
 			return events.APIGatewayProxyResponse{
 				StatusCode: http.StatusInternalServerError,
 				Headers:    headers,
-				Body:       fmt.Sprintf("{\"message\": \"%s\"}", err.Error()),
-			}, err
+				Body:       fmt.Sprintf("{\"message\": \"%s\"}", restaurantsErr.Error()),
+			}, restaurantsErr
 		}
 		if restaurants == nil {
 			return events.APIGatewayProxyResponse{
@@ -229,51 +241,11 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 		}
 
 		return events.APIGatewayProxyResponse{
-			StatusCode: 200,
+			StatusCode: http.StatusOK,
 			Headers:    headers,
 			Body:       string(body),
 		}, nil
 	}
-
-	latitude, latitudeErr := strconv.ParseFloat(request.QueryStringParameters["latitude"], 64)
-	longitude, longitudeErr := strconv.ParseFloat(request.QueryStringParameters["longitude"], 64)
-	if latitudeErr != nil || longitudeErr != nil {
-		return events.APIGatewayProxyResponse{
-			StatusCode: http.StatusBadRequest,
-			Headers:    headers,
-			Body:       "{\"message\": \"Invalid latitude/longitude\"}",
-		}, nil
-	}
-
-	restaurants, err := byCoordinates(latitude, longitude, radius)
-	if err != nil {
-		return events.APIGatewayProxyResponse{
-			StatusCode: http.StatusInternalServerError,
-			Headers:    headers,
-			Body:       fmt.Sprintf("{\"message\": \"%s\"}", err.Error()),
-		}, err
-	}
-	if restaurants == nil {
-		return events.APIGatewayProxyResponse{
-			StatusCode: http.StatusNoContent,
-			Headers:    headers,
-		}, nil
-	}
-
-	body, err := json.Marshal(restaurants)
-	if err != nil {
-		return events.APIGatewayProxyResponse{
-			StatusCode: http.StatusInternalServerError,
-			Headers:    headers,
-			Body:       fmt.Sprintf("{\"message\": \"%s\"}", err.Error()),
-		}, err
-	}
-
-	return events.APIGatewayProxyResponse{
-		StatusCode: http.StatusOK,
-		Headers:    headers,
-		Body:       string(body),
-	}, nil
 }
 
 func main() {
