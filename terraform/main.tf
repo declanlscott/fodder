@@ -155,19 +155,49 @@ data "aws_iam_policy_document" "assume_role" {
     actions = ["sts:AssumeRole"]
   }
 }
-
 resource "aws_iam_role" "iam_for_lambda" {
   name               = "iam_for_lambda"
   assume_role_policy = data.aws_iam_policy_document.assume_role.json
 }
 
+data "aws_iam_policy_document" "lambda_logging" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents",
+    ]
+
+    resources = ["arn:aws:logs:*:*:*"]
+  }
+}
+resource "aws_iam_policy" "lambda_logging" {
+  name        = "lambda_logging"
+  path        = "/"
+  description = "IAM policy for logging from a lambda"
+  policy      = data.aws_iam_policy_document.lambda_logging.json
+}
+resource "aws_iam_role_policy_attachment" "lambda_logs" {
+  role       = aws_iam_role.iam_for_lambda.name
+  policy_arn = aws_iam_policy.lambda_logging.arn
+}
+
+variable "restaurants_function_name" {
+  default = "fodder-restaurants"
+}
+resource "aws_cloudwatch_log_group" "restaurants" {
+  name              = "/aws/lambda/${var.restaurants_function_name}"
+  retention_in_days = 14
+}
 data "archive_file" "restaurants_lambda_zip" {
   type        = "zip"
   source_file = "${path.module}/../backend/lambdas/restaurants/bin/bootstrap"
   output_path = "${path.module}/../backend/lambdas/restaurants/bin/lambda_function_payload.zip"
 }
 resource "aws_lambda_function" "restaurants" {
-  function_name    = "fodder-restaurants"
+  function_name    = var.restaurants_function_name
   filename         = data.archive_file.restaurants_lambda_zip.output_path
   source_code_hash = data.archive_file.restaurants_lambda_zip.output_base64sha256
   role             = aws_iam_role.iam_for_lambda.arn
@@ -175,6 +205,11 @@ resource "aws_lambda_function" "restaurants" {
   runtime          = "provided.al2"
   architectures    = ["arm64"]
   timeout          = 15
+
+  depends_on = [
+    aws_iam_role_policy_attachment.lambda_logs,
+    aws_cloudwatch_log_group.restaurants
+  ]
 }
 resource "aws_lambda_permission" "allow_restaurants_api" {
   action        = "lambda:InvokeFunction"
@@ -183,13 +218,20 @@ resource "aws_lambda_permission" "allow_restaurants_api" {
   source_arn    = "${aws_apigatewayv2_api.fodder.execution_arn}/*/GET/restaurants"
 }
 
+variable "restaurant_function_name" {
+  default = "fodder-restaurant"
+}
+resource "aws_cloudwatch_log_group" "restaurant" {
+  name              = "/aws/lambda/${var.restaurant_function_name}"
+  retention_in_days = 14
+}
 data "archive_file" "restaurant_lambda_zip" {
   type        = "zip"
   source_file = "${path.module}/../backend/lambdas/restaurant/bin/bootstrap"
   output_path = "${path.module}/../backend/lambdas/restaurant/bin/lambda_function_payload.zip"
 }
 resource "aws_lambda_function" "restaurant" {
-  function_name    = "fodder-restaurant"
+  function_name    = var.restaurant_function_name
   filename         = data.archive_file.restaurant_lambda_zip.output_path
   source_code_hash = data.archive_file.restaurant_lambda_zip.output_base64sha256
   role             = aws_iam_role.iam_for_lambda.arn
@@ -203,6 +245,11 @@ resource "aws_lambda_function" "restaurant" {
       UPSTASH_REDIS_URL = "rediss://${var.upstash_redis_user}:${var.upstash_redis_password}@${upstash_redis_database.fodder.endpoint}:${var.upstash_redis_port}"
     }
   }
+
+  depends_on = [
+    aws_iam_role_policy_attachment.lambda_logs,
+    aws_cloudwatch_log_group.restaurant
+  ]
 }
 resource "aws_lambda_permission" "allow_restaurant_api" {
   action        = "lambda:InvokeFunction"
@@ -211,13 +258,20 @@ resource "aws_lambda_permission" "allow_restaurant_api" {
   source_arn    = "${aws_apigatewayv2_api.fodder.execution_arn}/*/GET/restaurant/*"
 }
 
+variable "flavor_function_name" {
+  default = "fodder-flavor"
+}
+resource "aws_cloudwatch_log_group" "flavor" {
+  name              = "/aws/lambda/${var.flavor_function_name}"
+  retention_in_days = 14
+}
 data "archive_file" "flavor_lambda_zip" {
   type        = "zip"
   source_file = "${path.module}/../backend/lambdas/flavor/bin/bootstrap"
   output_path = "${path.module}/../backend/lambdas/flavor/bin/lambda_function_payload.zip"
 }
 resource "aws_lambda_function" "flavor" {
-  function_name    = "fodder-flavor"
+  function_name    = var.flavor_function_name
   filename         = data.archive_file.flavor_lambda_zip.output_path
   source_code_hash = data.archive_file.flavor_lambda_zip.output_base64sha256
   role             = aws_iam_role.iam_for_lambda.arn
@@ -225,6 +279,11 @@ resource "aws_lambda_function" "flavor" {
   runtime          = "provided.al2"
   architectures    = ["arm64"]
   timeout          = 15
+
+  depends_on = [
+    aws_iam_role_policy_attachment.lambda_logs,
+    aws_cloudwatch_log_group.flavor
+  ]
 }
 resource "aws_lambda_permission" "allow_flavor_api" {
   action        = "lambda:InvokeFunction"
@@ -233,13 +292,20 @@ resource "aws_lambda_permission" "allow_flavor_api" {
   source_arn    = "${aws_apigatewayv2_api.fodder.execution_arn}/*/GET/flavor/*"
 }
 
+variable "flavors_function_name" {
+  default = "fodder-flavors"
+}
+resource "aws_cloudwatch_log_group" "flavors" {
+  name              = "/aws/lambda/${var.flavors_function_name}"
+  retention_in_days = 14
+}
 data "archive_file" "flavors_lambda_zip" {
   type        = "zip"
   source_file = "${path.module}/../backend/lambdas/flavors/bin/bootstrap"
   output_path = "${path.module}/../backend/lambdas/flavors/bin/lambda_function_payload.zip"
 }
 resource "aws_lambda_function" "flavors" {
-  function_name    = "fodder-flavors"
+  function_name    = var.flavors_function_name
   filename         = data.archive_file.flavors_lambda_zip.output_path
   source_code_hash = data.archive_file.flavors_lambda_zip.output_base64sha256
   role             = aws_iam_role.iam_for_lambda.arn
@@ -247,6 +313,11 @@ resource "aws_lambda_function" "flavors" {
   runtime          = "provided.al2"
   architectures    = ["arm64"]
   timeout          = 15
+
+  depends_on = [
+    aws_iam_role_policy_attachment.lambda_logs,
+    aws_cloudwatch_log_group.flavors
+  ]
 }
 resource "aws_lambda_permission" "allow_flavors_api" {
   action        = "lambda:InvokeFunction"
