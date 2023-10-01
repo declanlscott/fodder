@@ -36,7 +36,7 @@ func TestScrapeRestaurant(t *testing.T) {
 		return
 	}
 
-	expectedJson := `{"location":"Marion, IA - Red Fox Way","flavors":[{"date":"Tuesday, September 19","name":"Chocolate Covered Strawberry","imageUrl":"https:./test_response_files/img-Chocolate-Covered-Strawberry1(1).png"},{"date":"Wednesday, September 20","name":"Dulce de Leche Cheesecake","imageUrl":"https:./test_response_files/img-Dulce-de-Leche1.png"},{"date":"Thursday, September 21","name":"Georgia Peach","imageUrl":"https:./test_response_files/img-Georgia-Peach1.png"},{"date":"Friday, September 22","name":"Espresso Toffee Bar","imageUrl":"https:./test_response_files/img-Espresso-Toffee-Bar.Waffle-Cone.png"},{"date":"Saturday, September 23","name":"Turtle Cheesecake","imageUrl":"https:./test_response_files/img-Turtle-Cheesecake.Cake-Cone2.png"}]}`
+	expectedJson := `{"name":"Marion, IA - Red Fox Way","address":"1375 Red Fox Way","city":"Marion","state":"IA","zipCode":"52302","phoneNumber":"319-373-7575","flavors":[{"date":"Tuesday, September 19","name":"Chocolate Covered Strawberry","imageUrl":"https:./test_response_files/img-Chocolate-Covered-Strawberry1(1).png","slug":"chocolate-covered-strawberry"},{"date":"Wednesday, September 20","name":"Dulce de Leche Cheesecake","imageUrl":"https:./test_response_files/img-Dulce-de-Leche1.png","slug":"dulce-de-leche-cheesecake"},{"date":"Thursday, September 21","name":"Georgia Peach","imageUrl":"https:./test_response_files/img-Georgia-Peach1.png","slug":"georgia-peach"},{"date":"Friday, September 22","name":"Espresso Toffee Bar","imageUrl":"https:./test_response_files/img-Espresso-Toffee-Bar.Waffle-Cone.png","slug":"espresso-toffee-bar"},{"date":"Saturday, September 23","name":"Turtle Cheesecake","imageUrl":"https:./test_response_files/img-Turtle-Cheesecake.Cake-Cone2.png","slug":"turtle-cheesecake"}]}`
 
 	actualJson, err := json.Marshal(restaurant)
 	if err != nil {
@@ -89,7 +89,6 @@ func TestGetExpirationDuration(t *testing.T) {
 			expectedExpirationDuration,
 			expirationDuration.String(),
 		)
-		return
 	}
 }
 

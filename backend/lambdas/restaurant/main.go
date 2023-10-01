@@ -3,9 +3,11 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
+	"regexp"
 	"strings"
 	"time"
 
@@ -23,14 +25,40 @@ const EXTERNAL_API_BASE_URL = "https://www.culvers.com/restaurants"
 const LOGO_SVG_SRC = "//cdn.culvers.com/layout/logo.svg"
 
 type Restaurant struct {
-	Location string   `json:"location"`
-	Flavors  []Flavor `json:"flavors"`
+	Name        string   `json:"name"`
+	Address     string   `json:"address"`
+	City        string   `json:"city"`
+	State       string   `json:"state"`
+	ZipCode     string   `json:"zipCode"`
+	PhoneNumber string   `json:"phoneNumber"`
+	Flavors     []Flavor `json:"flavors"`
 }
 
 type Flavor struct {
 	Date     string `json:"date"`
 	Name     string `json:"name"`
 	ImageUrl string `json:"imageUrl"`
+	Slug     string `json:"slug"`
+}
+
+type ScrapeError struct {
+	StatusCode int
+}
+
+func (e *ScrapeError) Error() string {
+	return fmt.Errorf("received status code %d", e.StatusCode).Error()
+}
+
+func getSlugFromName(name string) string {
+	// Match any non-alphabetic characters
+	re := regexp.MustCompile(`[^a-zA-Z\s]+`)
+	slug := re.ReplaceAllString(name, "")
+
+	// Match any whitespace characters
+	re = regexp.MustCompile(`\s+`)
+	slug = strings.ToLower(re.ReplaceAllString(slug, "-"))
+
+	return slug
 }
 
 func scrapeRestaurant(slug string, client HttpClient) (*Restaurant, error) {
@@ -48,7 +76,7 @@ func scrapeRestaurant(slug string, client HttpClient) (*Restaurant, error) {
 	defer res.Body.Close()
 
 	if res.StatusCode != 200 {
-		return nil, fmt.Errorf("received status code %d", res.StatusCode)
+		return nil, &ScrapeError{res.StatusCode}
 	}
 
 	doc, err := goquery.NewDocumentFromReader(res.Body)
@@ -56,9 +84,10 @@ func scrapeRestaurant(slug string, client HttpClient) (*Restaurant, error) {
 		return nil, err
 	}
 
+	name := doc.Find("#upcoming .upperstub .content .fotd a").Text()
 	today := Flavor{
 		Date: strings.TrimSpace(strings.Replace(doc.Find("#upcoming .upperstub h3").Text(), "TODAY –", "", 1)),
-		Name: doc.Find("#upcoming .upperstub .content .fotd a").Text(),
+		Name: name,
 		ImageUrl: fmt.Sprintf("https:%s", func() string {
 			if src, exists := doc.Find("#upcoming .upperstub img").Attr("src"); exists {
 				return strings.Replace(src, "140", "400", 1)
@@ -66,6 +95,7 @@ func scrapeRestaurant(slug string, client HttpClient) (*Restaurant, error) {
 
 			return LOGO_SVG_SRC
 		}()),
+		Slug: getSlugFromName(name),
 	}
 
 	var upcoming []Flavor
@@ -73,9 +103,11 @@ func scrapeRestaurant(slug string, client HttpClient) (*Restaurant, error) {
 	for index := range upcomingSelector.Nodes {
 		selection := upcomingSelector.Eq(index)
 
+		name = selection.Find(".content .fotd a").Text()
+
 		upcoming = append(upcoming, Flavor{
 			Date: strings.TrimSpace(strings.Replace(selection.Find("h3").Text(), "TOMORROW –", "", 1)),
-			Name: selection.Find(".content .fotd a").Text(),
+			Name: name,
 			ImageUrl: fmt.Sprintf("https:%s", func() string {
 				if src, exists := selection.Find("img").Attr("src"); exists {
 					return strings.Replace(src, "140", "400", 1)
@@ -83,12 +115,25 @@ func scrapeRestaurant(slug string, client HttpClient) (*Restaurant, error) {
 
 				return LOGO_SVG_SRC
 			}()),
+			Slug: getSlugFromName(name),
 		})
 	}
 
+	addressSelector := doc.Find("p.restaurant-address span")
+	address := addressSelector.Eq(0).Text()
+	city := addressSelector.Eq(2).Text()
+	state := doc.Find("p.restaurant-address abbr").Text()
+	zipCode := addressSelector.Eq(3).Text()
+	phoneNumber := addressSelector.Eq(5).Find("a").Text()
+
 	restaurant := Restaurant{
-		Location: strings.TrimSpace(doc.Find(".ModuleContentHeader h1").Text()),
-		Flavors:  append([]Flavor{today}, upcoming...),
+		Name:        strings.TrimSpace(doc.Find(".ModuleContentHeader h1").Text()),
+		Address:     address,
+		City:        city,
+		State:       state,
+		ZipCode:     zipCode,
+		PhoneNumber: phoneNumber,
+		Flavors:     append([]Flavor{today}, upcoming...),
 	}
 
 	return &restaurant, nil
@@ -122,10 +167,11 @@ func getResponseBody(ctx context.Context, slug string) ([]byte, error) {
 	}
 
 	rdb := redis.NewClient(opt)
+	key := fmt.Sprintf("restaurant:%s", slug)
 
-	body, err := rdb.Get(ctx, slug).Bytes()
+	body, err := rdb.Get(ctx, key).Bytes()
 	if err == redis.Nil {
-		// Key does not exist
+		// Cache miss
 		restaurant, err := scrapeRestaurant(slug, &http.Client{
 			CheckRedirect: func(req *http.Request, via []*http.Request) error {
 				return http.ErrUseLastResponse
@@ -140,7 +186,7 @@ func getResponseBody(ctx context.Context, slug string) ([]byte, error) {
 			return nil, err
 		}
 
-		rdb.Set(ctx, slug, body, getExpirationDuration(time.Now().UTC()))
+		rdb.Set(ctx, key, body, getExpirationDuration(time.Now().UTC()))
 
 		return body, nil
 	}
@@ -161,11 +207,23 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 
 	body, err := getResponseBody(ctx, slug)
 	if err != nil {
+		var scrapeError *ScrapeError
+		if errors.As(err, &scrapeError) {
+			// External API redirects with HTTP 302 when the restaurant is not found
+			if scrapeError.StatusCode == http.StatusFound {
+				return events.APIGatewayProxyResponse{
+					StatusCode: http.StatusNotFound,
+					Headers:    headers,
+					Body:       fmt.Sprintf("{\"message\": \"Restaurant not found.\"}"),
+				}, nil
+			}
+		}
+
 		return events.APIGatewayProxyResponse{
 			StatusCode: http.StatusInternalServerError,
 			Headers:    headers,
 			Body:       fmt.Sprintf("{\"message\": \"%s\"}", err.Error()),
-		}, err
+		}, nil
 	}
 
 	return events.APIGatewayProxyResponse{
