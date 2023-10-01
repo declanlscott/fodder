@@ -8,8 +8,8 @@ import {
   Sun,
   X,
 } from "lucide-react";
-import { PropsWithChildren, useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { useState } from "react";
+import { Link, NavLink, Outlet } from "react-router-dom";
 
 import Logo from "~/components/Logo";
 import { useTheme } from "~/components/ThemeProvider";
@@ -37,9 +37,7 @@ const navLinkItems: NavLinkItem[] = [
   },
 ];
 
-type LayoutProps = PropsWithChildren;
-
-export function Layout(props: LayoutProps) {
+export function Layout() {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   return (
@@ -86,7 +84,9 @@ export function Layout(props: LayoutProps) {
         </div>
       </header>
 
-      <main className="container flex-grow p-8">{props.children}</main>
+      <main className="container flex-grow p-8">
+        <Outlet />
+      </main>
 
       <footer className="border-t">
         <div className="container flex h-16 items-center justify-between px-4">
@@ -138,6 +138,7 @@ function MobileNav() {
                     !isActive && "text-muted-foreground",
                   )
                 }
+                end
               >
                 {icon}
                 {title}

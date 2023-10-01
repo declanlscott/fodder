@@ -3,19 +3,17 @@ import { Dessert } from "lucide-react";
 
 import DroppedCone from "~/components/DroppedCone";
 import { FodCard, FodCardSkeleton } from "~/components/FodCard";
-import { Layout } from "~/components/Layout";
 import { LocateCard } from "~/components/LocateCard";
 import { Card } from "~/components/ui/Card";
 import { useRestaurants } from "~/lib/hooks";
 
-export function Locate() {
+export function LocatePage() {
   const { data } = useRestaurants();
 
   const isLoading = useIsMutating({ mutationKey: ["restaurants"] }) > 0;
   const isEmpty = (data?.length ?? -1) === 0;
 
   return (
-    <Layout>
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         <div className="col-span-1">
           <LocateCard />
@@ -45,6 +43,5 @@ export function Locate() {
           </div>
         </div>
       </div>
-    </Layout>
   );
 }

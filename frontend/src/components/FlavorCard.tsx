@@ -1,21 +1,16 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "~/components/ui/Card";
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/Card";
 import { Skeleton } from "~/components/ui/Skeleton";
-import { RestaurantsData } from "~/lib/types";
+import { FlavorsData } from "~/lib/types";
+import { cn } from "~/lib/utils";
 
-type FodCardProps = {
-  restaurant: RestaurantsData[number];
+type FlavorCardProps = {
+  flavor: FlavorsData[number];
 };
 
-export function FodCard({ restaurant }: FodCardProps) {
+export function FlavorCard({ flavor }: FlavorCardProps) {
   const [imageStatus, setImageStatus] = useState<
     "loading" | "success" | "error"
   >("loading");
@@ -25,32 +20,28 @@ export function FodCard({ restaurant }: FodCardProps) {
       <CardHeader>
         <CardTitle>
           <Link
-            to={`/flavors/${restaurant.fod.slug}`}
+            to={`/flavors/${flavor.slug}`}
             className="after:absolute after:inset-0 group-hover:underline"
           >
-            {restaurant.fod.name}
+            {flavor.name}
           </Link>
         </CardTitle>
-
-        <CardDescription className="z-10">
-          <Link
-            to={`/restaurants/${restaurant.slug}`}
-            className="hover:underline"
-          >
-            {restaurant.name}
-          </Link>
-        </CardDescription>
       </CardHeader>
 
-      <CardContent className="pb-0">
+      <CardContent
+        className={cn(
+          "flex justify-center",
+          imageStatus !== "loading" && "pb-0",
+        )}
+      >
         {imageStatus === "loading" ? (
           <Skeleton className="aspect-square w-full rounded-md" />
         ) : imageStatus === "success" ? (
-          <img src={restaurant.fod.imageUrl} alt={restaurant.fod.name} />
+          <img src={flavor.imageUrl} alt={flavor.name} />
         ) : null}
 
         <img
-          src={restaurant.fod.imageUrl}
+          src={flavor.imageUrl}
           onLoad={() => setImageStatus("success")}
           onError={() => setImageStatus("error")}
           className="hidden"
@@ -60,13 +51,11 @@ export function FodCard({ restaurant }: FodCardProps) {
   );
 }
 
-export function FodCardSkeleton() {
+export function FlavorCardSkeleton() {
   return (
     <Card>
       <CardHeader>
         <Skeleton className="h-5 w-2/3" />
-
-        <Skeleton className="mt-1.5 h-4 w-4/5" />
       </CardHeader>
 
       <CardContent>

@@ -1,9 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
-import { locate } from "~/lib/requests";
+import { getFlavor, getFlavors, getRestaurant, locate } from "~/lib/requests";
 import { LocateSchema } from "~/lib/schemas";
-import { Restaurant } from "~/lib/types";
+import { RestaurantsData } from "~/lib/types";
 
 export function useGeolocation(
   options: PositionOptions,
@@ -96,7 +96,7 @@ export function useLocate() {
 
   function onSubmit(data: LocateSchema) {
     if (!mutation.isLoading) {
-      const cache = queryClient.getQueryData<Restaurant[]>([
+      const cache = queryClient.getQueryData<RestaurantsData>([
         "restaurants",
         data,
       ]);
@@ -121,10 +121,37 @@ export function useRestaurants() {
     queryKey: ["restaurants"],
     queryFn: ({ queryKey }) => {
       const restaurants =
-        queryClient.getQueryData<Restaurant[]>(queryKey) ?? null;
+        queryClient.getQueryData<RestaurantsData>(queryKey) ?? null;
 
       return restaurants;
     },
+  });
+
+  return query;
+}
+
+export function useRestaurant(slug: string) {
+  const query = useQuery({
+    queryKey: ["restaurant", slug],
+    queryFn: () => getRestaurant(slug),
+  });
+
+  return query;
+}
+
+export function useFlavors() {
+  const query = useQuery({
+    queryKey: ["flavors"],
+    queryFn: getFlavors,
+  });
+
+  return query;
+}
+
+export function useFlavor(slug: string) {
+  const query = useQuery({
+    queryKey: ["flavor", slug],
+    queryFn: () => getFlavor(slug),
   });
 
   return query;
