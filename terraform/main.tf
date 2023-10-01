@@ -44,6 +44,10 @@ provider "upstash" {
   api_key = var.upstash_api_key
 }
 
+locals {
+  upstash_redis_url = "rediss://${var.upstash_redis_user}:${var.upstash_redis_password}@${upstash_redis_database.fodder.endpoint}:${var.upstash_redis_port}"
+}
+
 # Terraform remote backend bootstrap resources
 resource "aws_s3_bucket" "terraform_state" {
   bucket        = "fodder-tf-state"
@@ -242,7 +246,7 @@ resource "aws_lambda_function" "restaurant" {
 
   environment {
     variables = {
-      UPSTASH_REDIS_URL = "rediss://${var.upstash_redis_user}:${var.upstash_redis_password}@${upstash_redis_database.fodder.endpoint}:${var.upstash_redis_port}"
+      UPSTASH_REDIS_URL = local.upstash_redis_url
     }
   }
 
@@ -279,6 +283,12 @@ resource "aws_lambda_function" "flavor" {
   runtime          = "provided.al2"
   architectures    = ["arm64"]
   timeout          = 15
+
+  environment {
+    variables = {
+      UPSTASH_REDIS_URL = local.upstash_redis_url
+    }
+  }
 
   depends_on = [
     aws_iam_role_policy_attachment.lambda_logs,

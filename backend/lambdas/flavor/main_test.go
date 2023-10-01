@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"reflect"
 	"testing"
+	"time"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/dscott1008/fodder/backend/utils"
@@ -45,6 +46,46 @@ func TestScrapeFlavor(t *testing.T) {
 	if !reflect.DeepEqual(string(actualJson), expectedJson) {
 		t.Errorf("Expected JSON: %v\nActual JSON: %v", expectedJson, string(actualJson))
 		return
+	}
+}
+
+func TestGetExpirationDuration(t *testing.T) {
+	currentTime := time.Date(
+		2023,
+		time.September,
+		30,
+		16,
+		0,
+		0,
+		0,
+		time.UTC,
+	)
+	expirationDuration := getExpirationDuration(currentTime)
+	if expectedExpirationDuration := "8h0m0s"; expirationDuration.String() != expectedExpirationDuration {
+		t.Errorf(
+			"Expected expiration duration of %s, but got %s",
+			expectedExpirationDuration,
+			expirationDuration.String(),
+		)
+	}
+
+	currentTime = time.Date(
+		2023,
+		time.October,
+		1,
+		8,
+		0,
+		0,
+		0,
+		time.UTC,
+	)
+	expirationDuration = getExpirationDuration(currentTime)
+	if expectedExpirationDuration := "160h0m0s"; expirationDuration.String() != expectedExpirationDuration {
+		t.Errorf(
+			"Expected expiration duration of %s, but got %s",
+			expectedExpirationDuration,
+			expirationDuration.String(),
+		)
 	}
 }
 

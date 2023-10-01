@@ -3,13 +3,17 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
+	"os"
 	"strings"
+	"time"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
+	"github.com/redis/go-redis/v9"
 )
 
 type HttpClient interface {
@@ -24,6 +28,14 @@ type Flavor struct {
 	Description string   `json:"description"`
 	ImageUrl    string   `json:"imageUrl"`
 	Allergens   []string `json:"allergens"`
+}
+
+type ScrapeError struct {
+	StatusCode int
+}
+
+func (e *ScrapeError) Error() string {
+	return fmt.Errorf("received status code %d", e.StatusCode).Error()
 }
 
 func scrapeFlavor(slug string, client HttpClient) (*Flavor, error) {
@@ -41,7 +53,7 @@ func scrapeFlavor(slug string, client HttpClient) (*Flavor, error) {
 	defer res.Body.Close()
 
 	if res.StatusCode != 200 {
-		return nil, fmt.Errorf("received status code %d", res.StatusCode)
+		return nil, &ScrapeError{res.StatusCode}
 	}
 
 	doc, err := goquery.NewDocumentFromReader(res.Body)
@@ -75,7 +87,68 @@ func scrapeFlavor(slug string, client HttpClient) (*Flavor, error) {
 	return &flavor, nil
 }
 
+func getExpirationDuration(currentTime time.Time) time.Duration {
+	daysUntilSunday := time.Sunday - currentTime.Weekday()
+
+	if daysUntilSunday <= 0 {
+		daysUntilSunday += 7
+	}
+
+	durationUntilSunday := time.Duration(daysUntilSunday*24) * time.Hour
+	nextSunday := currentTime.Add(durationUntilSunday)
+	expirationDate := time.Date(
+		nextSunday.Year(),
+		nextSunday.Month(),
+		nextSunday.Day(),
+		0,
+		0,
+		0,
+		0,
+		time.UTC,
+	)
+
+	expirationDuaration := expirationDate.Sub(currentTime)
+
+	return expirationDuaration
+}
+
+func getResponseBody(ctx context.Context, slug string) ([]byte, error) {
+	opt, err := redis.ParseURL(os.Getenv("UPSTASH_REDIS_URL"))
+	if err != nil {
+		return nil, err
+	}
+
+	rdb := redis.NewClient(opt)
+	key := fmt.Sprintf("flavor:%s", slug)
+
+	body, err := rdb.Get(ctx, key).Bytes()
+	if err == redis.Nil {
+		// Cache miss
+		flavor, err := scrapeFlavor(slug, &http.Client{
+			CheckRedirect: func(req *http.Request, via []*http.Request) error {
+				return http.ErrUseLastResponse
+			},
+		})
+		if err != nil {
+			return nil, err
+		}
+
+		body, err := json.Marshal(flavor)
+		if err != nil {
+			return nil, err
+		}
+
+		rdb.Set(ctx, key, body, getExpirationDuration(time.Now().UTC()))
+
+		return body, nil
+	}
+
+	return body, nil
+}
+
 func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+	slug := request.PathParameters["slug"]
+
 	headers := map[string]string{
 		"Content-Type":                     "application/json",
 		"Access-Control-Allow-Origin":      "*",
@@ -84,28 +157,24 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 		"Access-Control-Allow-Credentials": "true",
 	}
 
-	slug := request.PathParameters["slug"]
-
-	flavor, err := scrapeFlavor(slug, &http.Client{
-		CheckRedirect: func(req *http.Request, via []*http.Request) error {
-			return http.ErrUseLastResponse
-		},
-	})
+	body, err := getResponseBody(ctx, slug)
 	if err != nil {
+		var scrapeError *ScrapeError
+		if errors.As(err, &scrapeError) {
+			if scrapeError.StatusCode == http.StatusNotFound {
+				return events.APIGatewayProxyResponse{
+					StatusCode: http.StatusNotFound,
+					Headers:    headers,
+					Body:       fmt.Sprintf("{\"message\": \"Flavor not found.\"}"),
+				}, nil
+			}
+		}
+
 		return events.APIGatewayProxyResponse{
 			StatusCode: http.StatusInternalServerError,
 			Headers:    headers,
 			Body:       fmt.Sprintf("{\"message\": \"%s\"}", err.Error()),
-		}, err
-	}
-
-	body, err := json.Marshal(flavor)
-	if err != nil {
-		return events.APIGatewayProxyResponse{
-			StatusCode: http.StatusInternalServerError,
-			Headers:    headers,
-			Body:       fmt.Sprintf("{\"message\": \"%s\"}", err.Error()),
-		}, err
+		}, nil
 	}
 
 	return events.APIGatewayProxyResponse{
