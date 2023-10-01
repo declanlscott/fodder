@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -93,17 +94,22 @@ type ExternalApiResponse struct {
 }
 
 type Restaurant struct {
-	Name        string  `json:"name"`
-	Address     string  `json:"address"`
-	City        string  `json:"city"`
-	State       string  `json:"state"`
-	Country     string  `json:"country"`
-	ZipCode     string  `json:"zipCode"`
-	Latitude    float64 `json:"latitude"`
-	Longitude   float64 `json:"longitude"`
-	Fod         string  `json:"fod"`
-	FodImageUrl string  `json:"fodImageUrl"`
-	Slug        string  `json:"slug"`
+	Name      string  `json:"name"`
+	Address   string  `json:"address"`
+	City      string  `json:"city"`
+	State     string  `json:"state"`
+	Country   string  `json:"country"`
+	ZipCode   string  `json:"zipCode"`
+	Latitude  float64 `json:"latitude"`
+	Longitude float64 `json:"longitude"`
+	Slug      string  `json:"slug"`
+	Fod       Fod     `json:"fod"`
+}
+
+type Fod struct {
+	Name     string `json:"name"`
+	ImageUrl string `json:"imageUrl"`
+	Slug     string `json:"slug"`
 }
 
 func getRestaurants(externalApiUrl string, client HttpClient) ([]Restaurant, error) {
@@ -140,18 +146,33 @@ func getRestaurants(externalApiUrl string, client HttpClient) ([]Restaurant, err
 
 		slug := strings.Replace(location.Url, "http://www.culvers.com/restaurants/", "", 1)
 
+		fodName := location.FlavorDay
+
+		// Match any non-alphabetic characters
+		re := regexp.MustCompile(`[^a-zA-Z\s]+`)
+		fodSlug := re.ReplaceAllString(fodName, "")
+
+		// Match any whitespace characters
+		re = regexp.MustCompile(`\s+`)
+		fodSlug = strings.ToLower(re.ReplaceAllString(fodSlug, "-"))
+
+		fod := Fod{
+			Name:     fodName,
+			ImageUrl: fodImageUrl,
+			Slug:     fodSlug,
+		}
+
 		restaurant := Restaurant{
-			Name:        location.Name,
-			Address:     location.Address,
-			City:        location.City,
-			State:       location.State,
-			Country:     location.Country,
-			ZipCode:     location.Postal,
-			Latitude:    latitude,
-			Longitude:   longitude,
-			Fod:         location.FlavorDay,
-			FodImageUrl: fodImageUrl,
-			Slug:        slug,
+			Name:      location.Name,
+			Address:   location.Address,
+			City:      location.City,
+			State:     location.State,
+			Country:   location.Country,
+			ZipCode:   location.Postal,
+			Latitude:  latitude,
+			Longitude: longitude,
+			Slug:      slug,
+			Fod:       fod,
 		}
 
 		restaurants = append(restaurants, restaurant)
@@ -221,7 +242,7 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 				StatusCode: http.StatusInternalServerError,
 				Headers:    headers,
 				Body:       fmt.Sprintf("{\"message\": \"%s\"}", restaurantsErr.Error()),
-			}, restaurantsErr
+			}, nil
 		}
 		if restaurants == nil {
 			return events.APIGatewayProxyResponse{
@@ -236,7 +257,7 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 				StatusCode: http.StatusInternalServerError,
 				Headers:    headers,
 				Body:       fmt.Sprintf("{\"message\": \"%s\"}", err.Error()),
-			}, err
+			}, nil
 		}
 
 		return events.APIGatewayProxyResponse{
