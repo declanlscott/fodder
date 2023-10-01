@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"regexp"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
@@ -22,6 +23,7 @@ const LOGO_SVG_SRC = "//cdn.culvers.com/layout/logo.svg"
 type Flavor struct {
 	Name     string `json:"name"`
 	ImageUrl string `json:"imageUrl"`
+	Slug     string `json:"slug"`
 }
 
 func scrapeFlavors(client HttpClient) ([]Flavor, error) {
@@ -50,8 +52,18 @@ func scrapeFlavors(client HttpClient) ([]Flavor, error) {
 	for index := range flavorSelector.Nodes {
 		selection := flavorSelector.Eq(index)
 
+		name := selection.Find("span").Text()
+
+		// Match any non-alphabetic characters
+		re := regexp.MustCompile(`[^a-zA-Z\s]+`)
+		slug := re.ReplaceAllString(name, "")
+
+		// Match any whitespace characters
+		re = regexp.MustCompile(`\s+`)
+		slug = strings.ToLower(re.ReplaceAllString(slug, "-"))
+
 		flavor := Flavor{
-			Name: selection.Find("span").Text(),
+			Name: name,
 			ImageUrl: fmt.Sprintf("https:%s", func() string {
 				if src, exists := selection.Find("img").Attr("src"); exists {
 					return strings.Replace(src, "180", "400", 1)
@@ -59,6 +71,7 @@ func scrapeFlavors(client HttpClient) ([]Flavor, error) {
 
 				return LOGO_SVG_SRC
 			}()),
+			Slug: slug,
 		}
 
 		flavors = append(flavors, flavor)
