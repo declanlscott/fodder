@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { Route, Routes } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import { Layout } from "~/components/Layout";
 import { ThemeProvider } from "~/components/ThemeProvider";
@@ -16,19 +16,24 @@ const queryClient = new QueryClient({
   },
 });
 
+const router = createBrowserRouter([
+  {
+    element: <Layout />,
+    children: [
+      { path: "/", element: <LocatePage /> },
+      { path: "/restaurants/:slug", element: <RestaurantPage /> },
+      { path: "/flavors", element: <FlavorsPage /> },
+      { path: "/flavors/:slug", element: <FlavorPage /> },
+      { path: "*", element: <NotFoundPage /> },
+    ],
+  },
+]);
+
 function App() {
   return (
     <ThemeProvider>
       <QueryClientProvider client={queryClient}>
-        <Routes>
-          <Route element={<Layout />}>
-            <Route path="/" element={<LocatePage />} />
-            <Route path="/restaurants/:slug" element={<RestaurantPage />} />
-            <Route path="/flavors" element={<FlavorsPage />} />
-            <Route path="/flavors/:slug" element={<FlavorPage />} />
-            <Route path="*" element={<NotFoundPage />} />
-          </Route>
-        </Routes>
+        <RouterProvider router={router} />
 
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
