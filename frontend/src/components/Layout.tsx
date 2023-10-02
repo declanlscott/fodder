@@ -8,7 +8,7 @@ import {
   Sun,
   X,
 } from "lucide-react";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { Link, NavLink, Outlet } from "react-router-dom";
 
 import Logo from "~/components/Logo";
@@ -38,7 +38,7 @@ const navLinkItems: NavLinkItem[] = [
 ];
 
 export function Layout() {
-  const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [showMobileNav, setShowMobileNav] = useState(false);
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -48,12 +48,17 @@ export function Layout() {
             className="sm:hidden"
             size="icon"
             variant="outline"
-            onClick={() => setShowMobileMenu((show) => !show)}
+            onClick={() => setShowMobileNav((show) => !show)}
           >
-            {showMobileMenu ? <X /> : <Menu />}
+            {showMobileNav ? <X /> : <Menu />}
           </Button>
 
-          {showMobileMenu ? <MobileNav /> : null}
+          {showMobileNav ? (
+            <MobileNav
+              isVisible={showMobileNav}
+              setIsVisible={setShowMobileNav}
+            />
+          ) : null}
 
           <nav className="flex sm:gap-12">
             <Link to="/">
@@ -121,7 +126,12 @@ export function Layout() {
   );
 }
 
-function MobileNav() {
+type MobileNavProps = {
+  isVisible: boolean;
+  setIsVisible: Dispatch<SetStateAction<boolean>>;
+};
+
+function MobileNav({ setIsVisible }: MobileNavProps) {
   useLockBody();
 
   return (
@@ -138,7 +148,7 @@ function MobileNav() {
                     !isActive && "text-muted-foreground",
                   )
                 }
-                end
+                onClick={() => setIsVisible(false)}
               >
                 {icon}
                 {title}
