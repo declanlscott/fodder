@@ -44,37 +44,13 @@ provider "upstash" {
   api_key = var.upstash_api_key
 }
 
-locals {
-  upstash_redis_url = "rediss://${var.upstash_redis_user}:${var.upstash_redis_password}@${upstash_redis_database.fodder.endpoint}:${var.upstash_redis_port}"
+# Terraform remote backend bootstrap resources
+module "remote_backend" {
+  source = "./modules/remote-backend"
 }
 
-# Terraform remote backend bootstrap resources
-resource "aws_s3_bucket" "terraform_state" {
-  bucket        = "fodder-tf-state"
-  force_destroy = true
-}
-resource "aws_s3_bucket_versioning" "terraform_bucket_versioning" {
-  bucket = aws_s3_bucket.terraform_state.id
-  versioning_configuration {
-    status = "Enabled"
-  }
-}
-resource "aws_s3_bucket_server_side_encryption_configuration" "terraform_state_crypto_config" {
-  bucket = aws_s3_bucket.terraform_state.bucket
-  rule {
-    apply_server_side_encryption_by_default {
-      sse_algorithm = "AES256"
-    }
-  }
-}
-resource "aws_dynamodb_table" "terraform_locks" {
-  name         = "terraform-state-locking"
-  billing_mode = "PAY_PER_REQUEST"
-  hash_key     = "LockID"
-  attribute {
-    name = "LockID"
-    type = "S"
-  }
+locals {
+  upstash_redis_url = "rediss://${var.upstash_redis_user}:${var.upstash_redis_password}@${upstash_redis_database.fodder.endpoint}:${var.upstash_redis_port}"
 }
 
 resource "aws_apigatewayv2_api" "fodder" {
@@ -94,272 +70,88 @@ resource "aws_apigatewayv2_stage" "v1" {
     throttling_rate_limit  = 100
   }
 }
-resource "aws_apigatewayv2_integration" "restaurants" {
-  api_id                 = aws_apigatewayv2_api.fodder.id
-  integration_type       = "AWS_PROXY"
-  integration_method     = "POST"
-  integration_uri        = aws_lambda_function.restaurants.invoke_arn
-  payload_format_version = "2.0"
-  description            = "Get restaurants by location"
+
+module "restaurants_route" {
+  source                  = "./modules/api-gateway-route"
+  api_id                  = aws_apigatewayv2_api.fodder.id
+  route_key               = "GET /restaurants"
+  integration_uri         = module.restaurants_lambda.function_invoke_arn
+  integration_description = "Get restaurants by location"
 }
-resource "aws_apigatewayv2_route" "restaurants" {
-  api_id    = aws_apigatewayv2_api.fodder.id
-  route_key = "GET /restaurants"
-  target    = "integrations/${aws_apigatewayv2_integration.restaurants.id}"
+module "restaurant_route" {
+  source                  = "./modules/api-gateway-route"
+  api_id                  = aws_apigatewayv2_api.fodder.id
+  route_key               = "GET /restaurants/{slug}"
+  integration_uri         = module.restaurant_lambda.function_invoke_arn
+  integration_description = "Get upcoming flavors be restaurant"
 }
-resource "aws_apigatewayv2_integration" "restaurant" {
-  api_id                 = aws_apigatewayv2_api.fodder.id
-  integration_type       = "AWS_PROXY"
-  integration_method     = "POST"
-  integration_uri        = aws_lambda_function.restaurant.invoke_arn
-  payload_format_version = "2.0"
-  description            = "Get upcoming flavors by restaurant"
+module "flavors_route" {
+  source                  = "./modules/api-gateway-route"
+  api_id                  = aws_apigatewayv2_api.fodder.id
+  route_key               = "GET /flavors"
+  integration_uri         = module.flavors_lambda.function_invoke_arn
+  integration_description = "Get all flavors"
 }
-resource "aws_apigatewayv2_route" "restaurant" {
-  api_id    = aws_apigatewayv2_api.fodder.id
-  route_key = "GET /restaurants/{slug}"
-  target    = "integrations/${aws_apigatewayv2_integration.restaurant.id}"
-}
-resource "aws_apigatewayv2_integration" "flavor" {
-  api_id                 = aws_apigatewayv2_api.fodder.id
-  integration_type       = "AWS_PROXY"
-  integration_method     = "POST"
-  integration_uri        = aws_lambda_function.flavor.invoke_arn
-  payload_format_version = "2.0"
-  description            = "Get flavor details"
-}
-resource "aws_apigatewayv2_route" "flavor" {
-  api_id    = aws_apigatewayv2_api.fodder.id
-  route_key = "GET /flavors/{slug}"
-  target    = "integrations/${aws_apigatewayv2_integration.flavor.id}"
-}
-resource "aws_apigatewayv2_integration" "flavors" {
-  api_id                 = aws_apigatewayv2_api.fodder.id
-  integration_type       = "AWS_PROXY"
-  integration_method     = "POST"
-  integration_uri        = aws_lambda_function.flavors.invoke_arn
-  payload_format_version = "2.0"
-  description            = "Get all flavors"
-}
-resource "aws_apigatewayv2_route" "flavors" {
-  api_id    = aws_apigatewayv2_api.fodder.id
-  route_key = "GET /flavors"
-  target    = "integrations/${aws_apigatewayv2_integration.flavors.id}"
+module "flavor_route" {
+  source                  = "./modules/api-gateway-route"
+  api_id                  = aws_apigatewayv2_api.fodder.id
+  route_key               = "GET /flavors/{slug}"
+  integration_uri         = module.flavor_lambda.function_invoke_arn
+  integration_description = "Get flavor details"
 }
 
-data "aws_iam_policy_document" "assume_role" {
-  statement {
-    effect = "Allow"
+module "lambda_iam" {
+  source = "./modules/lambda/iam"
+}
 
-    principals {
-      type        = "Service"
-      identifiers = ["lambda.amazonaws.com"]
-    }
+module "restaurants_lambda" {
+  source                       = "./modules/lambda"
+  lambda_function_name         = "fodder-restaurants"
+  archive_source_file          = "${path.module}/../backend/lambdas/restaurants/bin/bootstrap"
+  archive_output_path          = "${path.module}/../backend/lambdas/restaurants/bin/lambda_function_payload.zip"
+  lambda_role                  = module.lambda_iam.iam_for_lambda.arn
+  lambda_permission_source_arn = "${aws_apigatewayv2_api.fodder.execution_arn}/*/GET/restaurants"
 
-    actions = ["sts:AssumeRole"]
+  depends_on = [module.lambda_iam.lambda_logs_policy_attachment]
+}
+
+module "restaurant_lambda" {
+  source               = "./modules/lambda"
+  lambda_function_name = "fodder-restaurant"
+  archive_source_file  = "${path.module}/../backend/lambdas/restaurant/bin/bootstrap"
+  archive_output_path  = "${path.module}/../backend/lambdas/restaurant/bin/lambda_function_payload.zip"
+  lambda_role          = module.lambda_iam.iam_for_lambda.arn
+  lambda_environment_variables = {
+    UPSTASH_REDIS_URL = local.upstash_redis_url
   }
+  lambda_permission_source_arn = "${aws_apigatewayv2_api.fodder.execution_arn}/*/GET/restaurants/*"
+
+  depends_on = [module.lambda_iam.lambda_logs_policy_attachment]
 }
-resource "aws_iam_role" "iam_for_lambda" {
-  name               = "iam_for_lambda"
-  assume_role_policy = data.aws_iam_policy_document.assume_role.json
+
+module "flavors_lambda" {
+  source                       = "./modules/lambda"
+  lambda_function_name         = "fodder-flavors"
+  archive_source_file          = "${path.module}/../backend/lambdas/flavors/bin/bootstrap"
+  archive_output_path          = "${path.module}/../backend/lambdas/flavors/bin/lambda_function_payload.zip"
+  lambda_role                  = module.lambda_iam.iam_for_lambda.arn
+  lambda_permission_source_arn = "${aws_apigatewayv2_api.fodder.execution_arn}/*/GET/flavors"
+
+  depends_on = [module.lambda_iam.lambda_logs_policy_attachment]
 }
 
-data "aws_iam_policy_document" "lambda_logging" {
-  statement {
-    effect = "Allow"
-
-    actions = [
-      "logs:CreateLogGroup",
-      "logs:CreateLogStream",
-      "logs:PutLogEvents",
-    ]
-
-    resources = ["arn:aws:logs:*:*:*"]
+module "flavor_lambda" {
+  source               = "./modules/lambda"
+  lambda_function_name = "fodder-flavor"
+  archive_source_file  = "${path.module}/../backend/lambdas/flavor/bin/bootstrap"
+  archive_output_path  = "${path.module}/../backend/lambdas/flavor/bin/lambda_function_payload.zip"
+  lambda_role          = module.lambda_iam.iam_for_lambda.arn
+  lambda_environment_variables = {
+    UPSTASH_REDIS_URL = local.upstash_redis_url
   }
-}
-resource "aws_iam_policy" "lambda_logging" {
-  name        = "lambda_logging"
-  path        = "/"
-  description = "IAM policy for logging from a lambda"
-  policy      = data.aws_iam_policy_document.lambda_logging.json
-}
-resource "aws_iam_role_policy_attachment" "lambda_logs" {
-  role       = aws_iam_role.iam_for_lambda.name
-  policy_arn = aws_iam_policy.lambda_logging.arn
-}
+  lambda_permission_source_arn = "${aws_apigatewayv2_api.fodder.execution_arn}/*/GET/flavors/*"
 
-variable "restaurants_function_name" {
-  default = "fodder-restaurants"
-}
-resource "aws_cloudwatch_log_group" "restaurants" {
-  name              = "/aws/lambda/${var.restaurants_function_name}"
-  retention_in_days = 14
-}
-data "archive_file" "restaurants_lambda_zip" {
-  type        = "zip"
-  source_file = "${path.module}/../backend/lambdas/restaurants/bin/bootstrap"
-  output_path = "${path.module}/../backend/lambdas/restaurants/bin/lambda_function_payload.zip"
-}
-resource "aws_lambda_function" "restaurants" {
-  function_name    = var.restaurants_function_name
-  filename         = data.archive_file.restaurants_lambda_zip.output_path
-  source_code_hash = data.archive_file.restaurants_lambda_zip.output_base64sha256
-  role             = aws_iam_role.iam_for_lambda.arn
-  handler          = "bootstrap"
-  runtime          = "provided.al2"
-  architectures    = ["arm64"]
-  timeout          = 15
-
-  depends_on = [
-    aws_iam_role_policy_attachment.lambda_logs,
-    aws_cloudwatch_log_group.restaurants
-  ]
-}
-resource "aws_lambda_permission" "allow_restaurants_api" {
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.restaurants.function_name
-  principal     = "apigateway.amazonaws.com"
-  source_arn    = "${aws_apigatewayv2_api.fodder.execution_arn}/*/GET/restaurants"
-}
-
-variable "restaurant_function_name" {
-  default = "fodder-restaurant"
-}
-resource "aws_cloudwatch_log_group" "restaurant" {
-  name              = "/aws/lambda/${var.restaurant_function_name}"
-  retention_in_days = 14
-}
-data "archive_file" "restaurant_lambda_zip" {
-  type        = "zip"
-  source_file = "${path.module}/../backend/lambdas/restaurant/bin/bootstrap"
-  output_path = "${path.module}/../backend/lambdas/restaurant/bin/lambda_function_payload.zip"
-}
-resource "aws_lambda_function" "restaurant" {
-  function_name    = var.restaurant_function_name
-  filename         = data.archive_file.restaurant_lambda_zip.output_path
-  source_code_hash = data.archive_file.restaurant_lambda_zip.output_base64sha256
-  role             = aws_iam_role.iam_for_lambda.arn
-  handler          = "bootstrap"
-  runtime          = "provided.al2"
-  architectures    = ["arm64"]
-  timeout          = 15
-
-  environment {
-    variables = {
-      UPSTASH_REDIS_URL = local.upstash_redis_url
-    }
-  }
-
-  depends_on = [
-    aws_iam_role_policy_attachment.lambda_logs,
-    aws_cloudwatch_log_group.restaurant
-  ]
-}
-resource "aws_lambda_permission" "allow_restaurant_api" {
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.restaurant.function_name
-  principal     = "apigateway.amazonaws.com"
-  source_arn    = "${aws_apigatewayv2_api.fodder.execution_arn}/*/GET/restaurants/*"
-}
-
-variable "flavor_function_name" {
-  default = "fodder-flavor"
-}
-resource "aws_cloudwatch_log_group" "flavor" {
-  name              = "/aws/lambda/${var.flavor_function_name}"
-  retention_in_days = 14
-}
-data "archive_file" "flavor_lambda_zip" {
-  type        = "zip"
-  source_file = "${path.module}/../backend/lambdas/flavor/bin/bootstrap"
-  output_path = "${path.module}/../backend/lambdas/flavor/bin/lambda_function_payload.zip"
-}
-resource "aws_lambda_function" "flavor" {
-  function_name    = var.flavor_function_name
-  filename         = data.archive_file.flavor_lambda_zip.output_path
-  source_code_hash = data.archive_file.flavor_lambda_zip.output_base64sha256
-  role             = aws_iam_role.iam_for_lambda.arn
-  handler          = "bootstrap"
-  runtime          = "provided.al2"
-  architectures    = ["arm64"]
-  timeout          = 15
-
-  environment {
-    variables = {
-      UPSTASH_REDIS_URL = local.upstash_redis_url
-    }
-  }
-
-  depends_on = [
-    aws_iam_role_policy_attachment.lambda_logs,
-    aws_cloudwatch_log_group.flavor
-  ]
-}
-resource "aws_lambda_permission" "allow_flavor_api" {
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.flavor.function_name
-  principal     = "apigateway.amazonaws.com"
-  source_arn    = "${aws_apigatewayv2_api.fodder.execution_arn}/*/GET/flavors/*"
-}
-
-variable "flavors_function_name" {
-  default = "fodder-flavors"
-}
-resource "aws_cloudwatch_log_group" "flavors" {
-  name              = "/aws/lambda/${var.flavors_function_name}"
-  retention_in_days = 14
-}
-data "archive_file" "flavors_lambda_zip" {
-  type        = "zip"
-  source_file = "${path.module}/../backend/lambdas/flavors/bin/bootstrap"
-  output_path = "${path.module}/../backend/lambdas/flavors/bin/lambda_function_payload.zip"
-}
-resource "aws_lambda_function" "flavors" {
-  function_name    = var.flavors_function_name
-  filename         = data.archive_file.flavors_lambda_zip.output_path
-  source_code_hash = data.archive_file.flavors_lambda_zip.output_base64sha256
-  role             = aws_iam_role.iam_for_lambda.arn
-  handler          = "bootstrap"
-  runtime          = "provided.al2"
-  architectures    = ["arm64"]
-  timeout          = 15
-
-  depends_on = [
-    aws_iam_role_policy_attachment.lambda_logs,
-    aws_cloudwatch_log_group.flavors
-  ]
-}
-resource "aws_lambda_permission" "allow_flavors_api" {
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.flavors.function_name
-  principal     = "apigateway.amazonaws.com"
-  source_arn    = "${aws_apigatewayv2_api.fodder.execution_arn}/*/GET/flavors"
-}
-
-# Bucket for test files
-resource "aws_s3_bucket" "fodder_test_files" {
-  bucket        = "fodder-test-files"
-  force_destroy = true
-}
-resource "aws_s3_bucket_versioning" "fodder_test_files_bucket_versioning" {
-  bucket = aws_s3_bucket.fodder_test_files.id
-  versioning_configuration {
-    status = "Enabled"
-  }
-}
-resource "aws_s3_bucket_server_side_encryption_configuration" "fodder_test_files_crypto_config" {
-  bucket = aws_s3_bucket.fodder_test_files.bucket
-  rule {
-    apply_server_side_encryption_by_default {
-      sse_algorithm = "AES256"
-    }
-  }
-}
-resource "aws_s3_object" "mock_responses" {
-  bucket       = aws_s3_bucket.fodder_test_files.bucket
-  key          = "mock-responses/"
-  content_type = "application/x-directory"
-  acl          = "private"
+  depends_on = [module.lambda_iam.lambda_logs_policy_attachment]
 }
 
 # Upstash redis
@@ -367,4 +159,9 @@ resource "upstash_redis_database" "fodder" {
   database_name = "fodder-cache"
   region        = var.upstash_redis_region
   tls           = "true"
+}
+
+# Bucket for test files
+module "test_bucket" {
+  source = "./modules/test-bucket"
 }
