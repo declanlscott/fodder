@@ -49,6 +49,15 @@ module "remote_backend" {
   source = "./modules/remote-backend"
 }
 
+resource "aws_route53_zone" "fodder" {
+  name = "fodder.${var.domain}"
+}
+
+module "fodder_bucket" {
+  source      = "./modules/static-website"
+  bucket_name = aws_route53_zone.fodder.name
+}
+
 locals {
   upstash_redis_url = "rediss://${var.upstash_redis_user}:${var.upstash_redis_password}@${upstash_redis_database.fodder.endpoint}:${var.upstash_redis_port}"
 }

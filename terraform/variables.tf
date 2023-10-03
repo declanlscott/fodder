@@ -1,3 +1,8 @@
+variable "domain" {
+  description = "Root domain"
+  type        = string
+}
+
 variable "upstash_email" {
   description = "Registered email in Upstash"
   type        = string
