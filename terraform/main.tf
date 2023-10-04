@@ -49,13 +49,23 @@ module "remote_backend" {
   source = "./modules/remote-backend"
 }
 
-resource "aws_route53_zone" "fodder" {
-  name = "fodder.${var.domain}"
+module "fodder_zone" {
+  source               = "./modules/route53"
+  zone_name            = "fodder.${var.domain}"
+  bucket_alias_name    = module.fodder_bucket.fodder_bucket_endpoint
+  bucket_alias_zone_id = module.fodder_bucket.fodder_bucket_hosted_zone_id
+}
+
+module "fodder_distribution" {
+  source              = "./modules/cloudfront"
+  origin_domain_name  = module.fodder_bucket.fodder_bucket_regional_domain_name
+  origin_id           = module.fodder_bucket.fodder_bucket_id
+  acm_certificate_arn = module.fodder_zone.certificate_arn
 }
 
 module "fodder_bucket" {
   source      = "./modules/static-website"
-  bucket_name = aws_route53_zone.fodder.name
+  bucket_name = module.fodder_zone.zone_name
 }
 
 locals {

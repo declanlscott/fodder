@@ -1,5 +1,5 @@
 output "name_servers" {
-  value = aws_route53_zone.fodder.name_servers
+  value = module.fodder_zone.name_servers
 }
 
 output "api_invoke_url" {
@@ -16,4 +16,8 @@ output "fodder_bucket_name" {
 
 output "fodder_bucket_endpoint" {
   value = module.fodder_bucket.fodder_bucket_endpoint
+}
+
+output "fodder_distribution_url" {
+  value = module.fodder_distribution.distribution_url
 }
