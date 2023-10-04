@@ -14,10 +14,6 @@ output "fodder_bucket_name" {
   value = module.fodder_bucket.fodder_bucket_name
 }
 
-output "fodder_bucket_endpoint" {
-  value = module.fodder_bucket.fodder_bucket_endpoint
-}
-
-output "fodder_distribution_url" {
-  value = module.fodder_distribution.distribution_url
+output "fodder_cloudfront_url" {
+  value = module.fodder_distribution.domain_name
 }

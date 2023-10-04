@@ -8,8 +8,8 @@ resource "aws_route53_record" "record" {
   type    = "A"
 
   alias {
-    name                   = var.bucket_alias_name
-    zone_id                = var.bucket_alias_zone_id
+    name                   = var.alias_name
+    zone_id                = var.alias_zone_id
     evaluate_target_health = false
   }
 }
@@ -23,6 +23,10 @@ resource "aws_acm_certificate" "certificate" {
   domain_name       = var.zone_name
   validation_method = "DNS"
   provider          = aws.virginia
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_route53_record" "certificate" {
@@ -45,4 +49,5 @@ resource "aws_route53_record" "certificate" {
 resource "aws_acm_certificate_validation" "certificate" {
   certificate_arn         = aws_acm_certificate.certificate.arn
   validation_record_fqdns = [for record in aws_route53_record.certificate : record.fqdn]
+  provider                = aws.virginia
 }

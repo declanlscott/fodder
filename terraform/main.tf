@@ -50,10 +50,10 @@ module "remote_backend" {
 }
 
 module "fodder_zone" {
-  source               = "./modules/route53"
-  zone_name            = "fodder.${var.domain}"
-  bucket_alias_name    = module.fodder_bucket.fodder_bucket_endpoint
-  bucket_alias_zone_id = module.fodder_bucket.fodder_bucket_hosted_zone_id
+  source        = "./modules/route53"
+  zone_name     = "fodder.${var.domain}"
+  alias_name    = module.fodder_distribution.domain_name
+  alias_zone_id = module.fodder_distribution.hosted_zone_id
 }
 
 module "fodder_distribution" {

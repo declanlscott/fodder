@@ -3,12 +3,12 @@ variable "zone_name" {
   type        = string
 }
 
-variable "bucket_alias_name" {
-  description = "DNS domain name for a S3 bucket"
+variable "alias_name" {
+  description = "DNS domain name for a CloudFront distribution"
   type        = string
 }
 
-variable "bucket_alias_zone_id" {
-  description = "Hosted zone ID for a S3 bucket"
+variable "alias_zone_id" {
+  description = "Hosted zone ID for a CloudFront distribution"
   type        = string
 }
