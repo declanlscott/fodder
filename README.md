@@ -27,3 +27,7 @@ A few years ago, a certain midwestern fast-food restaurant chain discontinued it
   - Tailwind CSS
   - Vite
   - [And more...](frontend/package.json)
+
+## Architecture
+
+![Architecture Diagram](architecture.png)
