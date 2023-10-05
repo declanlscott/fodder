@@ -12,3 +12,8 @@ variable "acm_certificate_arn" {
   description = "ARN of the ACM certificate that you wish to use with this distribution"
   type        = string
 }
+
+variable "aliases" {
+  description = "Extra CNAMEs (alternate domain names), if any, for this distribution"
+  type        = list(string)
+}

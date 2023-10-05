@@ -2,41 +2,30 @@ resource "aws_s3_bucket" "fodder" {
   bucket = var.bucket_name
 }
 
-resource "aws_s3_bucket_public_access_block" "unblock_public" {
-  bucket = aws_s3_bucket.fodder.bucket
+resource "aws_s3_bucket_versioning" "versioning" {
+  bucket = aws_s3_bucket.fodder.id
 
-  block_public_acls       = false
-  block_public_policy     = false
-  ignore_public_acls      = false
-  restrict_public_buckets = false
-}
-
-resource "aws_s3_bucket_ownership_controls" "owner_preferred" {
-  bucket = aws_s3_bucket.fodder.bucket
-
-  rule {
-    object_ownership = "BucketOwnerPreferred"
+  versioning_configuration {
+    status = "Enabled"
   }
 }
 
-resource "aws_s3_bucket_acl" "public_read" {
-  bucket = aws_s3_bucket.fodder.bucket
+resource "aws_s3_bucket_public_access_block" "block_public" {
+  bucket = aws_s3_bucket.fodder.id
 
-  acl = "public-read"
-
-  depends_on = [
-    aws_s3_bucket_ownership_controls.owner_preferred,
-    aws_s3_bucket_public_access_block.unblock_public
-  ]
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
 }
 
-data "aws_iam_policy_document" "allow_read" {
+data "aws_iam_policy_document" "cloudfront_policy" {
   statement {
     effect = "Allow"
 
     principals {
-      type        = "*"
-      identifiers = ["*"]
+      type        = "Service"
+      identifiers = ["cloudfront.amazonaws.com"]
     }
 
     actions = ["s3:GetObject"]
@@ -48,7 +37,7 @@ data "aws_iam_policy_document" "allow_read" {
 resource "aws_s3_bucket_policy" "bucket_policy" {
   bucket = aws_s3_bucket.fodder.bucket
 
-  policy = data.aws_iam_policy_document.allow_read.json
+  policy = data.aws_iam_policy_document.cloudfront_policy.json
 }
 
 resource "aws_s3_bucket_website_configuration" "website_config" {
@@ -60,6 +49,4 @@ resource "aws_s3_bucket_website_configuration" "website_config" {
   error_document {
     key = "index.html"
   }
-
-  depends_on = [aws_s3_bucket_public_access_block.unblock_public]
 }

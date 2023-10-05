@@ -61,6 +61,7 @@ module "fodder_distribution" {
   origin_domain_name  = module.fodder_bucket.fodder_bucket_regional_domain_name
   origin_id           = module.fodder_bucket.fodder_bucket_id
   acm_certificate_arn = module.fodder_zone.certificate_arn
+  aliases             = [module.fodder_zone.zone_name]
 }
 
 module "fodder_bucket" {
