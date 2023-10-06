@@ -59,14 +59,3 @@ resource "aws_s3_bucket_policy" "bucket_policy" {
 
   policy = data.aws_iam_policy_document.cloudfront_policy.json
 }
-
-resource "aws_s3_bucket_website_configuration" "website_config" {
-  bucket = aws_s3_bucket.fodder.id
-
-  index_document {
-    suffix = "index.html"
-  }
-  error_document {
-    key = "index.html"
-  }
-}
