@@ -10,6 +10,20 @@ resource "aws_s3_bucket_versioning" "versioning" {
   }
 }
 
+resource "aws_s3_bucket_ownership_controls" "owner_preferred" {
+  bucket = aws_s3_bucket.fodder.id
+  rule {
+    object_ownership = "BucketOwnerPreferred"
+  }
+}
+
+resource "aws_s3_bucket_acl" "bucket_acl" {
+  depends_on = [aws_s3_bucket_ownership_controls.owner_preferred]
+
+  bucket = aws_s3_bucket.fodder.id
+  acl    = "private"
+}
+
 resource "aws_s3_bucket_public_access_block" "block_public" {
   bucket = aws_s3_bucket.fodder.id
 
@@ -31,17 +45,23 @@ data "aws_iam_policy_document" "cloudfront_policy" {
     actions = ["s3:GetObject"]
 
     resources = ["${aws_s3_bucket.fodder.arn}/*"]
+
+    condition {
+      test     = "StringEquals"
+      variable = "AWS:SourceArn"
+      values   = [var.cloudfront_distribution_arn]
+    }
   }
 }
 
 resource "aws_s3_bucket_policy" "bucket_policy" {
-  bucket = aws_s3_bucket.fodder.bucket
+  bucket = aws_s3_bucket.fodder.id
 
   policy = data.aws_iam_policy_document.cloudfront_policy.json
 }
 
 resource "aws_s3_bucket_website_configuration" "website_config" {
-  bucket = aws_s3_bucket.fodder.bucket
+  bucket = aws_s3_bucket.fodder.id
 
   index_document {
     suffix = "index.html"

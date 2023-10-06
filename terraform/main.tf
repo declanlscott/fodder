@@ -65,8 +65,9 @@ module "fodder_distribution" {
 }
 
 module "fodder_bucket" {
-  source      = "./modules/static-website"
-  bucket_name = module.fodder_zone.zone_name
+  source                      = "./modules/static-website"
+  bucket_name                 = module.fodder_zone.zone_name
+  cloudfront_distribution_arn = module.fodder_distribution.arn
 }
 
 locals {
