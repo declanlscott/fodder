@@ -17,3 +17,7 @@ output "fodder_bucket_name" {
 output "fodder_cloudfront_url" {
   value = module.fodder_distribution.domain_name
 }
+
+output "fodder_distribution_id" {
+  value = module.fodder_distribution.distribution_id
+}
