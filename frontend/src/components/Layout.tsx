@@ -8,8 +8,8 @@ import {
   Sun,
   X,
 } from "lucide-react";
-import { Dispatch, SetStateAction, useState } from "react";
-import { Link, NavLink, Outlet } from "react-router-dom";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 
 import Logo from "~/components/Logo";
 import { useTheme } from "~/components/ThemeProvider";
@@ -39,6 +39,12 @@ const navLinkItems: NavLinkItem[] = [
 
 export function Layout() {
   const [showMobileNav, setShowMobileNav] = useState(false);
+
+  // Scroll to top on route change
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
 
   return (
     <div className="flex min-h-screen flex-col">
