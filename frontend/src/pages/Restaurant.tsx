@@ -80,7 +80,10 @@ function RestaurantDetailsSkeleton() {
   return (
     <div className="space-y-8">
       <div className="flex flex-col gap-8 sm:flex-row sm:justify-between">
-        <Skeleton className="h-9 w-1/3" />
+        <div className="w-full space-y-2">
+          <Skeleton className="h-9 w-full sm:w-2/3 md:w-1/2" />
+          <Skeleton className="h-9 w-2/5 sm:hidden" />
+        </div>
 
         <div className="flex flex-col gap-1 text-muted-foreground sm:items-end">
           <div className="flex flex-row items-center gap-2 sm:flex-row-reverse">

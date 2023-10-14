@@ -92,14 +92,15 @@ function FlavorDetailsCardSkeleton() {
     <Card className="flex flex-col md:flex-row md:justify-between">
       <div className="flex w-full flex-col">
         <CardHeader>
-          <Skeleton className="h-9 w-3/5" />
+          <Skeleton className="h-9 w-4/5 sm:w-3/5" />
         </CardHeader>
 
         <CardContent className="flex flex-grow flex-col justify-between gap-8 pb-0 md:pb-6">
           <div className="space-y-2">
             <Skeleton className="h-5 w-full" />
-            <Skeleton className="h-5 w-11/12" />
-            <Skeleton className="h-5 w-2/5" />
+            <Skeleton className="h-5 w-full sm:w-11/12" />
+            <Skeleton className="h-5 w-11/12 sm:w-2/5" />
+            <Skeleton className="h-5 w-2/3 sm:hidden" />
           </div>
 
           <div className="flex items-center justify-end gap-4 text-muted-foreground">
