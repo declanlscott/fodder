@@ -7,6 +7,7 @@
     "dev": "vite --strictPort",
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "format": "prettier . --write",
     "preview": "vite preview",
     "sync": "aws s3 sync dist/ s3://$(terraform -chdir=../terraform output -raw fodder_bucket_name)/ --delete --exclude \".DS_Store\"",
     "invalidate": "aws cloudfront create-invalidation --distribution-id $(terraform -chdir=../terraform output -raw fodder_distribution_id) --paths \"/**/*\""
