@@ -1,4 +1,4 @@
-import { Ban, Loader2, MapPin, Send } from "lucide-react";
+import { Ban, Loader2, MapPin, MapPinOff, Send } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -65,8 +65,14 @@ export function LocateCard() {
         "location.longitude",
         geolocation.position.coords.longitude,
       );
+    } else if (geolocation.status === "error") {
+      setGpsEnabled(false);
+
+      form.resetField("location", {
+        defaultValue: { type: "address", address: "" },
+      });
     }
-  }, [gpsEnabled, geolocation]);
+  }, [gpsEnabled, geolocation, form, setGpsEnabled]);
 
   return (
     <Form {...form}>
@@ -118,14 +124,22 @@ export function LocateCard() {
                         variant="outline"
                         pressed={gpsEnabled}
                         onPressedChange={handleGpsPressed}
-                        disabled={geolocation.status === "loading"}
+                        disabled={
+                          geolocation.status === "loading" ||
+                          geolocation.status === "error"
+                        }
                         className="h-10 w-10 shrink-0 p-0"
                         aria-label={`GPS ${gpsEnabled ? "" : "un"}toggled`}
                       >
-                        {geolocation.status === "loading" ? (
+                        {geolocation.status === "ready" ||
+                        geolocation.status === "error" ? (
+                          <MapPinOff />
+                        ) : geolocation.status === "loading" ? (
                           <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : (
+                        ) : gpsEnabled ? (
                           <MapPin />
+                        ) : (
+                          <MapPinOff />
                         )}
                       </Toggle>
                     </div>
