@@ -137,10 +137,13 @@ jobs:
         working-directory: ./terraform
 
       - name: Download AWS CLI
+        if: ${{ env.ACT }}
         run: curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
       - name: Unzip AWS CLI
+        if: ${{ env.ACT }}
         run: unzip -q awscliv2.zip
       - name: Install AWS CLI
+        if: ${{ env.ACT }}
         run: ./aws/install
       - name: AWS CLI version
         run: aws --version
