@@ -1,3 +1,5 @@
 DOMAIN=declanlscott.com
 
 UPSTASH_REDIS_REGION=us-east-1
+
+VITE_API_BASE_URL=https://ajhd9p7o2i.execute-api.us-east-2.amazonaws.com/v1
