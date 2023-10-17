@@ -118,7 +118,7 @@ func TestGetRestaurants(t *testing.T) {
 		t.Errorf("Expected no error, but got %v", err)
 	}
 
-	expectedJson := `[{"name":"Culver's of Marion, IA - Red Fox Way","address":"1375 Red Fox Way","city":"Marion","state":"IA","country":"US","zipCode":"52302","latitude":42.0384902954102,"longitude":-91.5510787963867,"fod":"Chocolate Caramel Twist","fodImageUrl":"https://cdn.culvers.com/menu-item-detail/img-Chocolate-Caramel-Twist2.png","slug":"marion"}]`
+	expectedJson := `[{"name":"Culver's of Marion, IA - Red Fox Way","address":"1375 Red Fox Way","city":"Marion","state":"IA","country":"US","zipCode":"52302","latitude":42.0384902954102,"longitude":-91.5510787963867,"slug":"marion","fod":{"name":"Chocolate Caramel Twist","imageUrl":"https://cdn.culvers.com/menu-item-detail/img-Chocolate-Caramel-Twist2.png","slug":"chocolate-caramel-twist"}}]`
 	if !reflect.DeepEqual(string(actualJson), expectedJson) {
 		t.Errorf("Expected JSON: %v\nActual JSON: %v", expectedJson, string(actualJson))
 	}
