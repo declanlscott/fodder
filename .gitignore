@@ -287,3 +287,5 @@ terraform.rc
 
 **/bin/*
 *.mock.html
+
+*.secrets
