@@ -11,7 +11,7 @@ env:
 jobs:
   ci:
     name: CI
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout
@@ -61,7 +61,7 @@ jobs:
 
   cd:
     name: CD
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: [ci]
     env:
       TF_VAR_domain: ${{ vars.DOMAIN }}
