@@ -38,6 +38,14 @@ jobs:
         run: pnpm format
         working-directory: ./frontend
 
+      - name: Write frontend environment variables
+        run: echo "VITE_API_BASE_URL=${{ vars.VITE_API_BASE_URL }}" | cat >> .env
+        working-directory: ./frontend
+
+      - name: Test frontend
+        run: pnpm test
+        working-directory: ./frontend
+
       - name: Setup Go
         uses: actions/setup-go@v4
         with:
