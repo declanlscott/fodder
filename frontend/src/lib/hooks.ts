@@ -95,7 +95,7 @@ export function useLocate() {
   });
 
   function onSubmit(data: LocateSchema) {
-    if (!mutation.isLoading) {
+    if (!mutation.isPending) {
       const cache = queryClient.getQueryData<RestaurantsData>([
         "restaurants",
         data,

@@ -200,11 +200,11 @@ export function LocateCard() {
               type="submit"
               disabled={
                 !form.formState.isValid ||
-                mutation.isLoading ||
+                mutation.isPending ||
                 (gpsEnabled && geolocation.status !== "success")
               }
             >
-              {mutation.isLoading ? (
+              {mutation.isPending ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Loading...

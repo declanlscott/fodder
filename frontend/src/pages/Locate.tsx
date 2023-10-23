@@ -10,7 +10,7 @@ import { useRestaurants } from "~/lib/hooks";
 export function LocatePage() {
   const { data } = useRestaurants();
 
-  const isLoading = useIsMutating({ mutationKey: ["restaurants"] }) > 0;
+  const isPending = useIsMutating({ mutationKey: ["restaurants"] }) > 0;
   const isEmpty = (data?.length ?? -1) === 0;
 
   return (
@@ -21,7 +21,7 @@ export function LocatePage() {
 
       <div className="col-span-1 lg:col-span-2 xl:col-span-3">
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-3">
-          {isLoading ? (
+          {isPending ? (
             Array.from({ length: 3 }).map((_, index) => (
               <FodCardSkeleton key={index} />
             ))
