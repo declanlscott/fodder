@@ -52,8 +52,8 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f h1:lO4WD4F/rVNCu3HqELle0jiPLLBs70cWOduZpkS1E78=
 github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f/go.mod h1:cuUVRXasLTGF7a8hSLbxyZXjz+1KgoB3wDUb6vlszIc=
-github.com/dscott1008/fodder/backend/utils v0.0.0-20230921024846-84d10a74022b h1:ANwLZLwP+SSMugoe+vW3cybQZjN1nyVCVcHl5dMG3YA=
-github.com/dscott1008/fodder/backend/utils v0.0.0-20230921024846-84d10a74022b/go.mod h1:8545dLMtaZpAu4XpFUI7SbSJnsWMcWvqxhSy1qYKCws=
+github.com/dscott1008/fodder/backend/utils v0.0.0-20231023023917-113aacb4c1c2 h1:xt8oIDK+w3cp4wC8AYmFamAXgpA29bc3pa0RFtTBuEk=
+github.com/dscott1008/fodder/backend/utils v0.0.0-20231023023917-113aacb4c1c2/go.mod h1:8545dLMtaZpAu4XpFUI7SbSJnsWMcWvqxhSy1qYKCws=
 github.com/google/go-cmp v0.5.8 h1:e6P7q2lk1O+qJJb4BtCQXlK8vWEO8V1ZeuEdJNOqZyg=
 github.com/google/go-cmp v0.5.8/go.mod h1:17dUlkBOakJ0+DkrSSNjCkIjxS6bF9zb3elmeNGIjoY=
 github.com/jmespath/go-jmespath v0.4.0/go.mod h1:T8mJZnbsbmF+m6zOOFylbeCJqk5+pHWvzYPziyZiYoo=

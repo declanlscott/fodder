@@ -5,7 +5,7 @@ go 1.21.1
 require (
 	github.com/PuerkitoBio/goquery v1.8.1
 	github.com/aws/aws-lambda-go v1.41.0
-	github.com/dscott1008/fodder/backend/utils v0.0.0-20230921024846-84d10a74022b
+	github.com/dscott1008/fodder/backend/utils v0.0.0-20231023023917-113aacb4c1c2
 	github.com/redis/go-redis/v9 v9.2.1
 )
 
