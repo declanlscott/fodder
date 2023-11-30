@@ -6,6 +6,7 @@ provider "registry.terraform.io/hashicorp/archive" {
   constraints = "2.4.0"
   hashes = [
     "h1:ZtsrX5F13Ohsv/k/BvgyBVn0gF+lW4bkG7JmCGrN35Y=",
+    "h1:cJokkjeH1jfpG4QEHdRx0t2j8rr52H33A7C/oX73Ok4=",
     "zh:18e408596dd53048f7fc8229098d0e3ad940b92036a24287eff63e2caec72594",
     "zh:392d4216ecd1a1fd933d23f4486b642a8480f934c13e2cae3c13b6b6a7e34a7b",
     "zh:655dd1fa5ca753a4ace21d0de3792d96fff429445717f2ce31c125d19c38f3ff",
@@ -26,6 +27,7 @@ provider "registry.terraform.io/hashicorp/aws" {
   constraints = "5.17.0"
   hashes = [
     "h1:+riTtJ8Tqjd6js1SGim+926BtDuxy8Jn4F+xV8LXvvg=",
+    "h1:rplvK7UGP2FuzM44t2eRX+QYYPC0aUIoKdi5XayRI8M=",
     "zh:0087b9dd2c9c638fd63e527e5b9b70988008e263d480a199f180efe5a4f070f0",
     "zh:0fd532a4fd03ddef11f0502ff9fe4343443e1ae805cb088825a71d6d48906ec7",
     "zh:16411e731100cd15f7e165f53c23be784b2c86c2fcfd34781e0642d17090d342",
@@ -49,6 +51,7 @@ provider "registry.terraform.io/upstash/upstash" {
   constraints = "1.4.1"
   hashes = [
     "h1:VnaZIdtgD7bZ11085QXUM7wrsmcUhsTHAG8AgN1NhVo=",
+    "h1:YFwyMW8pfGyBWvefDWSctYg32n3GDeQqzzJUKpOBBFE=",
     "zh:04efa92bb049868c50b64a2131a47bf2cdb56839aa7d195260eadce019908dbf",
     "zh:0b1e5841f10172cf5e9f36147608ee4440ee4498a1afcc9cc6128082c14fd66f",
     "zh:29aab5e22132167067629245a91fc0660a5aa0b59e3b6fba97d916fc25f3aaef",

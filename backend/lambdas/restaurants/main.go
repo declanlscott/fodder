@@ -192,6 +192,13 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 		"Access-Control-Allow-Credentials": "true",
 	}
 
+	// TODO: Remove this once we can parse the data from the external API again
+	return events.APIGatewayProxyResponse{
+		StatusCode: http.StatusServiceUnavailable,
+		Headers:    headers,
+		Body:       "{\"message\": \"Service Unavailable.\"}",
+	}, nil
+
 	if radius, ok := request.QueryStringParameters["radius"]; !ok {
 		return events.APIGatewayProxyResponse{
 			StatusCode: http.StatusBadRequest,

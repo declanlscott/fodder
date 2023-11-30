@@ -4,11 +4,13 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import { Layout } from "~/components/Layout";
 import { ThemeProvider } from "~/components/ThemeProvider";
-import { NotFoundPage } from "~/pages/404";
-import { FlavorPage } from "~/pages/Flavor";
-import { FlavorsPage } from "~/pages/Flavors";
-import { LocatePage } from "~/pages/Locate";
-import { RestaurantPage } from "~/pages/Restaurant";
+// import { NotFoundPage } from "~/pages/404";
+import { ReconstructionPage } from "~/pages/Reconstruction";
+
+// import { FlavorPage } from "~/pages/Flavor";
+// import { FlavorsPage } from "~/pages/Flavors";
+// import { LocatePage } from "~/pages/Locate";
+// import { RestaurantPage } from "~/pages/Restaurant";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -20,11 +22,11 @@ const router = createBrowserRouter([
   {
     element: <Layout />,
     children: [
-      { path: "/", element: <LocatePage /> },
-      { path: "/restaurants/:slug", element: <RestaurantPage /> },
-      { path: "/flavors", element: <FlavorsPage /> },
-      { path: "/flavors/:slug", element: <FlavorPage /> },
-      { path: "*", element: <NotFoundPage /> },
+      // { path: "/", element: <LocatePage /> },
+      // { path: "/restaurants/:slug", element: <RestaurantPage /> },
+      // { path: "/flavors", element: <FlavorsPage /> },
+      // { path: "/flavors/:slug", element: <FlavorPage /> },
+      { path: "*", element: <ReconstructionPage /> },
     ],
   },
 ]);

@@ -89,6 +89,13 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 		"Access-Control-Allow-Credentials": "true",
 	}
 
+	// TODO: Remove this once we can parse the data from the external API again
+	return events.APIGatewayProxyResponse{
+		StatusCode: http.StatusServiceUnavailable,
+		Headers:    headers,
+		Body:       "{\"message\": \"Service Unavailable.\"}",
+	}, nil
+
 	flavors, err := scrapeFlavors(&http.Client{
 		CheckRedirect: func(req *http.Request, via []*http.Request) error {
 			return http.ErrUseLastResponse
