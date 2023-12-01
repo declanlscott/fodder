@@ -5,12 +5,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
+	"regexp"
 	"strings"
 	"time"
 
-	"github.com/PuerkitoBio/goquery"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/redis/go-redis/v9"
@@ -20,8 +21,37 @@ type HttpClient interface {
 	Do(req *http.Request) (*http.Response, error)
 }
 
-const EXTERNAL_API_BASE_URL = "https://www.culvers.com/flavor-of-the-day"
-const LOGO_SVG_SRC = "//cdn.culvers.com/layout/logo.svg"
+const BaseApiUrl = "https://www.culvers.com/flavor-of-the-day"
+const BaseImageUrl = "https://cdn.culvers.com/menu-item-detail"
+
+type NextData struct {
+	Props struct {
+		PageProps struct {
+			Page struct {
+				CustomData struct {
+					FlavorDetails struct {
+						IdFlavor    int    `json:"idFlavor"`
+						IdMenuItem  int    `json:"idMenuItem"`
+						Slug        string `json:"slug"`
+						Name        string `json:"name"`
+						Description string `json:"description"`
+						FotdImage   string `json:"fotdImage"`
+						Allergens   string `json:"allergens"`
+						Ingredients []struct {
+							Id             int    `json:"id"`
+							Title          string `json:"title"`
+							SubIngredients string `json:"subIngredients"`
+						}
+						FlavorCategories []struct {
+							Id   int    `json:"id"`
+							Name string `json:"name"`
+						}
+					} `json:"flavorDetails"`
+				} `json:"customData"`
+			} `json:"page"`
+		} `json:"pageProps"`
+	} `json:"props"`
+}
 
 type Flavor struct {
 	Name        string   `json:"name"`
@@ -39,9 +69,11 @@ func (e *ScrapeError) Error() string {
 }
 
 func scrapeFlavor(slug string, client HttpClient) (*Flavor, error) {
-	url := fmt.Sprintf("%s/%s", EXTERNAL_API_BASE_URL, slug)
-
-	req, err := http.NewRequest("GET", url, nil)
+	req, err := http.NewRequest(
+		"GET",
+		fmt.Sprintf("%s/%s", BaseApiUrl, slug),
+		nil,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -56,32 +88,33 @@ func scrapeFlavor(slug string, client HttpClient) (*Flavor, error) {
 		return nil, &ScrapeError{res.StatusCode}
 	}
 
-	doc, err := goquery.NewDocumentFromReader(res.Body)
+	body, err := io.ReadAll(res.Body)
 	if err != nil {
 		return nil, err
 	}
 
+	re := regexp.MustCompile(`<script id="__NEXT_DATA__" type="application/json">(.*?)</script>`)
+	matches := re.FindStringSubmatch(string(body))
+	if len(matches) != 2 {
+		return nil, errors.New("could not find __NEXT_DATA__")
+	}
+
+	var nextData NextData
+	err = json.Unmarshal([]byte(matches[1]), &nextData)
+	if err != nil {
+		return nil, err
+	}
+
+	flavorProps := nextData.Props.PageProps.Page.CustomData.FlavorDetails
 	flavor := Flavor{
-		Name:        doc.Find(".fotd-detail-copy h1").Text(),
-		Description: doc.Find(".ModuleFotdDetail-description p").Text(),
-		ImageUrl: fmt.Sprintf("https:%s", func() string {
-			if src, exists := doc.Find(".fotd-detail-image img").Attr("src"); exists {
-				return src
-			}
-
-			return LOGO_SVG_SRC
-		}()),
-		Allergens: func() []string {
-			var allergens []string
-			allergenSelector := doc.Find(".ModuleMenuItemDetail-allergens .col-xs-10 ul li")
-			for index := range allergenSelector.Nodes {
-				selection := allergenSelector.Eq(index)
-
-				allergens = append(allergens, strings.TrimSpace(selection.Text()))
-			}
-
-			return allergens
-		}(),
+		Name:        flavorProps.Name,
+		Description: flavorProps.Description,
+		ImageUrl: fmt.Sprintf(
+			"%s/%s",
+			BaseImageUrl,
+			flavorProps.FotdImage,
+		),
+		Allergens: strings.Split(flavorProps.Allergens, ", "),
 	}
 
 	return &flavor, nil
@@ -156,13 +189,6 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 		"Access-Control-Allow-Methods":     "GET",
 		"Access-Control-Allow-Credentials": "true",
 	}
-
-	// TODO: Remove this once we can parse the data from the external API again
-	return events.APIGatewayProxyResponse{
-		StatusCode: http.StatusServiceUnavailable,
-		Headers:    headers,
-		Body:       "{\"message\": \"Service Unavailable.\"}",
-	}, nil
 
 	body, err := getResponseBody(ctx, slug)
 	if err != nil {

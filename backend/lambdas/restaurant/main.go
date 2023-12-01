@@ -5,24 +5,75 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/redis/go-redis/v9"
+	"io"
 	"net/http"
+	"net/url"
 	"os"
 	"regexp"
 	"strings"
 	"time"
 
-	"github.com/PuerkitoBio/goquery"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
-	"github.com/redis/go-redis/v9"
 )
 
 type HttpClient interface {
 	Do(req *http.Request) (*http.Response, error)
 }
 
-const EXTERNAL_API_BASE_URL = "https://www.culvers.com/restaurants"
-const LOGO_SVG_SRC = "//cdn.culvers.com/layout/logo.svg"
+const BaseApiUrl = "https://www.culvers.com/restaurants"
+const BaseImageUrl = "https://cdn.culvers.com/menu-item-detail"
+const LogoSvgUrl = "https://cdn.culvers.com/layout/logo.svg"
+
+type NextData struct {
+	Props struct {
+		PageProps struct {
+			Page struct {
+				CustomData struct {
+					RestaurantDetails struct {
+						Id                int           `json:"id"`
+						Number            string        `json:"Number"`
+						Title             string        `json:"title"`
+						Slug              string        `json:"slug"`
+						PhoneNumber       string        `json:"phoneNumber"`
+						Address           string        `json:"address"`
+						City              string        `json:"city"`
+						State             string        `json:"state"`
+						PostalCode        string        `json:"postalCode"`
+						Latitude          float64       `json:"latitude"`
+						Longitude         float64       `json:"longitude"`
+						OnlineOrderUrl    string        `json:"onlineOrderUrl"`
+						OwnerFriendlyName string        `json:"ownerFriendlyName"`
+						OwnerMessage      string        `json:"ownerMessage"`
+						JobsApplyUrl      string        `json:"jobsApplyUrl"`
+						FlavorOfTheDay    []FlavorProps `json:"flavorOfTheDay"`
+					} `json:"restaurantDetails"`
+					RestaurantCalendar struct {
+						Restaurant struct {
+							Id    int    `json:"id"`
+							Title string `json:"title"`
+							Slug  string `json:"slug"`
+						}
+						Flavors []FlavorProps `json:"flavors"`
+					}
+				} `json:"customData"`
+			} `json:"page"`
+		} `json:"pageProps"`
+	} `json:"props"`
+}
+
+type FlavorProps struct {
+	FlavorId   int    `json:"flavorId"`
+	MenuItemId int    `json:"menuItemId"`
+	OnDate     string `json:"onDate"`
+	Title      string `json:"title"`
+	UrlSlug    string `json:"urlSlug"`
+	Image      struct {
+		UseWhiteBackground bool   `json:"useWhiteBackground"`
+		Src                string `json:"src"`
+	}
+}
 
 type Restaurant struct {
 	Name        string   `json:"name"`
@@ -49,22 +100,40 @@ func (e *ScrapeError) Error() string {
 	return fmt.Errorf("received status code %d", e.StatusCode).Error()
 }
 
-func getSlugFromName(name string) string {
-	// Match any non-alphabetic characters
-	re := regexp.MustCompile(`[^a-zA-Z\s]+`)
-	slug := re.ReplaceAllString(name, "")
+func isValidDate(flavorProps FlavorProps, requestTime time.Time) (bool, error) {
+	fodDate, err := time.Parse("2006-01-02T15:04:05", flavorProps.OnDate)
+	if err != nil {
+		return false, err
+	}
 
-	// Match any whitespace characters
-	re = regexp.MustCompile(`\s+`)
-	slug = strings.ToLower(re.ReplaceAllString(slug, "-"))
+	today := requestTime.Truncate(24 * time.Hour)
 
-	return slug
+	if fodDate.After(today) || fodDate.Equal(today) {
+		return true, nil
+	}
+
+	return false, nil
 }
 
-func scrapeRestaurant(slug string, client HttpClient) (*Restaurant, error) {
-	url := fmt.Sprintf("%s/%s", EXTERNAL_API_BASE_URL, slug)
+func filterFlavorsByDate(flavorsProps []FlavorProps, requestTime time.Time) ([]FlavorProps, error) {
+	var result []FlavorProps
 
-	req, err := http.NewRequest("GET", url, nil)
+	for _, flavorProps := range flavorsProps {
+		isValid, err := isValidDate(flavorProps, requestTime)
+		if err != nil {
+			return result, err
+		}
+
+		if isValid {
+			result = append(result, flavorProps)
+		}
+	}
+
+	return result, nil
+}
+
+func scrapeRestaurant(slug string, requestTime time.Time, client HttpClient) (*Restaurant, error) {
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/%s", BaseApiUrl, slug), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -79,88 +148,80 @@ func scrapeRestaurant(slug string, client HttpClient) (*Restaurant, error) {
 		return nil, &ScrapeError{res.StatusCode}
 	}
 
-	doc, err := goquery.NewDocumentFromReader(res.Body)
+	body, err := io.ReadAll(res.Body)
 	if err != nil {
 		return nil, err
 	}
 
-	name := doc.Find("#upcoming .upperstub .content .fotd a").Text()
-	today := Flavor{
-		Date: strings.TrimSpace(strings.Replace(doc.Find("#upcoming .upperstub h3").Text(), "TODAY –", "", 1)),
-		Name: name,
-		ImageUrl: fmt.Sprintf("https:%s", func() string {
-			if src, exists := doc.Find("#upcoming .upperstub img").Attr("src"); exists {
-				return strings.Replace(src, "140", "400", 1)
-			}
-
-			return LOGO_SVG_SRC
-		}()),
-		Slug: getSlugFromName(name),
+	re := regexp.MustCompile(`<script id="__NEXT_DATA__" type="application/json">(.*?)</script>`)
+	matches := re.FindStringSubmatch(string(body))
+	if len(matches) != 2 {
+		return nil, errors.New("could not find __NEXT_DATA__")
 	}
 
-	var upcoming []Flavor
-	upcomingSelector := doc.Find("#upcoming .lowerstub")
-	for index := range upcomingSelector.Nodes {
-		selection := upcomingSelector.Eq(index)
+	var nextData NextData
+	err = json.Unmarshal([]byte(matches[1]), &nextData)
+	if err != nil {
+		return nil, err
+	}
 
-		name = selection.Find(".content .fotd a").Text()
+	flavorsProps, err := filterFlavorsByDate(
+		nextData.Props.PageProps.Page.CustomData.RestaurantCalendar.Flavors,
+		requestTime,
+	)
+	if err != nil {
+		return nil, err
+	}
 
-		upcoming = append(upcoming, Flavor{
-			Date: strings.TrimSpace(strings.Replace(selection.Find("h3").Text(), "TOMORROW –", "", 1)),
-			Name: name,
-			ImageUrl: fmt.Sprintf("https:%s", func() string {
-				if src, exists := selection.Find("img").Attr("src"); exists {
-					return strings.Replace(src, "140", "400", 1)
+	var flavors []Flavor
+	for _, flavorProps := range flavorsProps {
+		flavor := Flavor{
+			Date: flavorProps.OnDate,
+			Name: flavorProps.Title,
+			ImageUrl: func() string {
+				urlSplit := strings.Split(flavorProps.Image.Src, "400/")
+				if len(urlSplit) != 2 {
+					return LogoSvgUrl
 				}
 
-				return LOGO_SVG_SRC
-			}()),
-			Slug: getSlugFromName(name),
-		})
+				return fmt.Sprintf(
+					"%s/%s?%s",
+					BaseImageUrl,
+					urlSplit[1],
+					url.Values{
+						"w": {"400"},
+					}.Encode(),
+				)
+			}(),
+			Slug: flavorProps.UrlSlug,
+		}
+
+		flavors = append(flavors, flavor)
 	}
 
-	addressSelector := doc.Find("p.restaurant-address span")
-	address := addressSelector.Eq(0).Text()
-	city := addressSelector.Eq(2).Text()
-	state := doc.Find("p.restaurant-address abbr").Text()
-	zipCode := addressSelector.Eq(3).Text()
-	phoneNumber := addressSelector.Eq(5).Find("a").Text()
-
+	restaurantProps := nextData.Props.PageProps.Page.CustomData.RestaurantDetails
 	restaurant := Restaurant{
-		Name:        strings.TrimSpace(doc.Find(".ModuleContentHeader h1").Text()),
-		Address:     address,
-		City:        city,
-		State:       state,
-		ZipCode:     zipCode,
-		PhoneNumber: phoneNumber,
-		Flavors:     append([]Flavor{today}, upcoming...),
+		Name:        restaurantProps.Title,
+		Address:     restaurantProps.Address,
+		City:        restaurantProps.City,
+		State:       restaurantProps.State,
+		ZipCode:     restaurantProps.PostalCode,
+		PhoneNumber: restaurantProps.PhoneNumber,
+		Flavors:     flavors,
 	}
 
 	return &restaurant, nil
 }
 
-func getExpirationDuration(currentTime time.Time) time.Duration {
-	expirationDate := time.Date(
-		currentTime.Year(),
-		currentTime.Month(),
-		currentTime.Day(),
-		7,
-		30,
-		0,
-		0,
-		time.UTC,
-	)
+func getExpiration(requestTime time.Time) time.Duration {
+	chicago, _ := time.LoadLocation("America/Chicago")
 
-	if currentTime.After(expirationDate) {
-		expirationDate = expirationDate.Add(24 * time.Hour)
-	}
+	_, offset := requestTime.In(chicago).Zone()
 
-	expirationDuration := expirationDate.Sub(currentTime)
-
-	return expirationDuration
+	return time.Until(requestTime.Truncate(24 * time.Hour).Add(24 * time.Hour).Add(time.Duration(offset) * time.Second * -1))
 }
 
-func getResponseBody(ctx context.Context, slug string) ([]byte, error) {
+func getResponseBody(ctx context.Context, slug string, requestTime time.Time) ([]byte, error) {
 	opt, err := redis.ParseURL(os.Getenv("UPSTASH_REDIS_URL"))
 	if err != nil {
 		return nil, err
@@ -172,11 +233,15 @@ func getResponseBody(ctx context.Context, slug string) ([]byte, error) {
 	body, err := rdb.Get(ctx, key).Bytes()
 	if err == redis.Nil {
 		// Cache miss
-		restaurant, err := scrapeRestaurant(slug, &http.Client{
-			CheckRedirect: func(req *http.Request, via []*http.Request) error {
-				return http.ErrUseLastResponse
+		restaurant, err := scrapeRestaurant(
+			slug,
+			requestTime,
+			&http.Client{
+				CheckRedirect: func(req *http.Request, via []*http.Request) error {
+					return http.ErrUseLastResponse
+				},
 			},
-		})
+		)
 		if err != nil {
 			return nil, err
 		}
@@ -186,7 +251,7 @@ func getResponseBody(ctx context.Context, slug string) ([]byte, error) {
 			return nil, err
 		}
 
-		rdb.Set(ctx, key, body, getExpirationDuration(time.Now().UTC()))
+		rdb.Set(ctx, key, body, getExpiration(requestTime))
 
 		return body, nil
 	}
@@ -195,6 +260,14 @@ func getResponseBody(ctx context.Context, slug string) ([]byte, error) {
 }
 
 func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+	requestTime, err := time.Parse("02/Jan/2006:15:04:05 -0700", request.RequestContext.RequestTime)
+	if err != nil {
+		return events.APIGatewayProxyResponse{
+			StatusCode: http.StatusInternalServerError,
+			Body:       fmt.Sprintf("{\"message\": \"%s\"}", err.Error()),
+		}, nil
+	}
+
 	slug := request.PathParameters["slug"]
 
 	headers := map[string]string{
@@ -205,14 +278,7 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 		"Access-Control-Allow-Credentials": "true",
 	}
 
-	// TODO: Remove this once we can parse the data from the external API again
-	return events.APIGatewayProxyResponse{
-		StatusCode: http.StatusServiceUnavailable,
-		Headers:    headers,
-		Body:       "{\"message\": \"Service Unavailable.\"}",
-	}, nil
-
-	body, err := getResponseBody(ctx, slug)
+	body, err := getResponseBody(ctx, slug, requestTime)
 	if err != nil {
 		var scrapeError *ScrapeError
 		if errors.As(err, &scrapeError) {

@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"net/url"
 	"regexp"
-	"strconv"
 	"strings"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -19,78 +18,54 @@ type HttpClient interface {
 	Do(req *http.Request) (*http.Response, error)
 }
 
+const BaseImageUrl = "https://cdn.culvers.com/menu-item-detail"
+const LogoSvgUrl = "https://cdn.culvers.com/layout/logo.svg"
+
 type ExternalApiResponse struct {
-	Collection struct {
-		Address     string `json:"Address"`
-		CenterPoint string `json:"CenterPoint"`
-		City        string `json:"City"`
-		Count       int    `json:"Count"`
-		Country     string `json:"Country"`
-		Locations   []struct {
-			Address          string      `json:"Address"`
-			Address2         string      `json:"Address2"`
-			Adi              string      `json:"Adi"`
-			Cfsifml          string      `json:"Cfsifml"`
-			Cfsijml          string      `json:"Cfsijml"`
-			Cfsiml           string      `json:"Cfsiml"`
-			Cfsimml          string      `json:"Cfsimml"`
-			Cfsipml          string      `json:"Cfsipml"`
-			City             string      `json:"City"`
-			Country          string      `json:"Country"`
-			DateOpen         string      `json:"DateOpen"`
-			Distance         float64     `json:"Distance"`
-			DistanceUnit     string      `json:"DistanceUnit"`
-			Email            string      `json:"Email"`
-			FacebookPlaceUrl string      `json:"FacebookPlaceUrl"`
-			Fax              string      `json:"Fax"`
-			Fbp              string      `json:"Fbp"`
-			FbpEmail         string      `json:"FbpEmail"`
-			FlavorDay        string      `json:"FlavorDay"`
-			FlavorId         interface{} `json:"FlavorId"`
-			FlavorImageUrl   string      `json:"FlavorImageUrl"`
-			FridayClose      string      `json:"FridayClose"`
-			FridayOpen       string      `json:"FridayOpen"`
-			Icon             string      `json:"Icon"`
-			Id               int         `json:"Id"`
-			JobApplyEmail    string      `json:"JobApplyEmail"`
-			JobSearchField   string      `json:"JobSearchField"`
-			Latitude         string      `json:"Latitude"`
-			Longitude        string      `json:"Longitude"`
-			MondayClose      string      `json:"MondayClose"`
-			MondayOpen       string      `json:"MondayOpen"`
-			Name             string      `json:"Name"`
-			OpsMrkt          string      `json:"OpsMrkt"`
-			OtherAddress     string      `json:"OtherAddress"`
-			Owner            string      `json:"Owner"`
-			Phone            string      `json:"Phone"`
-			Postal           string      `json:"Postal"`
-			Province         string      `json:"Province"`
-			SaturdayClose    string      `json:"SaturdayClose"`
-			SaturdayOpen     string      `json:"SaturdayOpen"`
-			SignalCampaignId string      `json:"SignalCampaignId"`
-			State            string      `json:"State"`
-			StoreNumber      string      `json:"StoreNumber"`
-			SundayClose      string      `json:"SundayClose"`
-			SundayOpen       string      `json:"SundayOpen"`
-			ThursdayClose    string      `json:"ThursdayClose"`
-			ThursdayOpen     string      `json:"ThursdayOpen"`
-			TuesdayClose     string      `json:"TuesdayClose"`
-			TuesdayOpen      string      `json:"TuesdayOpen"`
-			Type             string      `json:"Type"`
-			Uid              string      `json:"Uid"`
-			Url              string      `json:"Url"`
-			UrlSlug          string      `json:"UrlSlug"`
-			WednesdayClose   string      `json:"WednesdayClose"`
-			WednesdayOpen    string      `json:"WednesdayOpen"`
-		} `json:"Locations"`
-		Name     string `json:"Name"`
-		Postal   string `json:"Postal"`
-		Province string `json:"Province"`
-		Radius   int    `json:"Radius"`
-		State    string `json:"State"`
-	}
-	ErrorCode    string `json:"ErrorCode"`
-	ErrorMessage string `json:"ErrorMessage"`
+	IsSuccessful bool   `json:"isSuccessful"`
+	Message      string `json:"message"`
+	Data         struct {
+		Meta struct {
+			Code int `json:"code"`
+		} `json:"meta"`
+		Geofences []struct {
+			Id          string `json:"_id"`
+			Live        bool   `json:"live"`
+			Description string `json:"description"`
+			Metadata    struct {
+				DineInHours         string `json:"dineInHours"`
+				DriveThruHours      string `json:"driveThruHours"`
+				OnlineOrderStatus   int    `json:"onlineOrderStatus"`
+				FlavorOfDayName     string `json:"flavorOfDayName"`
+				FlavorOfDaySlug     string `json:"flavorOfDaySlug"`
+				OpenDate            string `json:"openDate"`
+				IsTemporarilyClosed bool   `json:"isTemporarilyClosed"`
+				UtcOffset           int    `json:"utcOffset"`
+				Street              string `json:"street"`
+				State               string `json:"state"`
+				City                string `json:"city"`
+				PostalCode          string `json:"postalCode"`
+				OloId               string `json:"oloId"`
+				Slug                string `json:"slug"`
+				JobSearchUrl        string `json:"jobSearchUrl"`
+				HandoffOptions      string `json:"handoffOptions"`
+			} `json:"metadata"`
+			Tag            string `json:"tag"`
+			ExternalId     string `json:"externalId"`
+			Type           string `json:"type"`
+			GeometryCenter struct {
+				Type        string    `json:"type"`
+				Coordinates []float64 `json:"coordinates"`
+			}
+			GeometryRadius int `json:"geometryRadius"`
+			Geometry       struct {
+				Type        string        `json:"type"`
+				Coordinates [][][]float64 `json:"coordinates"`
+			}
+			Enabled bool `json:"enabled"`
+		} `json:"geofences"`
+		TotalResults int `json:"totalResults"`
+	} `json:"data"`
 }
 
 type Restaurant struct {
@@ -98,7 +73,6 @@ type Restaurant struct {
 	Address   string  `json:"address"`
 	City      string  `json:"city"`
 	State     string  `json:"state"`
-	Country   string  `json:"country"`
 	ZipCode   string  `json:"zipCode"`
 	Latitude  float64 `json:"latitude"`
 	Longitude float64 `json:"longitude"`
@@ -135,18 +109,8 @@ func getRestaurants(externalApiUrl string, client HttpClient) ([]Restaurant, err
 	}
 
 	var restaurants []Restaurant
-	for _, location := range externalApiResponse.Collection.Locations {
-		latitude, _ := strconv.ParseFloat(location.Latitude, 64)
-		longitude, _ := strconv.ParseFloat(location.Longitude, 64)
-
-		fodImageUrl := location.FlavorImageUrl
-		if index := strings.Index(location.FlavorImageUrl, "?"); index != -1 {
-			fodImageUrl = location.FlavorImageUrl[:index]
-		}
-
-		slug := strings.Replace(location.Url, "http://www.culvers.com/restaurants/", "", 1)
-
-		fodName := location.FlavorDay
+	for _, location := range externalApiResponse.Data.Geofences {
+		fodName := location.Metadata.FlavorOfDayName
 
 		// Match any non-alphabetic characters
 		re := regexp.MustCompile(`[^a-zA-Z\s]+`)
@@ -157,21 +121,31 @@ func getRestaurants(externalApiUrl string, client HttpClient) ([]Restaurant, err
 		fodSlug = strings.ToLower(re.ReplaceAllString(fodSlug, "-"))
 
 		fod := Fod{
-			Name:     fodName,
-			ImageUrl: fodImageUrl,
-			Slug:     fodSlug,
+			Name: fodName,
+			ImageUrl: func() string {
+				slug := location.Metadata.FlavorOfDaySlug
+				if slug == "" {
+					return LogoSvgUrl
+				}
+
+				return fmt.Sprintf(
+					"%s/%s",
+					BaseImageUrl,
+					slug,
+				)
+			}(),
+			Slug: fodSlug,
 		}
 
 		restaurant := Restaurant{
-			Name:      location.Name,
-			Address:   location.Address,
-			City:      location.City,
-			State:     location.State,
-			Country:   location.Country,
-			ZipCode:   location.Postal,
-			Latitude:  latitude,
-			Longitude: longitude,
-			Slug:      slug,
+			Name:      fmt.Sprintf("Culver's of %s", location.Description),
+			Address:   location.Metadata.Street,
+			City:      location.Metadata.City,
+			State:     location.Metadata.State,
+			ZipCode:   location.Metadata.PostalCode,
+			Longitude: location.GeometryCenter.Coordinates[0],
+			Latitude:  location.GeometryCenter.Coordinates[1],
+			Slug:      location.Metadata.Slug,
 			Fod:       fod,
 		}
 
@@ -181,7 +155,7 @@ func getRestaurants(externalApiUrl string, client HttpClient) ([]Restaurant, err
 	return restaurants, nil
 }
 
-const EXTERNAL_API_BASE_URL = "https://www.culvers.com/api"
+const ExternalApiBaseUrl = "https://www.culvers.com/api"
 
 func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	headers := map[string]string{
@@ -192,87 +166,64 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 		"Access-Control-Allow-Credentials": "true",
 	}
 
-	// TODO: Remove this once we can parse the data from the external API again
-	return events.APIGatewayProxyResponse{
-		StatusCode: http.StatusServiceUnavailable,
-		Headers:    headers,
-		Body:       "{\"message\": \"Service Unavailable.\"}",
-	}, nil
+	params := url.Values{
+		"limit": {"1000"},
+	}
 
-	if radius, ok := request.QueryStringParameters["radius"]; !ok {
-		return events.APIGatewayProxyResponse{
-			StatusCode: http.StatusBadRequest,
-			Headers:    headers,
-			Body:       "{\"message\": \"Missing radius\"}",
-		}, nil
+	var restaurants []Restaurant
+	var restaurantsErr error
+
+	if address, ok := request.QueryStringParameters["address"]; ok {
+		params.Add("location", address)
 	} else {
-		params := url.Values{}
+		latitude, latOk := request.QueryStringParameters["latitude"]
+		longitude, longOk := request.QueryStringParameters["longitude"]
 
-		params.Add("searchRadius", radius)
-		params.Add("proximitySearchMethod", "drivetime")
-		params.Add("cuttoff", "100")
-		params.Add("limit", "1000")
-
-		var restaurants []Restaurant
-		var restaurantsErr error
-
-		if address, ok := request.QueryStringParameters["address"]; ok {
-			params.Add("address", address)
-
-			restaurants, restaurantsErr = getRestaurants(
-				fmt.Sprintf("%s/locate/address/json?%s", EXTERNAL_API_BASE_URL, params.Encode()),
-				http.DefaultClient,
-			)
-		} else {
-			latitude, latOk := request.QueryStringParameters["latitude"]
-			longitude, longOk := request.QueryStringParameters["longitude"]
-
-			if !latOk || !longOk {
-				return events.APIGatewayProxyResponse{
-					StatusCode: http.StatusBadRequest,
-					Headers:    headers,
-					Body:       "{\"message\": \"Missing latitude/longitude\"}",
-				}, nil
-			}
-
-			params.Add("latitude", latitude)
-			params.Add("longitude", longitude)
-
-			restaurants, restaurantsErr = getRestaurants(
-				fmt.Sprintf("%s/locate/latlong/json?%s", EXTERNAL_API_BASE_URL, params.Encode()),
-				http.DefaultClient,
-			)
-		}
-
-		if restaurantsErr != nil {
+		if !latOk || !longOk {
 			return events.APIGatewayProxyResponse{
-				StatusCode: http.StatusInternalServerError,
+				StatusCode: http.StatusBadRequest,
 				Headers:    headers,
-				Body:       fmt.Sprintf("{\"message\": \"%s\"}", restaurantsErr.Error()),
-			}, nil
-		}
-		if restaurants == nil {
-			return events.APIGatewayProxyResponse{
-				StatusCode: http.StatusNoContent,
-				Headers:    headers,
+				Body:       "{\"message\": \"Missing latitude/longitude\"}",
 			}, nil
 		}
 
-		body, err := json.Marshal(restaurants)
-		if err != nil {
-			return events.APIGatewayProxyResponse{
-				StatusCode: http.StatusInternalServerError,
-				Headers:    headers,
-				Body:       fmt.Sprintf("{\"message\": \"%s\"}", err.Error()),
-			}, nil
-		}
+		params.Add("lat", latitude)
+		params.Add("long", longitude)
+	}
 
+	restaurants, restaurantsErr = getRestaurants(
+		fmt.Sprintf("%s/restaurants/getLocations?%s", ExternalApiBaseUrl, params.Encode()),
+		http.DefaultClient,
+	)
+
+	if restaurantsErr != nil {
 		return events.APIGatewayProxyResponse{
-			StatusCode: http.StatusOK,
+			StatusCode: http.StatusInternalServerError,
 			Headers:    headers,
-			Body:       string(body),
+			Body:       fmt.Sprintf("{\"message\": \"%s\"}", restaurantsErr.Error()),
 		}, nil
 	}
+	if restaurants == nil {
+		return events.APIGatewayProxyResponse{
+			StatusCode: http.StatusNoContent,
+			Headers:    headers,
+		}, nil
+	}
+
+	body, err := json.Marshal(restaurants)
+	if err != nil {
+		return events.APIGatewayProxyResponse{
+			StatusCode: http.StatusInternalServerError,
+			Headers:    headers,
+			Body:       fmt.Sprintf("{\"message\": \"%s\"}", err.Error()),
+		}, nil
+	}
+
+	return events.APIGatewayProxyResponse{
+		StatusCode: http.StatusOK,
+		Headers:    headers,
+		Body:       string(body),
+	}, nil
 }
 
 func main() {

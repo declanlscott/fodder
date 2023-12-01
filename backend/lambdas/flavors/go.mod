@@ -3,13 +3,11 @@ module flavors
 go 1.21.1
 
 require (
-	github.com/PuerkitoBio/goquery v1.8.1
 	github.com/aws/aws-lambda-go v1.41.0
 	github.com/dscott1008/fodder/backend/utils v0.0.0-20230921023855-01415d7fb060
 )
 
 require (
-	github.com/andybalholm/cascadia v1.3.2 // indirect
 	github.com/aws/aws-sdk-go-v2 v1.21.0 // indirect
 	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.4.13 // indirect
 	github.com/aws/aws-sdk-go-v2/config v1.18.41 // indirect
@@ -28,5 +26,4 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.17.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sts v1.22.0 // indirect
 	github.com/aws/smithy-go v1.14.2 // indirect
-	golang.org/x/net v0.17.0 // indirect
 )
