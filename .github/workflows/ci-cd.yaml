@@ -168,10 +168,12 @@ jobs:
           aws configure set region $(echo $AWS_REGION)
 
       - name: Sync frontend with S3
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: aws s3 sync dist/ s3://fodder.${{ vars.DOMAIN }}/ --delete
         working-directory: ./frontend
 
       - name: Invalidate frontend on CloudFront
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: aws cloudfront create-invalidation --distribution-id ${{ secrets.FODDER_DISTRIBUTION_ID }} --paths "/**/*"
         env:
           AWS_PAGER: ""
