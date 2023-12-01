@@ -35,8 +35,7 @@ func TestScrapeFlavor(t *testing.T) {
 		return
 	}
 
-	expectedJson := `{"name":"Devil’s Food Cake","description":"Dark Chocolate Fresh Frozen Custard swirled with chocolate cake and novelty chocolate.","imageUrl":"https:./flavor_files/img-Devils-Food-Cake.png","allergens":["Soy","Milk","Egg","Wheat/Gluten"]}`
-
+	expectedJson := `{"name":"Devil’s Food Cake","description":"Dark Chocolate Fresh Frozen Custard swirled with chocolate cake and novelty chocolate.","imageUrl":"https://cdn.culvers.com/menu-item-detail/img-Devils-Food-Cake.png","allergens":["Egg","Milk","Soy","Wheat"]}`
 	actualJson, err := json.Marshal(flavor)
 	if err != nil {
 		t.Errorf("Expected no error, but got %v", err)

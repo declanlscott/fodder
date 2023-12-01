@@ -3,12 +3,13 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"io"
 	"net/http"
+	"net/url"
 	"regexp"
-	"strings"
 
-	"github.com/PuerkitoBio/goquery"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 )
@@ -17,8 +18,42 @@ type HttpClient interface {
 	Do(req *http.Request) (*http.Response, error)
 }
 
-const API_URL = "https://www.culvers.com/flavor-of-the-day"
-const LOGO_SVG_SRC = "//cdn.culvers.com/layout/logo.svg"
+const ApiUrl = "https://www.culvers.com/flavor-of-the-day"
+const BaseImageUrl = "https://cdn.culvers.com/menu-item-detail"
+
+type NextData struct {
+	Props struct {
+		PageProps struct {
+			Page struct {
+				Zones struct {
+					Content []struct {
+						ModuleName string `json:"moduleName"`
+						CustomData struct {
+							Flavors []struct {
+								IdFlavor          int    `json:"idFlavor"`
+								IdMenuItem        int    `json:"idMenuItem"`
+								LongFlavorName    string `json:"longFlavorName"`
+								FileName          string `json:"fileName"`
+								FlavorDescription string `json:"flavorDescription"`
+								LongDescription   string `json:"longDescription"`
+								FlavorName        string `json:"flavorName"`
+								FlavorCategories  []struct {
+									Id   int    `json:"id"`
+									Name string `json:"name"`
+								}
+								FlavorNameLocalized    string `json:"flavorNameLocalized"`
+								FotdImage              string `json:"fotdImage"`
+								FotdUrlSlug            string `json:"fotdUrlSlug"`
+								FlavorNameSpanish      string `json:"flavorNameSpanish"`
+								FotdDescriptionSpanish string `json:"fotdDescriptionSpanish"`
+							} `json:"flavors"`
+						} `json:"customData"`
+					} `json:"content"`
+				} `json:"zones"`
+			} `json:"page"`
+		} `json:"pageProps"`
+	} `json:"props"`
+}
 
 type Flavor struct {
 	Name     string `json:"name"`
@@ -27,7 +62,7 @@ type Flavor struct {
 }
 
 func scrapeFlavors(client HttpClient) ([]Flavor, error) {
-	req, err := http.NewRequest("GET", API_URL, nil)
+	req, err := http.NewRequest("GET", ApiUrl, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -42,36 +77,47 @@ func scrapeFlavors(client HttpClient) ([]Flavor, error) {
 		return nil, fmt.Errorf("received status code %d", res.StatusCode)
 	}
 
-	doc, err := goquery.NewDocumentFromReader(res.Body)
+	body, err := io.ReadAll(res.Body)
 	if err != nil {
 		return nil, err
 	}
 
+	re := regexp.MustCompile(`<script id="__NEXT_DATA__" type="application/json">(.*?)</script>`)
+	matches := re.FindStringSubmatch(string(body))
+	if len(matches) != 2 {
+		return nil, errors.New("could not find __NEXT_DATA__")
+	}
+
+	var nextData NextData
+	err = json.Unmarshal([]byte(matches[1]), &nextData)
+	if err != nil {
+		return nil, err
+	}
+
+	flavorsProps := nextData.Props.PageProps.Page.Zones.Content
+	index := 0
+	for _, content := range flavorsProps {
+		if content.ModuleName == "FlavorOfTheDayAllFlavors" {
+			break
+		}
+		index += 1
+	}
+	if index == len(flavorsProps) {
+		return nil, errors.New("could not find flavors")
+	}
+
+	var flavor Flavor
 	var flavors []Flavor
-	flavorSelector := doc.Find("ul.ModuleFotdAllFlavors li")
-	for index := range flavorSelector.Nodes {
-		selection := flavorSelector.Eq(index)
-
-		name := selection.Find("span").Text()
-
-		// Match any non-alphabetic characters
-		re := regexp.MustCompile(`[^a-zA-Z\s]+`)
-		slug := re.ReplaceAllString(name, "")
-
-		// Match any whitespace characters
-		re = regexp.MustCompile(`\s+`)
-		slug = strings.ToLower(re.ReplaceAllString(slug, "-"))
-
-		flavor := Flavor{
-			Name: name,
-			ImageUrl: fmt.Sprintf("https:%s", func() string {
-				if src, exists := selection.Find("img").Attr("src"); exists {
-					return strings.Replace(src, "180", "400", 1)
-				}
-
-				return LOGO_SVG_SRC
-			}()),
-			Slug: slug,
+	for _, flavorProps := range flavorsProps[index].CustomData.Flavors {
+		flavor = Flavor{
+			Name: flavorProps.FlavorName,
+			ImageUrl: fmt.Sprintf(
+				"%s/%s?%s",
+				BaseImageUrl,
+				flavorProps.FotdImage,
+				url.Values{"w": {"400"}}.Encode(),
+			),
+			Slug: flavorProps.FotdUrlSlug,
 		}
 
 		flavors = append(flavors, flavor)
@@ -88,13 +134,6 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 		"Access-Control-Allow-Methods":     "GET",
 		"Access-Control-Allow-Credentials": "true",
 	}
-
-	// TODO: Remove this once we can parse the data from the external API again
-	return events.APIGatewayProxyResponse{
-		StatusCode: http.StatusServiceUnavailable,
-		Headers:    headers,
-		Body:       "{\"message\": \"Service Unavailable.\"}",
-	}, nil
 
 	flavors, err := scrapeFlavors(&http.Client{
 		CheckRedirect: func(req *http.Request, via []*http.Request) error {

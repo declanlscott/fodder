@@ -1,15 +1,17 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/aws/aws-lambda-go/events"
 	"io"
 	"net/http"
 	"reflect"
-	"strings"
 	"testing"
+
+	"github.com/aws/aws-lambda-go/events"
+	"github.com/dscott1008/fodder/backend/utils"
 )
 
 type MockHttpClient struct {
@@ -22,90 +24,18 @@ func (mockHttpClient *MockHttpClient) Do(req *http.Request) (*http.Response, err
 }
 
 func TestGetRestaurants(t *testing.T) {
-	mockResponse := &http.Response{
-		StatusCode: 200,
-		Body: io.NopCloser(strings.NewReader(
-			`{
-			  "ErrorCode": null,
-			  "ErrorMessage": null,
-			  "Collection": {
-				"Name": "poi",
-				"Count": 1,
-				"Country": "US",
-				"Radius": 5,
-				"CenterPoint": "-91.56961,42.065038",
-				"State": "IA",
-				"City": "MARION",
-				"Address": "",
-				"Province": "",
-				"Postal": "52302",
-				"Locations": [
-				  {
-					"Address": "1375 Red Fox Way",
-					"Address2": "",
-					"Latitude": "42.0384902954102",
-					"Longitude": "-91.5510787963867",
-					"Name": "Culver's of Marion, IA - Red Fox Way",
-					"Distance": 2.07,
-					"DistanceUnit": "mile",
-					"Adi": "",
-					"City": "Marion",
-					"Id": 328,
-					"Country": "US",
-					"DateOpen": "",
-					"Email": "",
-					"FacebookPlaceUrl": "https://www.facebook.com/CulversMarion",
-					"Fax": "",
-					"Fbp": "Kelly Hughes",
-					"FbpEmail": "",
-					"FlavorDay": "Chocolate Caramel Twist",
-					"FlavorId": null,
-					"FlavorImageUrl": "https://cdn.culvers.com/menu-item-detail/img-Chocolate-Caramel-Twist2.png?w=120",
-					"FridayOpen": "10:00 AM",
-					"FridayClose": "10:00 PM",
-					"Icon": "default",
-					"JobApplyEmail": "",
-					"JobSearchField": "https://j.wrkstrm.us/6d08eebf/culvers/marion-52014",
-					"OtherAddress": "1375 Red Fox Way",
-					"MondayOpen": "10:00 AM",
-					"MondayClose": "10:00 PM",
-					"StoreNumber": "320",
-					"OpsMrkt": "HEARTLAND",
-					"Owner": "",
-					"Phone": "319-373-7575",
-					"Postal": "52302",
-					"Province": "",
-					"SaturdayOpen": "10:00 AM",
-					"SaturdayClose": "10:00 PM",
-					"SignalCampaignId": "21107",
-					"State": "IA",
-					"SundayOpen": "10:00 AM",
-					"SundayClose": "10:00 PM",
-					"ThursdayOpen": "10:00 AM",
-					"ThursdayClose": "10:00 PM",
-					"TuesdayOpen": "10:00 AM",
-					"TuesdayClose": "10:00 PM",
-					"Type": "S",
-					"Uid": "-2000922760",
-					"UrlSlug": "http://www.culvers.com/restaurants/marion",
-					"Url": "http://www.culvers.com/restaurants/marion",
-					"WednesdayOpen": "10:00 AM",
-					"WednesdayClose": "10:00 PM",
-					"Cfsiml": "",
-					"Cfsijml": "",
-					"Cfsipml": "",
-					"Cfsimml": "",
-					"Cfsifml": ""
-				  }
-				]
-			  }
-			}`,
-		)),
+	contents, err := utils.GetMockResponse("restaurants.mock.json")
+	if err != nil {
+		t.Errorf("Expected no error, but got %v", err)
+		return
 	}
 
 	mockClient := &MockHttpClient{
-		Response: mockResponse,
-		Error:    nil,
+		Response: &http.Response{
+			StatusCode: 200,
+			Body:       io.NopCloser(bytes.NewReader(contents)),
+		},
+		Error: nil,
 	}
 
 	restaurants, err := getRestaurants("https://example.com/api", mockClient)
@@ -118,7 +48,7 @@ func TestGetRestaurants(t *testing.T) {
 		t.Errorf("Expected no error, but got %v", err)
 	}
 
-	expectedJson := `[{"name":"Culver's of Marion, IA - Red Fox Way","address":"1375 Red Fox Way","city":"Marion","state":"IA","country":"US","zipCode":"52302","latitude":42.0384902954102,"longitude":-91.5510787963867,"slug":"marion","fod":{"name":"Chocolate Caramel Twist","imageUrl":"https://cdn.culvers.com/menu-item-detail/img-Chocolate-Caramel-Twist2.png","slug":"chocolate-caramel-twist"}}]`
+	expectedJson := `[{"name":"Culver's of Marion, IA - Red Fox Way","address":"1375 Red Fox Way","city":"Marion","state":"IA","zipCode":"52302","latitude":42.038490295410156,"longitude":-91.55107879638672,"slug":"marion","fod":{"name":"Salted Double Caramel Pecan","imageUrl":"https://cdn.culvers.com/menu-item-detail/img-Salted-Double-Caramel-Pecan.Cake-Cone.png","slug":"salted-double-caramel-pecan"}},{"name":"Culver's of Hiawatha, IA - N Center Point Rd","address":"1005 N Center Point Rd","city":"Hiawatha","state":"IA","zipCode":"52233","latitude":42.0482177734375,"longitude":-91.68312072753906,"slug":"hiawatha","fod":{"name":"Devil's Food Cake","imageUrl":"https://cdn.culvers.com/menu-item-detail/img-Devils-Food-Cake.png","slug":"devils-food-cake"}},{"name":"Culver's of Cedar Rapids, IA - Edgewood Rd SW","address":"2405 Edgewood Rd SW","city":"Cedar Rapids","state":"IA","zipCode":"52404","latitude":41.95463180541992,"longitude":-91.71552276611328,"slug":"cedar-rapids","fod":{"name":"Cappuccino Cookie Crumble","imageUrl":"https://cdn.culvers.com/menu-item-detail/img-Cappuccino-Cookie-Crumble.png","slug":"cappuccino-cookie-crumble"}},{"name":"Culver's of Coralville, IA - Heartland Pl","address":"2591 Heartland Pl","city":"Coralville","state":"IA","zipCode":"52241","latitude":41.70014572143555,"longitude":-91.60919189453125,"slug":"coralville","fod":{"name":"Caramel Fudge Cookie Dough","imageUrl":"https://cdn.culvers.com/menu-item-detail/img-Caramel-Fudge-CookieDough.png","slug":"caramel-fudge-cookie-dough"}}]`
 	if !reflect.DeepEqual(string(actualJson), expectedJson) {
 		t.Errorf("Expected JSON: %v\nActual JSON: %v", expectedJson, string(actualJson))
 	}
@@ -130,7 +60,6 @@ func TestHandler(t *testing.T) {
 	res, err := handler(ctx, events.APIGatewayProxyRequest{
 		QueryStringParameters: map[string]string{
 			"address": "marion, ia",
-			"radius":  "10",
 		},
 	})
 	if err != nil {
