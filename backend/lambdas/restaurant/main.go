@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/redis/go-redis/v9"
 	"io"
 	"net/http"
 	"net/url"
@@ -16,6 +15,7 @@ import (
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
+	"github.com/redis/go-redis/v9"
 )
 
 type HttpClient interface {
@@ -260,13 +260,7 @@ func getResponseBody(ctx context.Context, slug string, requestTime time.Time) ([
 }
 
 func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	requestTime, err := time.Parse("02/Jan/2006:15:04:05 -0700", request.RequestContext.RequestTime)
-	if err != nil {
-		return events.APIGatewayProxyResponse{
-			StatusCode: http.StatusInternalServerError,
-			Body:       fmt.Sprintf("{\"message\": \"%s\"}", err.Error()),
-		}, nil
-	}
+	requestTime := time.UnixMilli(request.RequestContext.RequestTimeEpoch)
 
 	slug := request.PathParameters["slug"]
 

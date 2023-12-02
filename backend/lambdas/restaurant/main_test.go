@@ -62,7 +62,7 @@ func TestHandler(t *testing.T) {
 			"slug": "marion",
 		},
 		RequestContext: events.APIGatewayProxyRequestContext{
-			RequestTime: time.Now().UTC().Format("02/Jan/2006:15:04:05 -0700"),
+			RequestTimeEpoch: time.Now().UTC().UnixMilli(),
 		},
 	})
 	if err != nil {
