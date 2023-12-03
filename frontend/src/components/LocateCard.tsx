@@ -22,7 +22,6 @@ import {
 } from "~/components/ui/Form";
 import { Input } from "~/components/ui/Input";
 import { Label, labelVariants } from "~/components/ui/Label";
-import { Slider } from "~/components/ui/Slider";
 import { Toggle } from "~/components/ui/Toggle";
 import { useGeolocation, useLocate } from "~/lib/hooks";
 import { LocateSchema, locateSchema } from "~/lib/schemas";
@@ -36,7 +35,6 @@ export function LocateCard() {
         type: "address",
         address: "",
       },
-      radius: 25,
     },
   });
 
@@ -143,49 +141,6 @@ export function LocateCard() {
                         )}
                       </Toggle>
                     </div>
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="radius"
-                defaultValue={25}
-                render={({ field: { value, onChange, ...field } }) => (
-                  <FormItem className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <FormLabel className={labelVariants()}>Radius</FormLabel>
-
-                      <div className="flex items-center gap-2">
-                        <FormControl>
-                          <Input
-                            {...field}
-                            value={value}
-                            onChange={({ target: { value } }) =>
-                              onChange(parseInt(value))
-                            }
-                            type="number"
-                            className="w-16"
-                            min={1}
-                            max={100}
-                          />
-                        </FormControl>
-
-                        <FormLabel className={labelVariants()}>mi</FormLabel>
-                      </div>
-                    </div>
-
-                    <FormControl>
-                      <Slider
-                        {...field}
-                        value={[value]}
-                        onValueChange={([radius]) => onChange(radius)}
-                        min={5}
-                        step={5}
-                      />
-                    </FormControl>
 
                     <FormMessage />
                   </FormItem>

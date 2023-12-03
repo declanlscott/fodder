@@ -1,11 +1,18 @@
 import { useQuery } from "@tanstack/react-query";
 import { MapPin, Phone } from "lucide-react";
-import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useLocation, useParams } from "react-router-dom";
 
 import DroppedCone from "~/components/DroppedCone";
 import { FodCard, FodCardSkeleton } from "~/components/FodCard";
 import { SomethingWentWrongCard } from "~/components/SomethingWentWrongCard";
+import { Button } from "~/components/ui/Button";
 import { Card } from "~/components/ui/Card";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "~/components/ui/Collapsible";
 import { Skeleton } from "~/components/ui/Skeleton";
 import {
   UpcomingFodCard,
@@ -26,6 +33,14 @@ export function RestaurantPage() {
 
 function RestaurantDetails({ slug }: { slug: string }) {
   const { data, isLoading } = useRestaurant(slug);
+
+  const [isOpen, setIsOpen] = useState(false);
+
+  const location = useLocation();
+
+  useEffect(() => {
+    setIsOpen(false);
+  }, [location]);
 
   if (isLoading) {
     return <RestaurantDetailsSkeleton />;
@@ -57,15 +72,28 @@ function RestaurantDetails({ slug }: { slug: string }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {data.flavors.map((flavor, index) => (
-          <UpcomingFodCard
-            key={flavor.slug}
-            flavor={flavor}
-            isToday={index === 0}
-          />
-        ))}
-      </div>
+      <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {data.flavors.slice(0, 5).map((flavor) => (
+            <UpcomingFodCard key={flavor.date} flavor={flavor} />
+          ))}
+          <CollapsibleContent asChild>
+            <>
+              {data.flavors.slice(5).map((flavor) => (
+                <UpcomingFodCard key={flavor.date} flavor={flavor} />
+              ))}
+            </>
+          </CollapsibleContent>
+        </div>
+
+        <CollapsibleTrigger asChild>
+          <div className="mt-4 flex justify-center">
+            <Button variant="secondary" className="w-full md:w-fit">
+              {isOpen ? "Show Less" : `Show ${data.flavors.length - 5} More`}
+            </Button>
+          </div>
+        </CollapsibleTrigger>
+      </Collapsible>
 
       <h2 className="text-3xl font-bold tracking-tight">
         Nearby Flavors Of The Day
@@ -135,7 +163,6 @@ function NearbyFods({ source: { slug, address } }: NearbyFodsProps) {
           type: "address",
           address,
         },
-        radius: 25,
       }),
     select: (data) => data.filter((restaurant) => restaurant.slug !== slug),
   });

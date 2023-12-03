@@ -32,11 +32,15 @@ export function FlavorDetailsCard({ slug }: FlavorDetailsProps) {
     return <SomethingWentWrongCard />;
   }
 
+  const isClosed = slug === "z-restaurant-closed-today";
+
   return (
     <Card className="flex flex-col md:flex-row md:justify-between">
       <div className="flex flex-col">
         <CardHeader>
-          <CardTitle className="text-4xl">{data.name}</CardTitle>
+          <CardTitle className="text-4xl">
+            {isClosed ? "Restaurant Closed Today" : data.name}
+          </CardTitle>
         </CardHeader>
 
         <CardContent className="flex flex-grow flex-col justify-between gap-8 pb-0 md:pb-6">
@@ -44,7 +48,12 @@ export function FlavorDetailsCard({ slug }: FlavorDetailsProps) {
             {data.description}
           </CardDescription>
 
-          <div className="flex items-center justify-end gap-4 text-muted-foreground">
+          <div
+            className={cn(
+              "flex items-center justify-end gap-4 text-muted-foreground",
+              isClosed && "hidden",
+            )}
+          >
             <div className="flex flex-col">
               <span className="font-semibold">Allergens:</span>
 

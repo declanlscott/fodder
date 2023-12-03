@@ -9,7 +9,7 @@ import {
   RestaurantsData,
 } from "~/lib/types";
 
-export async function locate({ location, radius }: LocateSchema) {
+export async function locate({ location }: LocateSchema) {
   const res = await ky(`${env.VITE_API_BASE_URL}/restaurants`, {
     searchParams: {
       ...(location.type === "address"
@@ -18,7 +18,6 @@ export async function locate({ location, radius }: LocateSchema) {
             latitude: location.latitude,
             longitude: location.longitude,
           }),
-      radius: radius,
     },
   });
 
