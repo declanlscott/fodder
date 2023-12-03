@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { format, isToday } from "date-fns";
 
 import {
   Card,
@@ -14,29 +15,32 @@ import { cn } from "~/lib/utils";
 
 type UpcomingFodCardProps = {
   flavor: RestaurantData["flavors"][number];
-  isToday: boolean;
 };
 
-export function UpcomingFodCard({ flavor, isToday }: UpcomingFodCardProps) {
+export function UpcomingFodCard({ flavor }: UpcomingFodCardProps) {
   const [imageStatus, setImageStatus] = useState<
     "loading" | "success" | "error"
   >("loading");
+
+  const date = new Date(flavor.date);
 
   return (
     <Card
       className={cn(
         "group relative transition-colors duration-75 hover:bg-accent/75",
-        isToday && "bg-secondary text-secondary-foreground",
+        isToday(date) && "bg-secondary text-secondary-foreground",
       )}
     >
       <CardHeader>
-        <CardTitle>{`${isToday ? "Today - " : ""}${flavor.date}`}</CardTitle>
+        <CardTitle>{format(date, "EEEE, MMMM d")}</CardTitle>
         <CardDescription>
           <Link
             to={`/flavors/${flavor.slug}`}
             className="after:absolute after:inset-0 group-hover:underline"
           >
-            {flavor.name}
+            {flavor.slug === "z-restaurant-closed-today"
+              ? "Restaurant Closed Today"
+              : flavor.name}
           </Link>
         </CardDescription>
       </CardHeader>

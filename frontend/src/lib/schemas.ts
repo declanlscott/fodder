@@ -12,7 +12,6 @@ export const locateSchema = z.object({
       longitude: z.number().gte(-180).lte(180),
     }),
   ]),
-  radius: z.number().int().gt(0).lte(100),
 });
 
 export type LocateSchema = z.infer<typeof locateSchema>;
