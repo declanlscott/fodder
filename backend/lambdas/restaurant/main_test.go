@@ -61,9 +61,6 @@ func TestHandler(t *testing.T) {
 		PathParameters: map[string]string{
 			"slug": "marion",
 		},
-		RequestContext: events.APIGatewayProxyRequestContext{
-			RequestTimeEpoch: time.Now().UTC().UnixMilli(),
-		},
 	})
 	if err != nil {
 		t.Error(err)

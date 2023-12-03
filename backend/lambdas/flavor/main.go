@@ -120,32 +120,22 @@ func scrapeFlavor(slug string, client HttpClient) (*Flavor, error) {
 	return &flavor, nil
 }
 
-func getExpirationDuration(currentTime time.Time) time.Duration {
-	daysUntilSunday := time.Sunday - currentTime.Weekday()
+func getExpiration(requestTime time.Time) time.Duration {
+	chicago, _ := time.LoadLocation("America/Chicago")
+	chicagoTime := requestTime.In(chicago)
+	chicagoMidnight := time.Date(chicagoTime.Year(), chicagoTime.Month(), chicagoTime.Day(), 0, 0, 0, 0, chicago)
 
-	if daysUntilSunday <= 0 {
-		daysUntilSunday += 7
+	expiration := chicagoMidnight.Sub(chicagoTime)
+	if expiration < 0 {
+		expiration += 24 * time.Hour
 	}
 
-	durationUntilSunday := time.Duration(daysUntilSunday*24) * time.Hour
-	nextSunday := currentTime.Add(durationUntilSunday)
-	expirationDate := time.Date(
-		nextSunday.Year(),
-		nextSunday.Month(),
-		nextSunday.Day(),
-		0,
-		0,
-		0,
-		0,
-		time.UTC,
-	)
-
-	expirationDuaration := expirationDate.Sub(currentTime)
-
-	return expirationDuaration
+	return expiration
 }
 
 func getResponseBody(ctx context.Context, slug string) ([]byte, error) {
+	requestTime := time.Now().UTC()
+
 	opt, err := redis.ParseURL(os.Getenv("UPSTASH_REDIS_URL"))
 	if err != nil {
 		return nil, err
@@ -171,7 +161,8 @@ func getResponseBody(ctx context.Context, slug string) ([]byte, error) {
 			return nil, err
 		}
 
-		rdb.Set(ctx, key, body, getExpirationDuration(time.Now().UTC()))
+		expiration := getExpiration(requestTime)
+		rdb.Set(ctx, key, body, expiration)
 
 		return body, nil
 	}
