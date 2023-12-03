@@ -101,12 +101,15 @@ func (e *ScrapeError) Error() string {
 }
 
 func isValidDate(flavorProps FlavorProps, requestTime time.Time) (bool, error) {
-	fodDate, err := time.Parse("2006-01-02T15:04:05", flavorProps.OnDate)
+	chicago, _ := time.LoadLocation("America/Chicago")
+
+	fodDate, err := time.ParseInLocation("2006-01-02T15:04:05", flavorProps.OnDate, chicago)
 	if err != nil {
 		return false, err
 	}
 
-	today := requestTime.Truncate(24 * time.Hour)
+	chicagoTime := requestTime.In(chicago)
+	today := time.Date(chicagoTime.Year(), chicagoTime.Month(), chicagoTime.Day(), 0, 0, 0, 0, chicago)
 
 	if fodDate.After(today) || fodDate.Equal(today) {
 		return true, nil
@@ -215,13 +218,20 @@ func scrapeRestaurant(slug string, requestTime time.Time, client HttpClient) (*R
 
 func getExpiration(requestTime time.Time) time.Duration {
 	chicago, _ := time.LoadLocation("America/Chicago")
+	chicagoTime := requestTime.In(chicago)
+	chicagoMidnight := time.Date(chicagoTime.Year(), chicagoTime.Month(), chicagoTime.Day(), 0, 0, 0, 0, chicago)
 
-	_, offset := requestTime.In(chicago).Zone()
+	expiration := chicagoMidnight.Sub(chicagoTime)
+	if expiration < 0 {
+		expiration += 24 * time.Hour
+	}
 
-	return time.Until(requestTime.Truncate(24 * time.Hour).Add(24 * time.Hour).Add(time.Duration(offset) * time.Second * -1))
+	return expiration
 }
 
-func getResponseBody(ctx context.Context, slug string, requestTime time.Time) ([]byte, error) {
+func getResponseBody(ctx context.Context, slug string) ([]byte, error) {
+	requestTime := time.Now().UTC()
+
 	opt, err := redis.ParseURL(os.Getenv("UPSTASH_REDIS_URL"))
 	if err != nil {
 		return nil, err
@@ -251,7 +261,8 @@ func getResponseBody(ctx context.Context, slug string, requestTime time.Time) ([
 			return nil, err
 		}
 
-		rdb.Set(ctx, key, body, getExpiration(requestTime))
+		expiration := getExpiration(requestTime)
+		rdb.Set(ctx, key, body, expiration)
 
 		return body, nil
 	}
@@ -260,8 +271,6 @@ func getResponseBody(ctx context.Context, slug string, requestTime time.Time) ([
 }
 
 func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	requestTime := time.UnixMilli(request.RequestContext.RequestTimeEpoch)
-
 	slug := request.PathParameters["slug"]
 
 	headers := map[string]string{
@@ -272,7 +281,7 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 		"Access-Control-Allow-Credentials": "true",
 	}
 
-	body, err := getResponseBody(ctx, slug, requestTime)
+	body, err := getResponseBody(ctx, slug)
 	if err != nil {
 		var scrapeError *ScrapeError
 		if errors.As(err, &scrapeError) {
