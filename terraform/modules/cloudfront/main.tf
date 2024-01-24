@@ -11,7 +11,7 @@ resource "aws_cloudfront_distribution" "distribution" {
 
   default_cache_behavior {
     target_origin_id       = var.origin_id
-    viewer_protocol_policy = "redirect-to-https"
+    viewer_protocol_policy = "https-only"
     allowed_methods        = ["GET", "HEAD"]
     cached_methods         = ["GET", "HEAD"]
 
