@@ -2,17 +2,17 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "5.17.0"
+      version = "5.33.0"
     }
 
     archive = {
       source  = "hashicorp/archive"
-      version = "2.4.0"
+      version = "2.4.1"
     }
 
     upstash = {
       source  = "upstash/upstash"
-      version = "1.4.1"
+      version = "1.5.2"
     }
   }
 
@@ -49,24 +49,25 @@ module "remote_backend" {
   source = "./modules/remote-backend"
 }
 
-module "fodder_zone" {
-  source        = "./modules/route53"
-  zone_name     = "fodder.${var.domain}"
-  alias_name    = module.fodder_distribution.domain_name
-  alias_zone_id = module.fodder_distribution.hosted_zone_id
+module "domain" {
+  source                              = "./modules/domain"
+  cloudflare_api_token                = var.cloudflare_api_token
+  root_domain_name                    = var.domain
+  cloudflare_zone_id                  = var.cloudflare_zone_id
+  cloudfront_distribution_domain_name = module.fodder_distribution.domain_name
 }
 
 module "fodder_distribution" {
   source              = "./modules/cloudfront"
   origin_domain_name  = module.fodder_bucket.fodder_bucket_regional_domain_name
   origin_id           = module.fodder_bucket.fodder_bucket_id
-  acm_certificate_arn = module.fodder_zone.certificate_arn
-  aliases             = [module.fodder_zone.zone_name]
+  acm_certificate_arn = module.domain.certificate_arn
+  aliases             = ["fodder.${var.domain}"]
 }
 
 module "fodder_bucket" {
   source                      = "./modules/static-website"
-  bucket_name                 = module.fodder_zone.zone_name
+  bucket_name                 = "fodder.${var.domain}"
   cloudfront_distribution_arn = module.fodder_distribution.arn
 }
 

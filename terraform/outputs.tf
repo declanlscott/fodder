@@ -1,7 +1,3 @@
-output "name_servers" {
-  value = module.fodder_zone.name_servers
-}
-
 output "api_invoke_url" {
   value = aws_apigatewayv2_stage.v1.invoke_url
 }
