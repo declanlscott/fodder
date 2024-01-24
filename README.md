@@ -8,12 +8,12 @@ A few years ago, a certain midwestern fast-food restaurant chain discontinued it
 
 - Infrastructure
   - Terraform IaC
+  - Cloudflare
   - AWS
     - API Gateway (HTTP)
     - Lambda
     - S3
     - CloudFront
-    - Route 53
     - ACM
     - IAM
     - DynamoDB
