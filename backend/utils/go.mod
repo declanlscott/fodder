@@ -1,4 +1,4 @@
-module github.com/dscott1008/fodder/backend/utils
+module fodder/backend/utils
 
 go 1.21.1
 

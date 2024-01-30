@@ -2,7 +2,12 @@ module restaurants
 
 go 1.21.1
 
-require github.com/aws/aws-lambda-go v1.41.0
+require (
+	fodder/backend/utils v0.0.0-00010101000000-000000000000
+	github.com/aws/aws-lambda-go v1.41.0
+)
+
+replace fodder/backend/utils => ../../utils
 
 require (
 	github.com/aws/aws-sdk-go-v2 v1.21.2 // indirect
@@ -23,5 +28,4 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.17.3 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sts v1.23.2 // indirect
 	github.com/aws/smithy-go v1.15.0 // indirect
-	github.com/dscott1008/fodder/backend/utils v0.0.0-20231130034544-c2d41c1e9855 // indirect
 )

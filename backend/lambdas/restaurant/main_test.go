@@ -11,8 +11,8 @@ import (
 	"testing"
 	"time"
 
+	"fodder/backend/utils"
 	"github.com/aws/aws-lambda-go/events"
-	"github.com/dscott1008/fodder/backend/utils"
 )
 
 func TestScrapeRestaurant(t *testing.T) {
