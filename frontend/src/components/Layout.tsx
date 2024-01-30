@@ -106,7 +106,7 @@ export function Layout() {
             <p>
               {"Developed by "}
               <a
-                href="https://github.com/dscott1008"
+                href="https://github.com/declanlscott"
                 className="font-semibold hover:underline"
                 target="_blank"
               >
@@ -122,7 +122,7 @@ export function Layout() {
             aria-label="GitHub repository"
             className="text-muted-foreground"
           >
-            <a href="https://github.com/dscott1008/fodder" target="_blank">
+            <a href="https://github.com/declanlscott/fodder" target="_blank">
               <Github />
             </a>
           </Button>
