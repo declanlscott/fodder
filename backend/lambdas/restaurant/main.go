@@ -260,7 +260,7 @@ func handler(_ context.Context, request events.LambdaFunctionURLRequest) (events
 		}, nil
 	}
 
-	headers["Expires"] = expires.AtMidnight(now)
+	headers["Expires"] = expires.BeforeOpening(now)
 	headers["Access-Control-Allow-Headers"] = headers["Access-Control-Allow-Headers"] + ",Expires"
 
 	return events.LambdaFunctionURLResponse{
