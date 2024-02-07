@@ -33,7 +33,7 @@ resource "aws_s3_bucket_acl" "bucket_acl" {
   depends_on = [aws_s3_bucket_ownership_controls.owner_preferred]
 
   bucket = aws_s3_bucket.fodder.id
-  acl    = "private"
+  acl    = "public-read"
 }
 
 resource "aws_s3_bucket_public_access_block" "allow_public" {
@@ -43,4 +43,25 @@ resource "aws_s3_bucket_public_access_block" "allow_public" {
   block_public_policy     = false
   ignore_public_acls      = false
   restrict_public_buckets = false
+}
+
+data "aws_iam_policy_document" "allow_public" {
+  statement {
+    effect = "Allow"
+
+    principals {
+      type        = "*"
+      identifiers = ["*"]
+    }
+
+    actions = ["s3:GetObject"]
+
+    resources = ["${aws_s3_bucket.fodder.arn}/*"]
+  }
+}
+
+resource "aws_s3_bucket_policy" "bucket_policy" {
+  bucket = aws_s3_bucket.fodder.id
+
+  policy = data.aws_iam_policy_document.allow_public.json
 }

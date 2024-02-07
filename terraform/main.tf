@@ -70,9 +70,8 @@ module "fodder_distribution" {
 }
 
 module "fodder_bucket" {
-  source                      = "./modules/static-website"
-  bucket_name                 = "fodder.${var.domain}"
-  cloudfront_distribution_arn = module.fodder_distribution.arn
+  source      = "./modules/static-website"
+  bucket_name = "fodder.${var.domain}"
 }
 
 module "lambda_iam" {
