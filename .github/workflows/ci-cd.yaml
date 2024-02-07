@@ -6,7 +6,6 @@ env:
   AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_REGION: us-east-2
-  UPSTASH_REDIS_URL: ${{ secrets.UPSTASH_REDIS_URL }}
 
 jobs:
   ci:
@@ -75,12 +74,6 @@ jobs:
       TF_VAR_domain: ${{ vars.DOMAIN }}
       TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       TF_VAR_cloudflare_zone_id: ${{ secrets.CLOUDFLARE_ZONE_ID }}
-      TF_VAR_upstash_email: ${{ secrets.UPSTASH_EMAIL }}
-      TF_VAR_upstash_api_key: ${{ secrets.UPSTASH_API_KEY }}
-      TF_VAR_upstash_redis_region: ${{ vars.UPSTASH_REDIS_REGION }}
-      TF_VAR_upstash_redis_user: ${{ secrets.UPSTASH_REDIS_USER }}
-      TF_VAR_upstash_redis_password: ${{ secrets.UPSTASH_REDIS_PASSWORD }}
-      TF_VAR_upstash_redis_port: ${{ secrets.UPSTASH_REDIS_PORT }}
 
     steps:
       - name: Checkout
