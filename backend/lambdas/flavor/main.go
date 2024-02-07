@@ -7,14 +7,13 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"os"
 	"regexp"
 	"strings"
 	"time"
 
+	"fodder/backend/utils/expires"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
-	"github.com/redis/go-redis/v9"
 )
 
 type HttpClient interface {
@@ -120,58 +119,9 @@ func scrapeFlavor(slug string, client HttpClient) (*Flavor, error) {
 	return &flavor, nil
 }
 
-func getExpiration(requestTime time.Time) time.Duration {
-	chicago, _ := time.LoadLocation("America/Chicago")
-	chicagoTime := requestTime.In(chicago)
-	chicagoMidnight := time.Date(chicagoTime.Year(), chicagoTime.Month(), chicagoTime.Day(), 0, 0, 0, 0, chicago)
-
-	expiration := chicagoMidnight.Sub(chicagoTime)
-	if expiration < 0 {
-		expiration += 24 * time.Hour
-	}
-
-	return expiration
-}
-
-func getResponseBody(ctx context.Context, slug string) ([]byte, error) {
-	requestTime := time.Now().UTC()
-
-	opt, err := redis.ParseURL(os.Getenv("UPSTASH_REDIS_URL"))
-	if err != nil {
-		return nil, err
-	}
-
-	rdb := redis.NewClient(opt)
-	key := fmt.Sprintf("flavor:%s", slug)
-
-	body, err := rdb.Get(ctx, key).Bytes()
-	if err == redis.Nil {
-		// Cache miss
-		flavor, err := scrapeFlavor(slug, &http.Client{
-			CheckRedirect: func(req *http.Request, via []*http.Request) error {
-				return http.ErrUseLastResponse
-			},
-		})
-		if err != nil {
-			return nil, err
-		}
-
-		body, err := json.Marshal(flavor)
-		if err != nil {
-			return nil, err
-		}
-
-		expiration := getExpiration(requestTime)
-		rdb.Set(ctx, key, body, expiration)
-
-		return body, nil
-	}
-
-	return body, nil
-}
-
-func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	slug := request.PathParameters["slug"]
+func handler(_ context.Context, request events.LambdaFunctionURLRequest) (events.LambdaFunctionURLResponse, error) {
+	parts := strings.Split(request.RawPath, "/")
+	slug := parts[len(parts)-1]
 
 	headers := map[string]string{
 		"Content-Type":                     "application/json",
@@ -181,27 +131,37 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 		"Access-Control-Allow-Credentials": "true",
 	}
 
-	body, err := getResponseBody(ctx, slug)
+	flavor, err := scrapeFlavor(slug, &http.Client{
+		CheckRedirect: func(req *http.Request, via []*http.Request) error {
+			return http.ErrUseLastResponse
+		},
+	})
 	if err != nil {
 		var scrapeError *ScrapeError
 		if errors.As(err, &scrapeError) {
 			if scrapeError.StatusCode == http.StatusNotFound {
-				return events.APIGatewayProxyResponse{
+				return events.LambdaFunctionURLResponse{
 					StatusCode: http.StatusNotFound,
 					Headers:    headers,
 					Body:       fmt.Sprintf("{\"message\": \"Flavor not found.\"}"),
 				}, nil
 			}
 		}
+	}
 
-		return events.APIGatewayProxyResponse{
+	body, err := json.Marshal(flavor)
+	if err != nil {
+		return events.LambdaFunctionURLResponse{
 			StatusCode: http.StatusInternalServerError,
 			Headers:    headers,
 			Body:       fmt.Sprintf("{\"message\": \"%s\"}", err.Error()),
 		}, nil
 	}
 
-	return events.APIGatewayProxyResponse{
+	headers["Expires"] = expires.AtMidnight(time.UnixMilli(request.RequestContext.TimeEpoch))
+	headers["Access-Control-Allow-Headers"] = headers["Access-Control-Allow-Headers"] + ",Expires"
+
+	return events.LambdaFunctionURLResponse{
 		StatusCode: http.StatusOK,
 		Headers:    headers,
 		Body:       string(body),

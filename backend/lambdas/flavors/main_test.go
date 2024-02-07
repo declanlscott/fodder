@@ -10,7 +10,7 @@ import (
 	"reflect"
 	"testing"
 
-	"fodder/backend/utils"
+	"fodder/backend/utils/test"
 	"github.com/aws/aws-lambda-go/events"
 )
 
@@ -24,7 +24,7 @@ func (mockHttpClient *MockHttpClient) Do(req *http.Request) (*http.Response, err
 }
 
 func TestScrapeFlavors(t *testing.T) {
-	contents, err := utils.GetMockResponse("flavors.mock.html")
+	contents, err := test.GetMockResponse("flavors.mock.html")
 	if err != nil {
 		t.Error(err)
 		return
@@ -59,7 +59,7 @@ func TestScrapeFlavors(t *testing.T) {
 func TestHandler(t *testing.T) {
 	ctx := context.Background()
 
-	res, err := handler(ctx, events.APIGatewayProxyRequest{})
+	res, err := handler(ctx, events.LambdaFunctionURLRequest{})
 	if err != nil {
 		t.Error(err)
 	}

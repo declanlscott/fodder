@@ -1,14 +1,16 @@
 module flavor
 
-go 1.21.1
+go 1.21.6
 
 require (
-	fodder/backend/utils v0.0.0-00010101000000-000000000000
+	fodder/backend/utils/expires v0.0.0-00010101000000-000000000000
+	fodder/backend/utils/test v0.0.0-00010101000000-000000000000
 	github.com/aws/aws-lambda-go v1.41.0
-	github.com/redis/go-redis/v9 v9.2.1
 )
 
-replace fodder/backend/utils => ../../utils
+replace fodder/backend/utils/test => ../../utils/test
+
+replace fodder/backend/utils/expires => ../../utils/expires
 
 require (
 	github.com/aws/aws-sdk-go-v2 v1.21.2 // indirect
@@ -29,6 +31,4 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.17.3 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sts v1.23.2 // indirect
 	github.com/aws/smithy-go v1.15.0 // indirect
-	github.com/cespare/xxhash/v2 v2.2.0 // indirect
-	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 )

@@ -11,18 +11,18 @@ import (
 	"testing"
 	"time"
 
-	"fodder/backend/utils"
+	"fodder/backend/utils/test"
 	"github.com/aws/aws-lambda-go/events"
 )
 
 func TestScrapeRestaurant(t *testing.T) {
-	contents, err := utils.GetMockResponse("restaurant.mock.html")
+	contents, err := test.GetMockResponse("restaurant.mock.html")
 	if err != nil {
 		t.Error(err)
 		return
 	}
 
-	mockClient := &utils.MockHttpClient{
+	mockClient := &test.MockHttpClient{
 		Response: &http.Response{
 			StatusCode: 200,
 			Body:       io.NopCloser(bytes.NewReader(contents)),
@@ -51,16 +51,11 @@ func TestScrapeRestaurant(t *testing.T) {
 	}
 }
 
-// TODO: TestGetExpiration
-
-// TODO: Mock the redis client
 func TestHandler(t *testing.T) {
 	ctx := context.Background()
 
-	res, err := handler(ctx, events.APIGatewayProxyRequest{
-		PathParameters: map[string]string{
-			"slug": "marion",
-		},
+	res, err := handler(ctx, events.LambdaFunctionURLRequest{
+		RawPath: "/api/restaurants/marion",
 	})
 	if err != nil {
 		t.Error(err)

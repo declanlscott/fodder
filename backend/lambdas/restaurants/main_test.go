@@ -10,7 +10,7 @@ import (
 	"reflect"
 	"testing"
 
-	"fodder/backend/utils"
+	"fodder/backend/utils/test"
 	"github.com/aws/aws-lambda-go/events"
 )
 
@@ -24,7 +24,7 @@ func (mockHttpClient *MockHttpClient) Do(req *http.Request) (*http.Response, err
 }
 
 func TestGetRestaurants(t *testing.T) {
-	contents, err := utils.GetMockResponse("restaurants.mock.json")
+	contents, err := test.GetMockResponse("restaurants.mock.json")
 	if err != nil {
 		t.Errorf("Expected no error, but got %v", err)
 		return
@@ -57,7 +57,7 @@ func TestGetRestaurants(t *testing.T) {
 func TestHandler(t *testing.T) {
 	ctx := context.Background()
 
-	res, err := handler(ctx, events.APIGatewayProxyRequest{
+	res, err := handler(ctx, events.LambdaFunctionURLRequest{
 		QueryStringParameters: map[string]string{
 			"address": "marion, ia",
 		},

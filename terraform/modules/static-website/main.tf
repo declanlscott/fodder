@@ -2,6 +2,18 @@ resource "aws_s3_bucket" "fodder" {
   bucket = var.bucket_name
 }
 
+resource "aws_s3_bucket_website_configuration" "config" {
+  bucket = aws_s3_bucket.fodder.id
+
+  index_document {
+    suffix = "index.html"
+  }
+
+  error_document {
+    key = "index.html"
+  }
+}
+
 resource "aws_s3_bucket_versioning" "versioning" {
   bucket = aws_s3_bucket.fodder.id
 
@@ -24,38 +36,11 @@ resource "aws_s3_bucket_acl" "bucket_acl" {
   acl    = "private"
 }
 
-resource "aws_s3_bucket_public_access_block" "block_public" {
+resource "aws_s3_bucket_public_access_block" "allow_public" {
   bucket = aws_s3_bucket.fodder.id
 
-  block_public_acls       = true
-  block_public_policy     = true
-  ignore_public_acls      = true
-  restrict_public_buckets = true
-}
-
-data "aws_iam_policy_document" "cloudfront_policy" {
-  statement {
-    effect = "Allow"
-
-    principals {
-      type        = "Service"
-      identifiers = ["cloudfront.amazonaws.com"]
-    }
-
-    actions = ["s3:GetObject"]
-
-    resources = ["${aws_s3_bucket.fodder.arn}/*"]
-
-    condition {
-      test     = "StringEquals"
-      variable = "AWS:SourceArn"
-      values   = [var.cloudfront_distribution_arn]
-    }
-  }
-}
-
-resource "aws_s3_bucket_policy" "bucket_policy" {
-  bucket = aws_s3_bucket.fodder.id
-
-  policy = data.aws_iam_policy_document.cloudfront_policy.json
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
 }

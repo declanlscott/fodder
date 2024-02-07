@@ -14,10 +14,6 @@ resource "aws_lambda_function" "function" {
   architectures    = ["arm64"]
   timeout          = 15
 
-  environment {
-    variables = var.lambda_environment_variables
-  }
-
   depends_on = [aws_cloudwatch_log_group.log_group]
 }
 
@@ -26,9 +22,7 @@ resource "aws_cloudwatch_log_group" "log_group" {
   retention_in_days = 14
 }
 
-resource "aws_lambda_permission" "allow_api" {
-  action        = "lambda:InvokeFunction"
-  function_name = var.lambda_function_name
-  principal     = "apigateway.amazonaws.com"
-  source_arn    = var.lambda_permission_source_arn
+resource "aws_lambda_function_url" "latest" {
+  function_name      = aws_lambda_function.function.function_name
+  authorization_type = "NONE"
 }

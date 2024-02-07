@@ -9,7 +9,9 @@ import (
 	"net/http"
 	"net/url"
 	"regexp"
+	"time"
 
+	"fodder/backend/utils/expires"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 )
@@ -126,7 +128,7 @@ func scrapeFlavors(client HttpClient) ([]Flavor, error) {
 	return flavors, nil
 }
 
-func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func handler(_ context.Context, request events.LambdaFunctionURLRequest) (events.LambdaFunctionURLResponse, error) {
 	headers := map[string]string{
 		"Content-Type":                     "application/json",
 		"Access-Control-Allow-Origin":      "*",
@@ -141,7 +143,7 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 		},
 	})
 	if err != nil {
-		return events.APIGatewayProxyResponse{
+		return events.LambdaFunctionURLResponse{
 			StatusCode: http.StatusInternalServerError,
 			Headers:    headers,
 			Body:       fmt.Sprintf("{\"message\": \"%s\"}", err.Error()),
@@ -150,14 +152,17 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 
 	body, err := json.Marshal(flavors)
 	if err != nil {
-		return events.APIGatewayProxyResponse{
+		return events.LambdaFunctionURLResponse{
 			StatusCode: http.StatusInternalServerError,
 			Headers:    headers,
 			Body:       fmt.Sprintf("{\"message\": \"%s\"}", err.Error()),
 		}, nil
 	}
 
-	return events.APIGatewayProxyResponse{
+	headers["Expires"] = expires.AtMidnight(time.UnixMilli(request.RequestContext.TimeEpoch))
+	headers["Access-Control-Allow-Headers"] = headers["Access-Control-Allow-Headers"] + ",Expires"
+
+	return events.LambdaFunctionURLResponse{
 		StatusCode: http.StatusOK,
 		Headers:    headers,
 		Body:       string(body),

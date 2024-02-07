@@ -1,4 +1,4 @@
-module fodder/backend/utils
+module fodder/backend/utils/test
 
 go 1.21.1
 

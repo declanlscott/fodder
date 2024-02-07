@@ -10,18 +10,18 @@ import (
 	"reflect"
 	"testing"
 
-	"fodder/backend/utils"
+	"fodder/backend/utils/test"
 	"github.com/aws/aws-lambda-go/events"
 )
 
 func TestScrapeFlavor(t *testing.T) {
-	contents, err := utils.GetMockResponse("flavor.mock.html")
+	contents, err := test.GetMockResponse("flavor.mock.html")
 	if err != nil {
 		t.Error(err)
 		return
 	}
 
-	mockClient := &utils.MockHttpClient{
+	mockClient := &test.MockHttpClient{
 		Response: &http.Response{
 			StatusCode: 200,
 			Body:       io.NopCloser(bytes.NewReader(contents)),
@@ -47,15 +47,11 @@ func TestScrapeFlavor(t *testing.T) {
 	}
 }
 
-// TODO: TestGetExpiration
-
 func TestHandler(t *testing.T) {
 	ctx := context.Background()
 
-	res, err := handler(ctx, events.APIGatewayProxyRequest{
-		PathParameters: map[string]string{
-			"slug": "devils-food-cake",
-		},
+	res, err := handler(ctx, events.LambdaFunctionURLRequest{
+		RawPath: "/api/flavors/devils-food-cake",
 	})
 	if err != nil {
 		t.Error(err)

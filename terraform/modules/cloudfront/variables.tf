@@ -1,10 +1,50 @@
-variable "origin_domain_name" {
-  description = "DNS domain dame of the S3 bucket"
+variable "static_website_bucket_id" {
+  description = "Unique identifier for the static website bucket origin"
   type        = string
 }
 
-variable "origin_id" {
-  description = "Unique identifier for the origin"
+variable "static_website_bucket_website_endpoint" {
+  description = "Website endpoint for the static website bucket origin"
+  type        = string
+}
+
+variable "restaurant_lambda_function_name" {
+  description = "Unique identifer for the restaurant lambda origin"
+  type        = string
+}
+
+variable "restaurant_lambda_function_url" {
+  description = "Function URL for the restaurant lambda origin"
+  type        = string
+}
+
+variable "restaurants_lambda_function_name" {
+  description = "Unique identifer for the restaurants lambda origin"
+  type        = string
+}
+
+variable "restaurants_lambda_function_url" {
+  description = "Function URL for the restaurants lambda origin"
+  type        = string
+}
+
+variable "flavor_lambda_function_name" {
+  description = "Unique identifer for the flavor lambda origin"
+  type        = string
+}
+
+variable "flavor_lambda_function_url" {
+  description = "Function URL for the flavor lambda origin"
+  type        = string
+}
+
+variable "flavors_lambda_function_name" {
+  description = "Unique identifer for the flavors lambda origin"
+  type        = string
+}
+
+variable "flavors_lambda_function_url" {
+  description = "Function URL for the flavors lambda origin"
   type        = string
 }
 

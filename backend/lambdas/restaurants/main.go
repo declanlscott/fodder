@@ -9,7 +9,9 @@ import (
 	"net/url"
 	"regexp"
 	"strings"
+	"time"
 
+	"fodder/backend/utils/expires"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 )
@@ -157,7 +159,7 @@ func getRestaurants(externalApiUrl string, client HttpClient) ([]Restaurant, err
 
 const ExternalApiBaseUrl = "https://www.culvers.com/api"
 
-func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func handler(_ context.Context, request events.LambdaFunctionURLRequest) (events.LambdaFunctionURLResponse, error) {
 	headers := map[string]string{
 		"Content-Type":                     "application/json",
 		"Access-Control-Allow-Origin":      "*",
@@ -180,7 +182,7 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 		longitude, longOk := request.QueryStringParameters["longitude"]
 
 		if !latOk || !longOk {
-			return events.APIGatewayProxyResponse{
+			return events.LambdaFunctionURLResponse{
 				StatusCode: http.StatusBadRequest,
 				Headers:    headers,
 				Body:       "{\"message\": \"Missing latitude/longitude\"}",
@@ -197,14 +199,14 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 	)
 
 	if restaurantsErr != nil {
-		return events.APIGatewayProxyResponse{
+		return events.LambdaFunctionURLResponse{
 			StatusCode: http.StatusInternalServerError,
 			Headers:    headers,
 			Body:       fmt.Sprintf("{\"message\": \"%s\"}", restaurantsErr.Error()),
 		}, nil
 	}
 	if restaurants == nil {
-		return events.APIGatewayProxyResponse{
+		return events.LambdaFunctionURLResponse{
 			StatusCode: http.StatusNoContent,
 			Headers:    headers,
 		}, nil
@@ -212,14 +214,17 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 
 	body, err := json.Marshal(restaurants)
 	if err != nil {
-		return events.APIGatewayProxyResponse{
+		return events.LambdaFunctionURLResponse{
 			StatusCode: http.StatusInternalServerError,
 			Headers:    headers,
 			Body:       fmt.Sprintf("{\"message\": \"%s\"}", err.Error()),
 		}, nil
 	}
 
-	return events.APIGatewayProxyResponse{
+	headers["Expires"] = expires.AtMidnight(time.UnixMilli(request.RequestContext.TimeEpoch))
+	headers["Access-Control-Allow-Headers"] = headers["Access-Control-Allow-Headers"] + ",Expires"
+
+	return events.LambdaFunctionURLResponse{
 		StatusCode: http.StatusOK,
 		Headers:    headers,
 		Body:       string(body),

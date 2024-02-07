@@ -17,14 +17,3 @@ variable "lambda_role" {
   description = "Amazon Resource Name (ARN) of the function's execution role. The role provides the function's identity and access to AWS services and resources."
   type        = string
 }
-
-variable "lambda_environment_variables" {
-  description = "Map of environment variables that are accessible from the function code during execution"
-  type        = map(string)
-  default     = null
-}
-
-variable "lambda_permission_source_arn" {
-  description = "When the principal is an AWS service, the ARN of the specific resource within that service to grant permission to."
-  type        = string
-}

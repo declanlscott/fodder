@@ -8,14 +8,13 @@ import (
 	"io"
 	"net/http"
 	"net/url"
-	"os"
 	"regexp"
 	"strings"
 	"time"
 
+	"fodder/backend/utils/expires"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
-	"github.com/redis/go-redis/v9"
 )
 
 type HttpClient interface {
@@ -100,7 +99,7 @@ func (e *ScrapeError) Error() string {
 	return fmt.Errorf("received status code %d", e.StatusCode).Error()
 }
 
-func isValidDate(flavorProps FlavorProps, requestTime time.Time) (bool, error) {
+func isValidDate(flavorProps FlavorProps, now time.Time) (bool, error) {
 	chicago, _ := time.LoadLocation("America/Chicago")
 
 	fodDate, err := time.ParseInLocation("2006-01-02T15:04:05", flavorProps.OnDate, chicago)
@@ -108,7 +107,7 @@ func isValidDate(flavorProps FlavorProps, requestTime time.Time) (bool, error) {
 		return false, err
 	}
 
-	chicagoTime := requestTime.In(chicago)
+	chicagoTime := now.In(chicago)
 	today := time.Date(chicagoTime.Year(), chicagoTime.Month(), chicagoTime.Day(), 0, 0, 0, 0, chicago)
 
 	if fodDate.After(today) || fodDate.Equal(today) {
@@ -118,11 +117,11 @@ func isValidDate(flavorProps FlavorProps, requestTime time.Time) (bool, error) {
 	return false, nil
 }
 
-func filterFlavorsByDate(flavorsProps []FlavorProps, requestTime time.Time) ([]FlavorProps, error) {
+func filterFlavorsByDate(flavorsProps []FlavorProps, now time.Time) ([]FlavorProps, error) {
 	var result []FlavorProps
 
 	for _, flavorProps := range flavorsProps {
-		isValid, err := isValidDate(flavorProps, requestTime)
+		isValid, err := isValidDate(flavorProps, now)
 		if err != nil {
 			return result, err
 		}
@@ -135,7 +134,7 @@ func filterFlavorsByDate(flavorsProps []FlavorProps, requestTime time.Time) ([]F
 	return result, nil
 }
 
-func scrapeRestaurant(slug string, requestTime time.Time, client HttpClient) (*Restaurant, error) {
+func scrapeRestaurant(slug string, now time.Time, client HttpClient) (*Restaurant, error) {
 	req, err := http.NewRequest("GET", fmt.Sprintf("%s/%s", BaseApiUrl, slug), nil)
 	if err != nil {
 		return nil, err
@@ -170,7 +169,7 @@ func scrapeRestaurant(slug string, requestTime time.Time, client HttpClient) (*R
 
 	flavorsProps, err := filterFlavorsByDate(
 		nextData.Props.PageProps.Page.CustomData.RestaurantCalendar.Flavors,
-		requestTime,
+		now,
 	)
 	if err != nil {
 		return nil, err
@@ -216,62 +215,9 @@ func scrapeRestaurant(slug string, requestTime time.Time, client HttpClient) (*R
 	return &restaurant, nil
 }
 
-func getExpiration(requestTime time.Time) time.Duration {
-	chicago, _ := time.LoadLocation("America/Chicago")
-	chicagoTime := requestTime.In(chicago)
-	chicagoMidnight := time.Date(chicagoTime.Year(), chicagoTime.Month(), chicagoTime.Day(), 0, 0, 0, 0, chicago)
-
-	expiration := chicagoMidnight.Sub(chicagoTime)
-	if expiration < 0 {
-		expiration += 24 * time.Hour
-	}
-
-	return expiration
-}
-
-func getResponseBody(ctx context.Context, slug string) ([]byte, error) {
-	requestTime := time.Now().UTC()
-
-	opt, err := redis.ParseURL(os.Getenv("UPSTASH_REDIS_URL"))
-	if err != nil {
-		return nil, err
-	}
-
-	rdb := redis.NewClient(opt)
-	key := fmt.Sprintf("restaurant:%s", slug)
-
-	body, err := rdb.Get(ctx, key).Bytes()
-	if err == redis.Nil {
-		// Cache miss
-		restaurant, err := scrapeRestaurant(
-			slug,
-			requestTime,
-			&http.Client{
-				CheckRedirect: func(req *http.Request, via []*http.Request) error {
-					return http.ErrUseLastResponse
-				},
-			},
-		)
-		if err != nil {
-			return nil, err
-		}
-
-		body, err := json.Marshal(restaurant)
-		if err != nil {
-			return nil, err
-		}
-
-		expiration := getExpiration(requestTime)
-		rdb.Set(ctx, key, body, expiration)
-
-		return body, nil
-	}
-
-	return body, nil
-}
-
-func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	slug := request.PathParameters["slug"]
+func handler(_ context.Context, request events.LambdaFunctionURLRequest) (events.LambdaFunctionURLResponse, error) {
+	parts := strings.Split(request.RawPath, "/")
+	slug := parts[len(parts)-1]
 
 	headers := map[string]string{
 		"Content-Type":                     "application/json",
@@ -281,28 +227,43 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 		"Access-Control-Allow-Credentials": "true",
 	}
 
-	body, err := getResponseBody(ctx, slug)
+	now := time.UnixMilli(request.RequestContext.TimeEpoch)
+
+	restaurant, err := scrapeRestaurant(
+		slug,
+		now,
+		&http.Client{
+			CheckRedirect: func(req *http.Request, via []*http.Request) error {
+				return http.ErrUseLastResponse
+			},
+		},
+	)
 	if err != nil {
 		var scrapeError *ScrapeError
 		if errors.As(err, &scrapeError) {
-			// External API redirects with HTTP 302 when the restaurant is not found
-			if scrapeError.StatusCode == http.StatusFound {
-				return events.APIGatewayProxyResponse{
+			if scrapeError.StatusCode == http.StatusNotFound {
+				return events.LambdaFunctionURLResponse{
 					StatusCode: http.StatusNotFound,
 					Headers:    headers,
 					Body:       fmt.Sprintf("{\"message\": \"Restaurant not found.\"}"),
 				}, nil
 			}
 		}
+	}
 
-		return events.APIGatewayProxyResponse{
+	body, err := json.Marshal(restaurant)
+	if err != nil {
+		return events.LambdaFunctionURLResponse{
 			StatusCode: http.StatusInternalServerError,
 			Headers:    headers,
 			Body:       fmt.Sprintf("{\"message\": \"%s\"}", err.Error()),
 		}, nil
 	}
 
-	return events.APIGatewayProxyResponse{
+	headers["Expires"] = expires.AtMidnight(now)
+	headers["Access-Control-Allow-Headers"] = headers["Access-Control-Allow-Headers"] + ",Expires"
+
+	return events.LambdaFunctionURLResponse{
 		StatusCode: http.StatusOK,
 		Headers:    headers,
 		Body:       string(body),

@@ -1,13 +1,16 @@
 module flavors
 
-go 1.21.1
+go 1.21.6
 
 require (
-	fodder/backend/utils v0.0.0-00010101000000-000000000000
+	fodder/backend/utils/expires v0.0.0-00010101000000-000000000000
+	fodder/backend/utils/test v0.0.0-00010101000000-000000000000
 	github.com/aws/aws-lambda-go v1.41.0
 )
 
-replace fodder/backend/utils => ../../utils
+replace fodder/backend/utils/test => ../../utils/test
+
+replace fodder/backend/utils/expires => ../../utils/expires
 
 require (
 	github.com/aws/aws-sdk-go-v2 v1.21.2 // indirect
