@@ -9,16 +9,14 @@ A few years ago, a certain midwestern fast-food restaurant chain discontinued it
 - Infrastructure
   - Terraform IaC
   - Cloudflare
+    - DNS
   - AWS
-    - API Gateway (HTTP)
+    - CloudFront
     - Lambda
     - S3
-    - CloudFront
     - ACM
     - IAM
     - DynamoDB
-  - Upstash
-    - Redis
 - Backend
   - Golang (unit tested)
 - Frontend
