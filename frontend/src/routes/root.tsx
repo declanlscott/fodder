@@ -1,7 +1,10 @@
 import { lazy, Suspense } from "react";
 import { QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { createRootRouteWithContext } from "@tanstack/react-router";
+import {
+  createRootRouteWithContext,
+  ScrollRestoration,
+} from "@tanstack/react-router";
 
 import { Layout } from "~/components/Layout";
 
@@ -23,6 +26,8 @@ export const rootRoute = rootRouteWithContext({
   component: () => (
     <>
       <Layout />
+
+      <ScrollRestoration getKey={(location) => location.pathname} />
 
       <Suspense>
         <TanStackRouterDevtools position="bottom-right" />
