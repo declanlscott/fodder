@@ -1,9 +1,3 @@
-export type NavLinkItem = {
-  title: string;
-  path: string;
-  icon: React.ReactNode;
-};
-
 export type RestaurantsData = {
   name: string;
   address: string;

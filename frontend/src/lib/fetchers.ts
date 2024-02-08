@@ -1,7 +1,7 @@
 import { env } from "env";
 import ky from "ky";
 
-import { LocateSchema } from "~/lib/schemas";
+import { LocateFormSchema } from "~/lib/schemas";
 import {
   FlavorData,
   FlavorsData,
@@ -9,7 +9,7 @@ import {
   RestaurantsData,
 } from "~/lib/types";
 
-export async function locate({ location }: LocateSchema) {
+export async function locate({ location }: LocateFormSchema) {
   const res = await ky(`${env.VITE_API_BASE_URL}/restaurants`, {
     searchParams: {
       ...(location.type === "address"

@@ -1,14 +1,15 @@
-import { useIsMutating } from "@tanstack/react-query";
+import { useIsMutating, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Dessert } from "lucide-react";
 
 import DroppedCone from "~/components/DroppedCone";
 import { FodCard, FodCardSkeleton } from "~/components/FodCard";
-import { LocateCard } from "~/components/LocateCard";
+import { LocateForm } from "~/components/LocateForm";
 import { Card } from "~/components/ui/Card";
-import { useRestaurants } from "~/lib/hooks";
+import { queryOptionsFactory } from "~/lib/queryOptionsFactory";
 
-export function LocatePage() {
-  const { data } = useRestaurants();
+export function Locate() {
+  const queryClient = useQueryClient();
+  const { data } = useQuery(queryOptionsFactory.restaurants(queryClient));
 
   const isPending = useIsMutating({ mutationKey: ["restaurants"] }) > 0;
   const isEmpty = (data?.length ?? -1) === 0;
@@ -16,7 +17,7 @@ export function LocatePage() {
   return (
     <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       <div className="col-span-1">
-        <LocateCard />
+        <LocateForm />
       </div>
 
       <div className="col-span-1 lg:col-span-2 xl:col-span-3">

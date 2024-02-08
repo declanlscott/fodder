@@ -1,17 +1,29 @@
-import { z } from "zod";
+import {
+  literal,
+  maxLength,
+  maxValue,
+  minLength,
+  minValue,
+  number,
+  object,
+  string,
+  variant,
+} from "valibot";
 
-export const locateSchema = z.object({
-  location: z.discriminatedUnion("type", [
-    z.object({
-      type: z.literal("address"),
-      address: z.string().nonempty().max(100),
+import type { Output } from "valibot";
+
+export const LocateFormSchema = object({
+  location: variant("type", [
+    object({
+      type: literal("address"),
+      address: string([minLength(1), maxLength(100)]),
     }),
-    z.object({
-      type: z.literal("coordinates"),
-      latitude: z.number().gte(-90).lte(90),
-      longitude: z.number().gte(-180).lte(180),
+    object({
+      type: literal("coordinates"),
+      latitude: number([minValue(-90), maxValue(90)]),
+      longitude: number([minValue(-180), maxValue(180)]),
     }),
   ]),
 });
 
-export type LocateSchema = z.infer<typeof locateSchema>;
+export type LocateFormSchema = Output<typeof LocateFormSchema>;

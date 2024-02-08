@@ -1,3 +1,5 @@
+import { Dispatch, SetStateAction, useState } from "react";
+import { Link, Outlet } from "@tanstack/react-router";
 import {
   Code2,
   Github,
@@ -8,8 +10,6 @@ import {
   Sun,
   X,
 } from "lucide-react";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 
 import Logo from "~/components/Logo";
 import { useTheme } from "~/components/ThemeProvider";
@@ -21,30 +21,14 @@ import {
   DropdownMenuTrigger,
 } from "~/components/ui/DropdownMenu";
 import { useLockBody } from "~/lib/hooks";
-import { NavLinkItem } from "~/lib/types";
-import { cn } from "~/lib/utils";
-
-const navLinkItems: NavLinkItem[] = [
-  {
-    title: "Locate",
-    path: "/",
-    icon: <Locate />,
-  },
-  {
-    title: "Flavors",
-    path: "/flavors",
-    icon: <IceCream />,
-  },
-];
 
 export function Layout() {
   const [showMobileNav, setShowMobileNav] = useState(false);
 
-  // Scroll to top on route change
-  const { pathname } = useLocation();
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
+  const linkClassNames =
+    "flex items-center gap-2 text-sm font-medium transition-colors hover:text-primary";
+
+  const inactiveLinkClassNames = "text-muted-foreground";
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -72,22 +56,27 @@ export function Layout() {
             </Link>
 
             <ul className="hidden items-center gap-6 sm:flex">
-              {navLinkItems.map(({ title, path, icon }, index) => (
-                <li key={index}>
-                  <NavLink
-                    to={path}
-                    className={({ isActive }) =>
-                      cn(
-                        "flex items-center gap-2 text-sm font-medium transition-colors hover:text-primary",
-                        !isActive && "text-muted-foreground",
-                      )
-                    }
-                  >
-                    {icon}
-                    {title}
-                  </NavLink>
-                </li>
-              ))}
+              <li>
+                <Link
+                  to="/"
+                  className={linkClassNames}
+                  inactiveProps={{ className: inactiveLinkClassNames }}
+                >
+                  <Locate />
+                  <span>Locate</span>
+                </Link>
+              </li>
+
+              <li>
+                <Link
+                  to="/flavors"
+                  className={linkClassNames}
+                  inactiveProps={{ className: inactiveLinkClassNames }}
+                >
+                  <IceCream />
+                  <span>Flavors</span>
+                </Link>
+              </li>
             </ul>
           </nav>
 
@@ -140,27 +129,38 @@ type MobileNavProps = {
 function MobileNav({ setIsVisible }: MobileNavProps) {
   useLockBody();
 
+  const linkClassNames =
+    "flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors hover:text-primary";
+
+  const inactiveLinkClassNames = "text-muted-foreground";
+
   return (
     <div className="fixed inset-0 top-16 z-50 grid h-[calc(100vh-4rem)] grid-flow-row auto-rows-max overflow-auto p-6 pb-32 animate-in slide-in-from-top-9 sm:hidden">
       <nav className="relative z-20 rounded-md border border-border bg-popover shadow-2xl">
         <ul className="rid-flow-row grid auto-rows-max py-1">
-          {navLinkItems.map(({ title, path, icon }, index) => (
-            <li key={index}>
-              <NavLink
-                to={path}
-                className={({ isActive }) =>
-                  cn(
-                    "flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors hover:text-primary",
-                    !isActive && "text-muted-foreground",
-                  )
-                }
-                onClick={() => setIsVisible(false)}
-              >
-                {icon}
-                {title}
-              </NavLink>
-            </li>
-          ))}
+          <li>
+            <Link
+              to="/"
+              className={linkClassNames}
+              inactiveProps={{ className: inactiveLinkClassNames }}
+              onClick={() => setIsVisible(false)}
+            >
+              <Locate />
+              <span>Locate</span>
+            </Link>
+          </li>
+
+          <li>
+            <Link
+              to="/flavors"
+              className={linkClassNames}
+              inactiveProps={{ className: inactiveLinkClassNames }}
+              onClick={() => setIsVisible(false)}
+            >
+              <IceCream />
+              <span>Flavors</span>
+            </Link>
+          </li>
         </ul>
       </nav>
     </div>

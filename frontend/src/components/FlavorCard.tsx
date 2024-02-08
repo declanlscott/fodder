@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/Card";
 import { Skeleton } from "~/components/ui/Skeleton";
@@ -20,7 +20,8 @@ export function FlavorCard({ flavor }: FlavorCardProps) {
       <CardHeader>
         <CardTitle>
           <Link
-            to={`/flavors/${flavor.slug}`}
+            to="/flavors/$slug"
+            params={{ slug: flavor.slug }}
             className="after:absolute after:inset-0 group-hover:underline"
           >
             {flavor.name}

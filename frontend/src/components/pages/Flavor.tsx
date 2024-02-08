@@ -1,5 +1,6 @@
-import { AlertTriangle } from "lucide-react";
 import { useState } from "react";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { AlertTriangle } from "lucide-react";
 
 import { SomethingWentWrongCard } from "~/components/SomethingWentWrongCard";
 import {
@@ -10,15 +11,15 @@ import {
   CardTitle,
 } from "~/components/ui/Card";
 import { Skeleton } from "~/components/ui/Skeleton";
-import { useFlavor } from "~/lib/hooks";
+import { queryOptionsFactory } from "~/lib/queryOptionsFactory";
 import { cn } from "~/lib/utils";
+import { flavorRoute } from "~/routes/flavor";
 
-type FlavorDetailsProps = {
-  slug: string;
-};
-
-export function FlavorDetailsCard({ slug }: FlavorDetailsProps) {
-  const { data, isLoading } = useFlavor(slug);
+export function Flavor() {
+  const { slug } = flavorRoute.useParams();
+  const { data, isLoading } = useSuspenseQuery(
+    queryOptionsFactory.flavor(slug),
+  );
 
   const [imageStatus, setImageStatus] = useState<
     "loading" | "success" | "error"

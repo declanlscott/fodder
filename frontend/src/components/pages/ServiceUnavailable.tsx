@@ -1,6 +1,6 @@
 import { Construction } from "lucide-react";
 
-export function ReconstructionPage() {
+export function ServiceUnavailable() {
   return (
     <div className="mt-8 flex flex-col items-center justify-center gap-8 sm:flex-row sm:gap-16">
       <Construction className="h-48 w-48" />

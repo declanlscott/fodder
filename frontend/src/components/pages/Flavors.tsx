@@ -1,8 +1,10 @@
-import { FlavorCard, FlavorCardSkeleton } from "~/components/FlavorCard";
-import { useFlavors } from "~/lib/hooks";
+import { useSuspenseQuery } from "@tanstack/react-query";
 
-export function FlavorsPage() {
-  const { data, isLoading } = useFlavors();
+import { FlavorCard, FlavorCardSkeleton } from "~/components/FlavorCard";
+import { queryOptionsFactory } from "~/lib/queryOptionsFactory";
+
+export function Flavors() {
+  const { data, isLoading } = useSuspenseQuery(queryOptionsFactory.flavors);
 
   return (
     <>

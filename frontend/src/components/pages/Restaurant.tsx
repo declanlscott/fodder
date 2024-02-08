@@ -1,7 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { MapPin, Phone } from "lucide-react";
-import { useEffect, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
 
 import DroppedCone from "~/components/DroppedCone";
 import { FodCard, FodCardSkeleton } from "~/components/FodCard";
@@ -18,29 +17,17 @@ import {
   UpcomingFodCard,
   UpcomingFodCardSkeleton,
 } from "~/components/UpcomingFodCard";
-import { useRestaurant } from "~/lib/hooks";
-import { locate } from "~/lib/requests";
+import { locate } from "~/lib/fetchers";
+import { queryOptionsFactory } from "~/lib/queryOptionsFactory";
+import { restaurantRoute } from "~/routes/restaurant";
 
-export function RestaurantPage() {
-  const { slug } = useParams();
-
-  if (!slug) {
-    return null;
-  }
-
-  return <RestaurantDetails slug={slug} />;
-}
-
-function RestaurantDetails({ slug }: { slug: string }) {
-  const { data, isLoading } = useRestaurant(slug);
+export function Restaurant() {
+  const { slug } = restaurantRoute.useParams();
+  const { data, isLoading } = useSuspenseQuery(
+    queryOptionsFactory.restaurant(slug),
+  );
 
   const [isOpen, setIsOpen] = useState(false);
-
-  const location = useLocation();
-
-  useEffect(() => {
-    setIsOpen(false);
-  }, [location]);
 
   if (isLoading) {
     return <RestaurantDetailsSkeleton />;

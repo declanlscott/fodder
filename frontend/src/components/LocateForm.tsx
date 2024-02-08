@@ -1,7 +1,8 @@
-import { Ban, Loader2, MapPin, MapPinOff, Send } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { valibotResolver } from "@hookform/resolvers/valibot";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Ban, Loader2, MapPin, MapPinOff, Send } from "lucide-react";
 
 import { Button } from "~/components/ui/Button";
 import {
@@ -23,13 +24,15 @@ import {
 import { Input } from "~/components/ui/Input";
 import { Label, labelVariants } from "~/components/ui/Label";
 import { Toggle } from "~/components/ui/Toggle";
-import { useGeolocation, useLocate } from "~/lib/hooks";
-import { LocateSchema, locateSchema } from "~/lib/schemas";
+import { locate } from "~/lib/fetchers";
+import { useGeolocation } from "~/lib/hooks";
+import { queryOptionsFactory } from "~/lib/queryOptionsFactory";
+import { LocateFormSchema } from "~/lib/schemas";
 import { cn } from "~/lib/utils";
 
-export function LocateCard() {
-  const form = useForm<LocateSchema>({
-    resolver: zodResolver(locateSchema),
+export function LocateForm() {
+  const form = useForm<LocateFormSchema>({
+    resolver: valibotResolver(LocateFormSchema),
     defaultValues: {
       location: {
         type: "address",
@@ -44,7 +47,8 @@ export function LocateCard() {
     setEnabled: setGpsEnabled,
   } = useGeolocation({});
 
-  const { mutation, onSubmit } = useLocate();
+  const mutation = useMutation({ mutationFn: locate });
+  const queryClient = useQueryClient();
 
   function handleGpsPressed(pressed: boolean) {
     setGpsEnabled(pressed);
@@ -71,6 +75,21 @@ export function LocateCard() {
       });
     }
   }, [gpsEnabled, geolocation, form, setGpsEnabled]);
+
+  function onSubmit(data: LocateFormSchema) {
+    console.log(data);
+
+    if (!mutation.isPending) {
+      mutation.mutate(data, {
+        onSuccess: (data) => {
+          queryClient.setQueryData(
+            queryOptionsFactory.restaurants(queryClient).queryKey,
+            data,
+          );
+        },
+      });
+    }
+  }
 
   return (
     <Form {...form}>

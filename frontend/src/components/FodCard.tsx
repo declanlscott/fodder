@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 
 import {
   Card,
@@ -25,7 +25,8 @@ export function FodCard({ restaurant }: FodCardProps) {
       <CardHeader>
         <CardTitle>
           <Link
-            to={`/flavors/${restaurant.fod.slug}`}
+            to="/flavors/$slug"
+            params={{ slug: restaurant.fod.slug }}
             className="after:absolute after:inset-0 group-hover:underline"
           >
             {restaurant.fod.name}
@@ -34,7 +35,8 @@ export function FodCard({ restaurant }: FodCardProps) {
 
         <CardDescription className="z-10">
           <Link
-            to={`/restaurants/${restaurant.slug}`}
+            to="/restaurants/$slug"
+            params={{ slug: restaurant.slug }}
             className="hover:underline"
           >
             {restaurant.name}

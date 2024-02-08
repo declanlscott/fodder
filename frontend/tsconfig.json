@@ -20,11 +20,12 @@
     /* Absolute imports and module path aliases */
     "baseUrl": "./src",
     "paths": {
+      "~/ui/*": ["components/ui/*"],
+      "~/pages/*": ["components/pages/*"],
       "~/components/*": ["components/*"],
       "~/lib/*": ["lib/*"],
-      "~/pages/*": ["pages/*"],
-      "~/styles/*": ["styles/*"],
-      "~/ui/*": ["components/ui/*"]
+      "~/routes/*": ["routes/*"],
+      "~/styles/*": ["styles/*"]
     }
   },
   "include": ["src"],

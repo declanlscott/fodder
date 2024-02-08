@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 import { format, isToday } from "date-fns";
 
 import {
@@ -35,7 +35,8 @@ export function UpcomingFodCard({ flavor }: UpcomingFodCardProps) {
         <CardTitle>{format(date, "EEEE, MMMM d")}</CardTitle>
         <CardDescription>
           <Link
-            to={`/flavors/${flavor.slug}`}
+            to="/flavors/$slug"
+            params={{ slug: flavor.slug }}
             className="after:absolute after:inset-0 group-hover:underline"
           >
             {flavor.slug === "z-restaurant-closed-today"
