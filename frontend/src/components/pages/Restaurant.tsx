@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { MapPin, Phone } from "lucide-react";
 
@@ -28,6 +28,10 @@ export function Restaurant() {
   );
 
   const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    setIsOpen(false);
+  }, [slug]);
 
   if (isLoading) {
     return <RestaurantDetailsSkeleton />;
