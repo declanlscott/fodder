@@ -77,8 +77,6 @@ export function LocateForm() {
   }, [gpsEnabled, geolocation, form, setGpsEnabled]);
 
   function onSubmit(data: LocateFormSchema) {
-    console.log(data);
-
     if (!mutation.isPending) {
       mutation.mutate(data, {
         onSuccess: (data) => {
