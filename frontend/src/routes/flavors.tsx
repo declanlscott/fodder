@@ -8,6 +8,6 @@ export const flavorsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/flavors",
   loader: ({ context: { queryClient } }) =>
-    queryClient.ensureQueryData(queryOptionsFactory.flavors),
+    queryClient.ensureQueryData(queryOptionsFactory.flavors()),
   component: () => <Flavors />,
 });

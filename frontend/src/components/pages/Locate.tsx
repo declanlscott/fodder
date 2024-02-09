@@ -9,7 +9,7 @@ import { queryOptionsFactory } from "~/lib/queryOptionsFactory";
 
 export function Locate() {
   const queryClient = useQueryClient();
-  const { data } = useQuery(queryOptionsFactory.restaurants(queryClient));
+  const { data } = useQuery(queryOptionsFactory.restaurants.query(queryClient));
 
   const isPending = useIsMutating({ mutationKey: ["restaurants"] }) > 0;
   const isEmpty = (data?.length ?? -1) === 0;

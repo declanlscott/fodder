@@ -1,6 +1,6 @@
 import { queryOptions } from "@tanstack/react-query";
 
-import { getFlavor, getFlavors, getRestaurant } from "~/lib/fetchers";
+import { getFlavor, getFlavors, getRestaurant, locate } from "~/lib/fetchers";
 import { RestaurantsData } from "~/lib/types";
 
 import type { QueryClient } from "@tanstack/react-query";
@@ -11,19 +11,27 @@ export const queryOptionsFactory = {
       queryKey: ["restaurant", slug],
       queryFn: ({ queryKey }) => getRestaurant(queryKey[1]),
     }),
-  restaurants: (queryClient: QueryClient) =>
-    queryOptions({
-      queryKey: ["restaurants"],
-      queryFn: ({ queryKey }) =>
-        queryClient.getQueryData<RestaurantsData>(queryKey) ?? null,
+  restaurants: {
+    key: ["restaurants"] as const,
+    mutation: () => ({
+      mutationKey: queryOptionsFactory.restaurants.key,
+      mutationFn: locate,
     }),
+    query: (queryClient: QueryClient) =>
+      queryOptions({
+        queryKey: queryOptionsFactory.restaurants.key,
+        queryFn: ({ queryKey }) =>
+          queryClient.getQueryData<RestaurantsData>(queryKey) ?? null,
+      }),
+  },
   flavor: (slug: string) =>
     queryOptions({
       queryKey: ["flavor", slug],
       queryFn: ({ queryKey }) => getFlavor(queryKey[1]),
     }),
-  flavors: queryOptions({
-    queryKey: ["flavors"],
-    queryFn: getFlavors,
-  }),
+  flavors: () =>
+    queryOptions({
+      queryKey: ["flavors"],
+      queryFn: getFlavors,
+    }),
 };

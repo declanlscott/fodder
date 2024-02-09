@@ -4,7 +4,7 @@ import { FlavorCard, FlavorCardSkeleton } from "~/components/FlavorCard";
 import { queryOptionsFactory } from "~/lib/queryOptionsFactory";
 
 export function Flavors() {
-  const { data, isLoading } = useSuspenseQuery(queryOptionsFactory.flavors);
+  const { data, isLoading } = useSuspenseQuery(queryOptionsFactory.flavors());
 
   return (
     <>

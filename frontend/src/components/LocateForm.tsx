@@ -24,7 +24,6 @@ import {
 import { Input } from "~/components/ui/Input";
 import { Label, labelVariants } from "~/components/ui/Label";
 import { Toggle } from "~/components/ui/Toggle";
-import { locate } from "~/lib/fetchers";
 import { useGeolocation } from "~/lib/hooks";
 import { queryOptionsFactory } from "~/lib/queryOptionsFactory";
 import { LocateFormSchema } from "~/lib/schemas";
@@ -47,7 +46,7 @@ export function LocateForm() {
     setEnabled: setGpsEnabled,
   } = useGeolocation({});
 
-  const mutation = useMutation({ mutationFn: locate });
+  const mutation = useMutation(queryOptionsFactory.restaurants.mutation());
   const queryClient = useQueryClient();
 
   function handleGpsPressed(pressed: boolean) {
@@ -80,10 +79,7 @@ export function LocateForm() {
     if (!mutation.isPending) {
       mutation.mutate(data, {
         onSuccess: (data) => {
-          queryClient.setQueryData(
-            queryOptionsFactory.restaurants(queryClient).queryKey,
-            data,
-          );
+          queryClient.setQueryData(queryOptionsFactory.restaurants.key, data);
         },
       });
     }
