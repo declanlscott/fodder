@@ -1,6 +1,9 @@
 import DroppedCone from "~/components/DroppedCone";
+import { useTitle } from "~/lib/hooks";
 
 export function NotFound() {
+  useTitle({ title: "Page Not Found" });
+
   return (
     <div className="mt-8 flex flex-col items-center justify-center gap-8 sm:flex-row sm:gap-16">
       <DroppedCone className="w-48" />

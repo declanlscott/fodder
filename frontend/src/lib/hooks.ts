@@ -80,3 +80,23 @@ export function useLockBody() {
     return () => (document.body.style.overflow = originalStyle);
   }, []);
 }
+
+export function useTitle(
+  props: { title?: string; isLoading?: boolean } = { isLoading: false },
+) {
+  const { title, isLoading } = props;
+
+  const appName = "Fodder";
+
+  useEffect(() => {
+    if (isLoading) {
+      document.title = `Loading... | ${appName}`;
+    } else if (title) {
+      document.title = `${title} | ${appName}`;
+    }
+
+    return () => {
+      document.title = appName;
+    };
+  }, [title, isLoading]);
+}

@@ -11,6 +11,7 @@ import {
   CardTitle,
 } from "~/components/ui/Card";
 import { Skeleton } from "~/components/ui/Skeleton";
+import { useTitle } from "~/lib/hooks";
 import { queryOptionsFactory } from "~/lib/queryOptionsFactory";
 import { cn } from "~/lib/utils";
 import { flavorRoute } from "~/routes/flavor";
@@ -20,6 +21,8 @@ export function Flavor() {
   const { data, isLoading } = useSuspenseQuery(
     queryOptionsFactory.flavor(slug),
   );
+
+  useTitle({ title: data.name, isLoading });
 
   const [imageStatus, setImageStatus] = useState<
     "loading" | "success" | "error"

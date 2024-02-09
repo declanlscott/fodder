@@ -18,6 +18,7 @@ import {
   UpcomingFodCardSkeleton,
 } from "~/components/UpcomingFodCard";
 import { locate } from "~/lib/fetchers";
+import { useTitle } from "~/lib/hooks";
 import { queryOptionsFactory } from "~/lib/queryOptionsFactory";
 import { restaurantRoute } from "~/routes/restaurant";
 
@@ -26,6 +27,8 @@ export function Restaurant() {
   const { data, isLoading } = useSuspenseQuery(
     queryOptionsFactory.restaurant(slug),
   );
+
+  useTitle({ title: data?.name, isLoading });
 
   const [isOpen, setIsOpen] = useState(false);
 

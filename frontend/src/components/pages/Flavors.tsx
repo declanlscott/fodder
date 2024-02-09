@@ -1,10 +1,13 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 
 import { FlavorCard, FlavorCardSkeleton } from "~/components/FlavorCard";
+import { useTitle } from "~/lib/hooks";
 import { queryOptionsFactory } from "~/lib/queryOptionsFactory";
 
 export function Flavors() {
   const { data, isLoading } = useSuspenseQuery(queryOptionsFactory.flavors());
+
+  useTitle({ title: "Flavors" });
 
   return (
     <>
