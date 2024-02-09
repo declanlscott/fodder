@@ -22,7 +22,7 @@
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-toggle": "^1.0.3",
     "@tanstack/react-query": "^5.18.1",
-    "@tanstack/react-router": "^1.15.22",
+    "@tanstack/react-router": "^1.16.0",
     "clsx": "^2.1.0",
     "cva": "npm:class-variance-authority@^0.7.0",
     "date-fns": "^2.30.0",
