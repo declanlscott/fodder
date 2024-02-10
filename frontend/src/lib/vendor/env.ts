@@ -27,10 +27,10 @@ type Reduce<
 > = TArr extends []
   ? TAcc
   : TArr extends [infer Head, ...infer Tail]
-  ? Tail extends Array<Record<string, unknown>>
-    ? Head & Reduce<Tail, TAcc>
-    : never
-  : never;
+    ? Tail extends Array<Record<string, unknown>>
+      ? Head & Reduce<Tail, TAcc>
+      : never
+    : never;
 
 export interface BaseOptions<
   TShared extends Record<string, BaseSchema>,
@@ -117,15 +117,15 @@ export interface StrictOptions<
         [TKey in keyof TClient]: TPrefix extends undefined
           ? never
           : TKey extends `${TPrefix}${string}`
-          ? TKey
-          : never;
+            ? TKey
+            : never;
       }[keyof TClient]
     | {
         [TKey in keyof TServer]: TPrefix extends undefined
           ? TKey
           : TKey extends `${TPrefix}${string}`
-          ? never
-          : TKey;
+            ? never
+            : TKey;
       }[keyof TServer]
     | {
         [TKey in keyof TShared]: TKey extends string ? TKey : never;
@@ -170,12 +170,12 @@ export interface ServerOptions<
     [TKey in keyof TServer]: TPrefix extends undefined
       ? TServer[TKey]
       : TPrefix extends ""
-      ? TServer[TKey]
-      : TKey extends `${TPrefix}${string}`
-      ? ErrorMessage<`${TKey extends `${TPrefix}${string}`
-          ? TKey
-          : never} should not prefixed with ${TPrefix}.`>
-      : TServer[TKey];
+        ? TServer[TKey]
+        : TKey extends `${TPrefix}${string}`
+          ? ErrorMessage<`${TKey extends `${TPrefix}${string}`
+              ? TKey
+              : never} should not prefixed with ${TPrefix}.`>
+          : TServer[TKey];
   }>;
 }
 
