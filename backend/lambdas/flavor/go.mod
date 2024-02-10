@@ -5,7 +5,7 @@ go 1.21.6
 require (
 	fodder/backend/utils/expires v0.0.0-00010101000000-000000000000
 	fodder/backend/utils/test v0.0.0-00010101000000-000000000000
-	github.com/aws/aws-lambda-go v1.41.0
+	github.com/aws/aws-lambda-go v1.46.0
 )
 
 replace fodder/backend/utils/test => ../../utils/test
