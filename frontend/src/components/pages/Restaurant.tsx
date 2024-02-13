@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { MapPin, Phone } from "lucide-react";
 
@@ -22,6 +22,8 @@ import { useTitle } from "~/lib/hooks";
 import { queryOptionsFactory } from "~/lib/queryOptionsFactory";
 import { restaurantRoute } from "~/routes/restaurant";
 
+import type { RestaurantData } from "~/lib/types";
+
 export function Restaurant() {
   const { slug } = restaurantRoute.useParams();
   const { data, isLoading } = useSuspenseQuery(
@@ -29,12 +31,6 @@ export function Restaurant() {
   );
 
   useTitle({ title: data?.name, isLoading });
-
-  const [isOpen, setIsOpen] = useState(false);
-
-  useEffect(() => {
-    setIsOpen(false);
-  }, [slug]);
 
   if (isLoading) {
     return <RestaurantDetailsSkeleton />;
@@ -66,28 +62,7 @@ export function Restaurant() {
         </div>
       </div>
 
-      <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {data.flavors.slice(0, 5).map((flavor) => (
-            <UpcomingFodCard key={flavor.date} flavor={flavor} />
-          ))}
-          <CollapsibleContent asChild>
-            <>
-              {data.flavors.slice(5).map((flavor) => (
-                <UpcomingFodCard key={flavor.date} flavor={flavor} />
-              ))}
-            </>
-          </CollapsibleContent>
-        </div>
-
-        <CollapsibleTrigger asChild>
-          <div className="mt-4 flex justify-center">
-            <Button variant="secondary" className="w-full md:w-fit">
-              {isOpen ? "Show Less" : `Show ${data.flavors.length - 5} More`}
-            </Button>
-          </div>
-        </CollapsibleTrigger>
-      </Collapsible>
+      <UpcomingFlavors key={slug} flavors={data.flavors} />
 
       <h2 className="text-3xl font-bold tracking-tight">
         Nearby Flavors Of The Day
@@ -95,6 +70,39 @@ export function Restaurant() {
 
       <NearbyFods source={{ slug, address }} />
     </div>
+  );
+}
+
+function UpcomingFlavors({ flavors }: { flavors: RestaurantData["flavors"] }) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const initialNumberOfFlavors = 5;
+
+  return (
+    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {flavors.slice(0, initialNumberOfFlavors).map((flavor) => (
+          <UpcomingFodCard key={flavor.date} flavor={flavor} />
+        ))}
+        <CollapsibleContent asChild>
+          <>
+            {flavors.slice(initialNumberOfFlavors).map((flavor) => (
+              <UpcomingFodCard key={flavor.date} flavor={flavor} />
+            ))}
+          </>
+        </CollapsibleContent>
+      </div>
+
+      <CollapsibleTrigger asChild>
+        <div className="mt-4 flex justify-center">
+          <Button variant="secondary" className="w-full md:w-fit">
+            {isOpen
+              ? "Show Less"
+              : `Show ${flavors.length - initialNumberOfFlavors} More`}
+          </Button>
+        </div>
+      </CollapsibleTrigger>
+    </Collapsible>
   );
 }
 

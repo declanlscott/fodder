@@ -1,9 +1,18 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-export function useGeolocation(
-  options: PositionOptions,
+export type UseGeolocationProps = {
+  options?: PositionOptions;
+  initiallyEnabled?: boolean;
+  successCallback: (location: { latitude: number; longitude: number }) => void;
+  errorCallback: () => void;
+};
+
+export function useGeolocation({
+  options = {},
   initiallyEnabled = false,
-) {
+  successCallback,
+  errorCallback,
+}: UseGeolocationProps) {
   const [enabled, setEnabled] = useState(initiallyEnabled);
 
   const [geolocation, setGeolocation] = useState<
@@ -23,17 +32,22 @@ export function useGeolocation(
 
   useEffect(() => {
     const onEvent = (position: GeolocationPosition) => {
+      const latitude = parseFloat(position.coords.latitude.toFixed(2));
+      const longitude = parseFloat(position.coords.longitude.toFixed(2));
+
       setGeolocation({
         status: "success",
         position: {
           ...position,
           coords: {
             ...position.coords,
-            latitude: parseFloat(position.coords.latitude.toFixed(2)),
-            longitude: parseFloat(position.coords.longitude.toFixed(2)),
+            latitude,
+            longitude,
           },
         },
       });
+
+      successCallback({ latitude, longitude });
     };
 
     const onEventError = (error: GeolocationPositionError) => {
@@ -41,6 +55,8 @@ export function useGeolocation(
         status: "error",
         error,
       });
+
+      errorCallback();
     };
 
     if (enabled) {
@@ -64,28 +80,17 @@ export function useGeolocation(
         navigator.geolocation.clearWatch(watchId);
       };
     }
-  }, [enabled]);
+  }, [enabled, successCallback, errorCallback]);
 
   return { geolocation, enabled, setEnabled };
 }
 
-export function useLockBody() {
-  useLayoutEffect((): (() => void) => {
-    const originalStyle: string = window.getComputedStyle(
-      document.body,
-    ).overflow;
+export type UseTitleProps = {
+  title?: string;
+  isLoading?: boolean;
+};
 
-    document.body.style.overflow = "hidden";
-
-    return () => (document.body.style.overflow = originalStyle);
-  }, []);
-}
-
-export function useTitle(
-  props: { title?: string; isLoading?: boolean } = { isLoading: false },
-) {
-  const { title, isLoading } = props;
-
+export function useTitle({ title, isLoading = false }: UseTitleProps) {
   const appName = "Fodder";
 
   useEffect(() => {

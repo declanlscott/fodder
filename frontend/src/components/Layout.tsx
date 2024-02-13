@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useLayoutEffect, useState } from "react";
 import { Link, Outlet } from "@tanstack/react-router";
 import {
   Code2,
@@ -20,7 +20,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "~/components/ui/DropdownMenu";
-import { useLockBody } from "~/lib/hooks";
 
 export function Layout() {
   const [showMobileNav, setShowMobileNav] = useState(false);
@@ -127,7 +126,13 @@ type MobileNavProps = {
 };
 
 function MobileNav({ setIsVisible }: MobileNavProps) {
-  useLockBody();
+  useLayoutEffect((): (() => void) => {
+    const originalStyle = window.getComputedStyle(document.body).overflow;
+
+    document.body.style.overflow = "hidden";
+
+    return () => (document.body.style.overflow = originalStyle);
+  }, []);
 
   const linkClassNames =
     "flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors hover:text-primary";

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { valibotResolver } from "@hookform/resolvers/valibot";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -40,11 +40,28 @@ export function LocateForm() {
     },
   });
 
+  const gpsSuccessCallback = useCallback(
+    (location: { latitude: number; longitude: number }) => {
+      form.setValue("location.latitude", location.latitude);
+      form.setValue("location.longitude", location.longitude);
+    },
+    [form],
+  );
+
+  const gpsErrorCallback = useCallback(() => {
+    form.resetField("location", {
+      defaultValue: { type: "address", address: "" },
+    });
+  }, [form]);
+
   const {
     geolocation,
     enabled: gpsEnabled,
     setEnabled: setGpsEnabled,
-  } = useGeolocation({});
+  } = useGeolocation({
+    successCallback: gpsSuccessCallback,
+    errorCallback: gpsErrorCallback,
+  });
 
   const mutation = useMutation(queryOptionsFactory.restaurants.mutation());
   const queryClient = useQueryClient();
@@ -58,22 +75,6 @@ export function LocateForm() {
         : { type: "address", address: "" },
     });
   }
-
-  useEffect(() => {
-    if (gpsEnabled && geolocation.status === "success") {
-      form.setValue("location.latitude", geolocation.position.coords.latitude);
-      form.setValue(
-        "location.longitude",
-        geolocation.position.coords.longitude,
-      );
-    } else if (geolocation.status === "error") {
-      setGpsEnabled(false);
-
-      form.resetField("location", {
-        defaultValue: { type: "address", address: "" },
-      });
-    }
-  }, [gpsEnabled, geolocation, form, setGpsEnabled]);
 
   function onSubmit(data: LocateFormSchema) {
     if (!mutation.isPending) {
