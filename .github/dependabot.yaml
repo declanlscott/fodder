@@ -9,34 +9,34 @@ updates:
   - package-ecosystem: "npm" # See documentation for possible values
     directory: "/frontend" # Location of package manifests
     schedule:
-      interval: "daily"
+      interval: "weekly"
 
   # Backend
   - package-ecosystem: "gomod"
     directory: /backend/lambdas/flavor
     schedule:
-      interval: "daily"
+      interval: "weekly"
   - package-ecosystem: "gomod"
     directory: /backend/lambdas/flavors
     schedule:
-      interval: "daily"
+      interval: "weekly"
   - package-ecosystem: "gomod"
     directory: /backend/lambdas/restaurant
     schedule:
-      interval: "daily"
+      interval: "weekly"
   - package-ecosystem: "gomod"
     directory: /backend/lambdas/restaurants
     schedule:
-      interval: "daily"
+      interval: "weekly"
 
   # Terraform
   - package-ecosystem: "terraform"
     directory: /terraform
     schedule:
-      interval: "daily"
+      interval: "weekly"
 
   # GitHub Actions
   - package-ecosystem: "github-actions"
     directory: /
     schedule:
-      interval: "daily"
+      interval: "weekly"
