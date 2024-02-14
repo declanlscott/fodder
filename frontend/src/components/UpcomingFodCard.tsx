@@ -68,25 +68,3 @@ export function UpcomingFodCard({ flavor }: UpcomingFodCardProps) {
     </Card>
   );
 }
-
-type UpcomingFodCardSkeletonProps = {
-  isToday: boolean;
-};
-
-export function UpcomingFodCardSkeleton({
-  isToday,
-}: UpcomingFodCardSkeletonProps) {
-  return (
-    <Card className={cn(isToday && "bg-secondary text-secondary-foreground")}>
-      <CardHeader>
-        <Skeleton className="h-6 w-4/5" />
-
-        <Skeleton className="h-4 w-1/2" />
-      </CardHeader>
-
-      <CardContent>
-        <Skeleton className="aspect-square w-full rounded-md" />
-      </CardContent>
-    </Card>
-  );
-}

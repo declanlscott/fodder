@@ -51,17 +51,3 @@ export function FlavorCard({ flavor }: FlavorCardProps) {
     </Card>
   );
 }
-
-export function FlavorCardSkeleton() {
-  return (
-    <Card>
-      <CardHeader>
-        <Skeleton className="h-5 w-2/3" />
-      </CardHeader>
-
-      <CardContent>
-        <Skeleton className="aspect-square w-full rounded-md" />
-      </CardContent>
-    </Card>
-  );
-}

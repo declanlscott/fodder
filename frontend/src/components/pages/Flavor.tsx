@@ -18,19 +18,13 @@ import { flavorRoute } from "~/routes/flavor";
 
 export function Flavor() {
   const { slug } = flavorRoute.useParams();
-  const { data, isLoading } = useSuspenseQuery(
-    queryOptionsFactory.flavor(slug),
-  );
+  const { data } = useSuspenseQuery(queryOptionsFactory.flavor(slug));
 
-  useTitle({ title: data.name, isLoading });
+  useTitle({ title: data.name });
 
   const [imageStatus, setImageStatus] = useState<
     "loading" | "success" | "error"
   >("loading");
-
-  if (isLoading) {
-    return <FlavorDetailsCardSkeleton />;
-  }
 
   if (!data) {
     return <SomethingWentWrongCard />;
@@ -95,47 +89,6 @@ export function Flavor() {
           onError={() => setImageStatus("error")}
           className="hidden"
         />
-      </div>
-    </Card>
-  );
-}
-
-function FlavorDetailsCardSkeleton() {
-  return (
-    <Card className="flex flex-col md:flex-row md:justify-between">
-      <div className="flex w-full flex-col">
-        <CardHeader>
-          <Skeleton className="h-9 w-4/5 sm:w-3/5" />
-        </CardHeader>
-
-        <CardContent className="flex flex-grow flex-col justify-between gap-8 pb-0 md:pb-6">
-          <div className="space-y-2">
-            <Skeleton className="h-5 w-full" />
-            <Skeleton className="h-5 w-full sm:w-11/12" />
-            <Skeleton className="h-5 w-11/12 sm:w-2/5" />
-            <Skeleton className="h-5 w-2/3 sm:hidden" />
-          </div>
-
-          <div className="flex items-center justify-end gap-4 text-muted-foreground">
-            <div className="flex flex-col">
-              <span className="font-semibold">Allergens:</span>
-
-              <ul className="flex gap-1">
-                {Array.from({ length: 3 }).map((_, index) => (
-                  <li key={index}>
-                    <Skeleton className="h-4 w-8" />
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <AlertTriangle className="h-10 w-10" />
-          </div>
-        </CardContent>
-      </div>
-
-      <div className="w-full shrink-0 p-8 md:w-2/5">
-        <Skeleton className="aspect-square" />
       </div>
     </Card>
   );
