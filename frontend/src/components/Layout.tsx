@@ -25,7 +25,7 @@ export function Layout() {
   const [showMobileNav, setShowMobileNav] = useState(false);
 
   const linkClassNames =
-    "flex items-center gap-2 text-sm font-medium transition-colors hover:text-primary";
+    "flex items-center gap-2 p-3 text-sm font-medium transition-colors hover:text-primary";
 
   const inactiveLinkClassNames = "text-muted-foreground";
 
@@ -49,12 +49,12 @@ export function Layout() {
             />
           ) : null}
 
-          <nav className="flex sm:gap-12">
+          <nav className="flex items-center sm:gap-12">
             <Link to="/">
               <Logo />
             </Link>
 
-            <ul className="hidden items-center gap-6 sm:flex">
+            <ul className="hidden sm:flex">
               <li>
                 <Link
                   to="/"
@@ -142,7 +142,7 @@ function MobileNav({ setIsVisible }: MobileNavProps) {
   return (
     <div className="fixed inset-0 top-16 z-50 grid h-[calc(100vh-4rem)] grid-flow-row auto-rows-max overflow-auto p-6 pb-32 animate-in slide-in-from-top-9 sm:hidden">
       <nav className="relative z-20 rounded-md border border-border bg-popover shadow-2xl">
-        <ul className="rid-flow-row grid auto-rows-max py-1">
+        <ul className="grid grid-flow-row auto-rows-max py-1">
           <li>
             <Link
               to="/"
