@@ -29,6 +29,8 @@ import { queryOptionsFactory } from "~/lib/queryOptionsFactory";
 import { LocateFormSchema } from "~/lib/schemas";
 import { cn } from "~/lib/utils";
 
+import type { Coordinates } from "~/lib/hooks";
+
 export function LocateForm() {
   const form = useForm<LocateFormSchema>({
     resolver: valibotResolver(LocateFormSchema),
@@ -41,9 +43,9 @@ export function LocateForm() {
   });
 
   const gpsSuccessCallback = useCallback(
-    (location: { latitude: number; longitude: number }) => {
-      form.setValue("location.latitude", location.latitude);
-      form.setValue("location.longitude", location.longitude);
+    (coordinates: Coordinates) => {
+      form.setValue("location.latitude", coordinates.latitude);
+      form.setValue("location.longitude", coordinates.longitude);
     },
     [form],
   );

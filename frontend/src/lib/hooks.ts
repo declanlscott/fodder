@@ -1,9 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 
+export type Coordinates = Pick<
+  GeolocationCoordinates,
+  "latitude" | "longitude"
+>;
+
 export type UseGeolocationProps = {
   options?: PositionOptions;
   initiallyEnabled?: boolean;
-  successCallback: (location: { latitude: number; longitude: number }) => void;
+  successCallback: (coordinates: Coordinates) => void;
   errorCallback: () => void;
 };
 
