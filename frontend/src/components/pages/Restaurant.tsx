@@ -1,22 +1,13 @@
 import { useState } from "react";
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
-import { MapPin, Phone } from "lucide-react";
+import { ChevronDown, ChevronUp, MapPin, Phone } from "lucide-react";
 
 import DroppedCone from "~/components/DroppedCone";
 import { FodCard, FodCardSkeleton } from "~/components/FodCard";
 import { SomethingWentWrongCard } from "~/components/SomethingWentWrongCard";
 import { Button } from "~/components/ui/Button";
 import { Card } from "~/components/ui/Card";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "~/components/ui/Collapsible";
-import { Skeleton } from "~/components/ui/Skeleton";
-import {
-  UpcomingFodCard,
-  UpcomingFodCardSkeleton,
-} from "~/components/UpcomingFodCard";
+import { UpcomingFodCard } from "~/components/UpcomingFodCard";
 import { locate } from "~/lib/fetchers";
 import { useTitle } from "~/lib/hooks";
 import { queryOptionsFactory } from "~/lib/queryOptionsFactory";
@@ -26,15 +17,9 @@ import type { RestaurantData } from "~/lib/types";
 
 export function Restaurant() {
   const { slug } = restaurantRoute.useParams();
-  const { data, isLoading } = useSuspenseQuery(
-    queryOptionsFactory.restaurant(slug),
-  );
+  const { data } = useSuspenseQuery(queryOptionsFactory.restaurant(slug));
 
-  useTitle({ title: data?.name, isLoading });
-
-  if (isLoading) {
-    return <RestaurantDetailsSkeleton />;
-  }
+  useTitle({ title: data.name });
 
   if (!data) {
     return <SomethingWentWrongCard />;
@@ -74,78 +59,47 @@ export function Restaurant() {
 }
 
 function UpcomingFlavors({ flavors }: { flavors: RestaurantData["flavors"] }) {
-  const [isOpen, setIsOpen] = useState(false);
+  const initialShowing = 5;
+  const [showing, setShowing] = useState(initialShowing);
 
-  const initialNumberOfFlavors = 5;
+  const canShowMore = showing < flavors.length;
 
   return (
-    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+    <>
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {flavors.slice(0, initialNumberOfFlavors).map((flavor) => (
+        {flavors.slice(0, showing).map((flavor) => (
           <UpcomingFodCard key={flavor.date} flavor={flavor} />
         ))}
-        <CollapsibleContent asChild>
-          <>
-            {flavors.slice(initialNumberOfFlavors).map((flavor) => (
-              <UpcomingFodCard key={flavor.date} flavor={flavor} />
-            ))}
-          </>
-        </CollapsibleContent>
       </div>
 
-      <CollapsibleTrigger asChild>
-        <div className="mt-4 flex justify-center">
-          <Button variant="secondary" className="w-full md:w-fit">
-            {isOpen
-              ? "Show Less"
-              : `Show ${flavors.length - initialNumberOfFlavors} More`}
-          </Button>
-        </div>
-      </CollapsibleTrigger>
-    </Collapsible>
-  );
-}
+      <div className="mt-4 flex justify-center">
+        <Button
+          className="w-full gap-2 md:w-fit"
+          onClick={() =>
+            setShowing((prev) => {
+              if (!canShowMore) {
+                return initialShowing;
+              }
 
-function RestaurantDetailsSkeleton() {
-  return (
-    <div className="space-y-8">
-      <div className="flex flex-col gap-8 sm:flex-row sm:justify-between">
-        <div className="w-full space-y-2">
-          <Skeleton className="h-9 w-full sm:w-2/3 md:w-1/2" />
-          <Skeleton className="h-9 w-2/5 sm:hidden" />
-        </div>
-
-        <div className="flex flex-col gap-1 text-muted-foreground sm:items-end">
-          <div className="flex flex-row items-center gap-2 sm:flex-row-reverse">
-            <MapPin className="h-5 w-5 shrink-0 text-primary" />
-
-            <Skeleton className="h-4 w-32" />
-          </div>
-
-          <div className="flex flex-row items-center gap-2 sm:flex-row-reverse">
-            <Phone className="h-5 w-5 shrink-0 text-primary" />
-
-            <Skeleton className="h-4 w-24" />
-          </div>
-        </div>
+              const next = prev + 5;
+              return next > flavors.length ? flavors.length : next;
+            })
+          }
+        >
+          {canShowMore ? (
+            <>
+              <ChevronDown />
+              Show More
+            </>
+          ) : (
+            <>
+              <ChevronUp />
+              Show Less
+            </>
+          )}
+        </Button>
       </div>
-
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {Array.from({ length: 5 }).map((_, index) => (
-          <UpcomingFodCardSkeleton key={index} isToday={index === 0} />
-        ))}
-      </div>
-
-      <h2 className="text-3xl font-bold tracking-tight">
-        Nearby Flavors Of The Day
-      </h2>
-
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {Array.from({ length: 3 }).map((_, index) => (
-          <FodCardSkeleton key={index} />
-        ))}
-      </div>
-    </div>
+    </>
   );
 }
 
