@@ -1,0 +1,17 @@
+{
+  "name": "@repo/env",
+  "version": "0.0.0",
+  "license": "MIT",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "dependencies": {
+    "valibot": "^0.28.1"
+  },
+  "devDependencies": {
+    "@repo/eslintrc": "workspace:*",
+    "@repo/prettierrc": "workspace:*",
+    "@repo/tsconfig": "workspace:*",
+    "@types/node": "^20.11.18"
+  },
+  "prettier": "@repo/prettierrc"
+}
