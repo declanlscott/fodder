@@ -25,7 +25,6 @@ A few years ago, a certain midwestern fast-food restaurant chain discontinued it
   - React
   - TypeScript
   - Tailwind CSS
-  - [And more...](frontend/package.json)
 
 ## Architecture
 

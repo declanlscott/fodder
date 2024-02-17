@@ -4,12 +4,12 @@
     "deploy": "wrangler deploy --minify src/index.ts"
   },
   "dependencies": {
-    "hono": "^4.0.2"
+    "hono": "^4.0.3"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240208.0",
     "@repo/env": "workspace:*",
     "@repo/tsconfig": "workspace:*",
-    "wrangler": "^3.25.0"
+    "wrangler": "^3.28.3"
   }
 }

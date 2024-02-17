@@ -1,15 +1,19 @@
 import * as React from "react";
 
-import { cn } from "../utils/cn";
+import { cn } from "../utils";
 
 const Card = React.forwardRef<
   HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
+  React.HTMLAttributes<HTMLDivElement> & {
+    withHoverStyles?: boolean;
+  }
+>(({ withHoverStyles = false, className, ...props }, ref) => (
   <div
     ref={ref}
     className={cn(
       "bg-card text-card-foreground rounded-lg border shadow-sm",
+      withHoverStyles &&
+        " hover:bg-accent/75 group relative transition-colors duration-75",
       className,
     )}
     {...props}

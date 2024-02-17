@@ -18,9 +18,12 @@
     "paths": {
       "~/pages/*": ["components/pages/*"],
       "~/components/*": ["components/*"],
+      "~/hooks/*": ["hooks/*"],
       "~/lib/*": ["lib/*"],
       "~/routes/*": ["routes/*"],
-      "~/styles/*": ["styles/*"]
+      "~/schemas/*": ["schemas/*"],
+      "~/styles/*": ["styles/*"],
+      "~/types/*": ["types/*"]
     }
   }
 }

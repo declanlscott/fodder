@@ -1,35 +1,52 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { createRouter, RouterProvider } from "@tanstack/react-router";
 
-function App() {
-  const [count, setCount] = useState(0)
+import { ThemeProvider } from "~/components/theme-provider";
+import { flavorRoute } from "~/routes/flavor";
+import { flavorsRoute } from "~/routes/flavors";
+import { indexRoute } from "~/routes/index";
+import { notFoundRoute } from "~/routes/not-found";
+import { restaurantRoute } from "~/routes/restaurant";
+import { rootRoute } from "~/routes/root";
 
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: { staleTime: Infinity, refetchOnWindowFocus: false },
+  },
+});
+
+const routeTree = rootRoute.addChildren([
+  indexRoute,
+  restaurantRoute,
+  flavorRoute,
+  flavorsRoute,
+  notFoundRoute,
+]);
+const router = createRouter({
+  routeTree,
+  defaultPreload: "intent",
+  // Since we're using React Query, we don't want loader calls to ever be stale
+  // This will ensure that the loader is always called when the route is preloaded or visited
+  defaultPreloadStaleTime: 0,
+  context: {
+    queryClient,
+  },
+});
+
+declare module "@tanstack/react-router" {
+  interface Register {
+    router: typeof router;
+  }
 }
 
-export default App
+function App() {
+  return (
+    <ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider router={router} />
+      </QueryClientProvider>
+    </ThemeProvider>
+  );
+}
+
+export default App;
