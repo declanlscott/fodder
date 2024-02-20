@@ -1,18 +1,8 @@
 name = "api"
 compatibility_date = "2023-12-01"
 
-# [vars]
-# MY_VARIABLE = "production_value"
-
-# [[kv_namespaces]]
-# binding = "MY_KV_NAMESPACE"
-# id = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-
-# [[r2_buckets]]
-# binding = "MY_BUCKET"
-# bucket_name = "my-bucket"
-
-# [[d1_databases]]
-# binding = "DB"
-# database_name = "my-database"
-# database_id = ""
+[vars]
+RESTAURANTS_API_BASE_URL = "https://www.culvers.com/api"
+RESTAURANT_SCRAPE_BASE_URL = "https://www.culvers.com/restaurants"
+BASE_IMAGE_URL = "https://cdn.culvers.com/menu-item-detail"
+LOGO_SVG_URL = "https://cdn.culvers.com/layout/logo.svg"

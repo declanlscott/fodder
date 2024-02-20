@@ -1,9 +1,24 @@
 import { Hono } from "hono";
+import { HTTPException } from "hono/http-exception";
 
-const app = new Hono();
+import restaurants from "./routes/restaurants";
 
-app.get("/", (c) => {
-  return c.text("Hello Hono!");
+const api = new Hono();
+
+api.route("/restaurants", restaurants);
+
+api.onError((err, c) => {
+  if (err instanceof HTTPException) {
+    return err.getResponse();
+  }
+
+  return c.json(
+    {
+      error: "Internal server error",
+      message: "An unexpected error occurred",
+    },
+    500,
+  );
 });
 
-export default app;
+export default api;
