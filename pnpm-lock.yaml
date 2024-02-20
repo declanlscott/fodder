@@ -32,16 +32,19 @@ importers:
 
   apps/backend:
     dependencies:
+      '@repo/env':
+        specifier: workspace:*
+        version: link:../../packages/env
       hono:
         specifier: ^4.0.3
         version: 4.0.3
+      valibot:
+        specifier: ^0.28.1
+        version: 0.28.1
     devDependencies:
       '@cloudflare/workers-types':
         specifier: ^4.20240208.0
         version: 4.20240208.0
-      '@repo/env':
-        specifier: workspace:*
-        version: link:../../packages/env
       '@repo/tsconfig':
         specifier: workspace:*
         version: link:../../config/typescript
@@ -229,6 +232,9 @@ importers:
       tailwind-merge:
         specifier: ^2.2.1
         version: 2.2.1
+      tailwindcss-animate:
+        specifier: ^1.0.7
+        version: 1.0.7(tailwindcss@3.4.1)
     devDependencies:
       '@repo/eslintrc':
         specifier: workspace:*
@@ -242,6 +248,9 @@ importers:
       '@types/react':
         specifier: ^18.2.55
         version: 18.2.55
+      tailwindcss:
+        specifier: ^3.4.1
+        version: 3.4.1
       typescript:
         specifier: ^5.3.3
         version: 5.3.3

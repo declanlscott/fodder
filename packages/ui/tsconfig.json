@@ -1,11 +1,16 @@
 {
   "extends": "@repo/tsconfig/base.json",
-  "include": ["."],
+  "include": ["src"],
   "exclude": ["node_modules"],
   "compilerOptions": {
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "target": "ES2020",
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {
+      "~/components/*": ["./src/components/*"],
+      "~/utils": ["./src/utils/index.ts"]
+    }
   }
 }

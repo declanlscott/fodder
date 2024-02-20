@@ -1,6 +1,13 @@
 {
   "extends": "@repo/tsconfig/vite.json",
-  "include": ["src"],
+  "include": [
+    "vite.config.ts",
+    "vite-env.d.ts",
+    "postcss.config.cjs",
+    "**/*.js",
+    "**/*.ts",
+    "**/*.tsx"
+  ],
   "compilerOptions": {
     "skipLibCheck": true,
     /* Bundler mode */
