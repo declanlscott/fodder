@@ -32,12 +32,9 @@ importers:
 
   apps/backend:
     dependencies:
-      '@repo/env':
-        specifier: workspace:*
-        version: link:../../packages/env
       hono:
-        specifier: ^4.0.3
-        version: 4.0.3
+        specifier: ^4.0.5
+        version: 4.0.5
       valibot:
         specifier: ^0.28.1
         version: 0.28.1
@@ -49,8 +46,8 @@ importers:
         specifier: workspace:*
         version: link:../../config/typescript
       wrangler:
-        specifier: ^3.28.3
-        version: 3.28.3(@cloudflare/workers-types@4.20240208.0)
+        specifier: ^3.28.4
+        version: 3.28.4(@cloudflare/workers-types@4.20240208.0)
 
   apps/frontend:
     dependencies:
@@ -2958,8 +2955,8 @@ packages:
     dependencies:
       function-bind: 1.1.2
 
-  /hono@4.0.3:
-    resolution: {integrity: sha512-LLZFvqiksAO6Hf080XCUbsEjRxIrqEoiIN1HUzL0xtYP+BZUxGfeWg8yB5Dvp/sI7T0Lt4XdtGTGLwpIzAsl8w==}
+  /hono@4.0.5:
+    resolution: {integrity: sha512-6LEGL1Pf3+dLjVA0NJxAB/3FJ6S3W5qxd/XOG7Wl9YOrpMRZT9lt83R4Ojs8dO6GbAUSutI7zTyjStnSn9sbEg==}
     engines: {node: '>=16.0.0'}
     dev: false
 
@@ -4096,8 +4093,8 @@ packages:
       '@cloudflare/workerd-windows-64': 1.20240129.0
     dev: true
 
-  /wrangler@3.28.3(@cloudflare/workers-types@4.20240208.0):
-    resolution: {integrity: sha512-pLuvWA5W8FhjI/a7Mr5F491KOqNMYzyWVN7dmwr+52sPv2BFrfN1v6btmhHYotSblCH8yfs5DmuxwdKuVPMw9w==}
+  /wrangler@3.28.4(@cloudflare/workers-types@4.20240208.0):
+    resolution: {integrity: sha512-LDwW4KhplRhIEfQaZry8AMZIOTpkYZXLWjg1MDSC3a12BXSY37pXACmFxbZeg2TzcOi30j+KqwLfv15vCavIyA==}
     engines: {node: '>=16.17.0'}
     hasBin: true
     peerDependencies:

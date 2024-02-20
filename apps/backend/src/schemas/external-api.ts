@@ -1,16 +1,20 @@
 import {
   array,
   boolean,
+  literal,
+  notValue,
   nullable,
   number,
   object,
   string,
   tuple,
+  unknown,
+  variant,
 } from "valibot";
 
 import type { Output } from "valibot";
 
-export const RestaurantsApiResponseSchema = object({
+export const FetchedRestaurants = object({
   isSuccessful: boolean(),
   message: nullable(string()),
   data: object({
@@ -58,12 +62,9 @@ export const RestaurantsApiResponseSchema = object({
     totalResults: number(),
   }),
 });
+export type FetchedRestaurants = Output<typeof FetchedRestaurants>;
 
-export type RestaurantsApiResponseSchema = Output<
-  typeof RestaurantsApiResponseSchema
->;
-
-export const FlavorPropsSchema = object({
+export const FlavorProps = object({
   flavorId: number(),
   menuItemId: number(),
   onDate: string(),
@@ -74,10 +75,9 @@ export const FlavorPropsSchema = object({
     src: string(),
   }),
 });
+export type FlavorProps = Output<typeof FlavorProps>;
 
-export type FlavorPropsSchema = Output<typeof FlavorPropsSchema>;
-
-export const RestaurantScrapeNextDataSchema = object({
+export const ScrapedRestaurantNextData = object({
   props: object({
     pageProps: object({
       page: object({
@@ -98,7 +98,7 @@ export const RestaurantScrapeNextDataSchema = object({
             ownerFriendlyName: string(),
             ownerMessage: string(),
             jobsApplyUrl: string(),
-            flavorOfTheDay: array(FlavorPropsSchema),
+            flavorOfTheDay: array(FlavorProps),
           }),
           restaurantCalendar: object({
             restaurant: object({
@@ -106,14 +106,90 @@ export const RestaurantScrapeNextDataSchema = object({
               title: string(),
               slug: string(),
             }),
-            flavors: array(FlavorPropsSchema),
+            flavors: array(FlavorProps),
           }),
         }),
       }),
     }),
   }),
 });
-
-export type RestaurantScrapeNextDataSchema = Output<
-  typeof RestaurantScrapeNextDataSchema
+export type ScrapedRestaurantNextData = Output<
+  typeof ScrapedRestaurantNextData
 >;
+
+const flavorsModuleName = "FlavorOfTheDayAllFlavors";
+export const FlavorsModule = object({
+  moduleName: literal(flavorsModuleName),
+  customData: object({
+    flavors: array(
+      object({
+        idFlavor: number(),
+        idMenuItem: number(),
+        longFlavorName: string(),
+        flavorName: string(),
+        flavorCategories: array(object({ id: number(), name: string() })),
+        flavorNameLocalized: nullable(string()),
+        fotdImage: string(),
+        fotdUrlSlug: string(),
+        flavorNameSpanish: nullable(string()),
+        fotdDescriptionSpanish: nullable(string()),
+      }),
+    ),
+  }),
+});
+export type FlavorsModule = Output<typeof FlavorsModule>;
+export const UnknownModule = object(
+  {
+    moduleName: string([notValue(flavorsModuleName)]),
+  },
+  unknown(),
+);
+export type UnknownModule = Output<typeof UnknownModule>;
+
+export const ScrapedAllFlavorsNextData = object({
+  props: object({
+    pageProps: object({
+      page: object({
+        zones: object({
+          Content: array(variant("moduleName", [FlavorsModule, UnknownModule])),
+        }),
+      }),
+    }),
+  }),
+});
+export type ScrapedAllFlavorsNextData = Output<
+  typeof ScrapedAllFlavorsNextData
+>;
+
+export const isFlavorsModule = (
+  module: ScrapedAllFlavorsNextData["props"]["pageProps"]["page"]["zones"]["Content"][number],
+): module is FlavorsModule => module.moduleName === flavorsModuleName;
+
+export const ScrapedFlavorNextData = object({
+  props: object({
+    pageProps: object({
+      page: object({
+        customData: object({
+          flavorDetails: object({
+            idFlavor: number(),
+            idMenuItem: number(),
+            slug: string(),
+            name: string(),
+            description: string(),
+            fotdImage: string(),
+            allergens: string(),
+            ingredients: array(
+              object({
+                id: number(),
+                title: string(),
+                subIngredients: string(),
+              }),
+            ),
+            flavorCategories: array(object({ id: number(), name: string() })),
+          }),
+        }),
+      }),
+    }),
+  }),
+});
+export type ScrapedFlavorNextData = Output<typeof ScrapedFlavorNextData>;

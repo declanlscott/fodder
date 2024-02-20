@@ -1,29 +1,28 @@
 import { Context } from "hono";
 import { env } from "hono/adapter";
-import { safeParse } from "valibot";
 
+import { HTTPExceptionWithJsonBody } from "~/lib/exceptions";
+import { parseJson, parseNextData } from "~/lib/parsers";
+import { hasAddress } from "~/schemas/api";
 import {
-  HTTPExceptionWithJsonBody,
-  ValidationException,
-} from "~/lib/exceptions";
-import { EnvSchema } from "~/schemas/env";
-import {
-  RestaurantsApiResponseSchema,
-  RestaurantScrapeNextDataSchema,
+  FetchedRestaurants,
+  ScrapedAllFlavorsNextData,
+  ScrapedFlavorNextData,
+  ScrapedRestaurantNextData,
 } from "~/schemas/external-api";
-import { hasAddress } from "~/schemas/restaurants";
 
-import type { ByLocationSchema } from "~/schemas/restaurants";
+import type { LocateRestaurantsSchema } from "~/schemas/api";
+import type { Bindings } from "~/types/env";
 
-export async function locateRestaurants({
+export async function fetchRestaurants({
   c,
   queryParams,
 }: {
-  c: Context;
-  queryParams: ByLocationSchema;
-}) {
+  c: Context<{ Bindings: Bindings }>;
+  queryParams: LocateRestaurantsSchema;
+}): Promise<FetchedRestaurants> {
   const url = new URL(
-    `${env<EnvSchema>(c).RESTAURANTS_API_BASE_URL}/restaurants/getLocations`,
+    `${env(c).EXTERNAL_API_BASE_URL}/restaurants/getLocations`,
   );
 
   const searchParams = new URLSearchParams({
@@ -47,32 +46,20 @@ export async function locateRestaurants({
 
   const json = await res.json();
 
-  const { success, issues, output } = safeParse(
-    RestaurantsApiResponseSchema,
+  return parseJson({
+    schema: FetchedRestaurants,
     json,
-  );
-
-  if (!success) {
-    throw new ValidationException<typeof RestaurantsApiResponseSchema>(
-      500,
-      "Failed to parse restaurants response",
-      issues,
-    );
-  }
-
-  return output;
+  });
 }
 
-export async function scrapeRestaurant({
+export async function scrapeRestaurantBySlug({
   c,
   slug,
 }: {
-  c: Context;
+  c: Context<{ Bindings: Bindings }>;
   slug: string;
-}) {
-  const url = new URL(
-    `${env<EnvSchema>(c).RESTAURANT_SCRAPE_BASE_URL}/${slug}`,
-  );
+}): Promise<ScrapedRestaurantNextData> {
+  const url = new URL(`${env(c).RESTAURANT_SCRAPE_BASE_URL}/${slug}`);
 
   const res = await fetch(url.toString());
   if (!res.ok) {
@@ -90,28 +77,61 @@ export async function scrapeRestaurant({
 
   const body = await res.text();
 
-  const matches = body.match(
-    /<script id="__NEXT_DATA__" type="application\/json">(.*?)<\/script>/,
-  );
+  return parseNextData({
+    schema: ScrapedRestaurantNextData,
+    body,
+  });
+}
 
-  if (matches?.length !== 2) {
+export async function scrapeAllFlavors({
+  c,
+}: {
+  c: Context<{ Bindings: Bindings }>;
+}) {
+  const url = new URL(`${env(c).FLAVORS_SCRAPE_BASE_URL}`);
+
+  const res = await fetch(url.toString());
+  if (!res.ok) {
     throw new HTTPExceptionWithJsonBody(500, {
-      error: "Failed to match __NEXT_DATA__",
+      error: "Failed to fetch flavors",
     });
   }
 
-  const { success, issues, output } = safeParse(
-    RestaurantScrapeNextDataSchema,
-    JSON.parse(matches[1]),
-  );
+  const body = await res.text();
 
-  if (!success) {
-    throw new ValidationException<typeof RestaurantScrapeNextDataSchema>(
-      500,
-      "Failed to parse __NEXT_DATA__",
-      issues,
-    );
+  return parseNextData({
+    schema: ScrapedAllFlavorsNextData,
+    body,
+  });
+}
+
+export async function scrapeFlavorBySlug({
+  c,
+  slug,
+}: {
+  c: Context<{ Bindings: Bindings }>;
+  slug: string;
+}): Promise<ScrapedFlavorNextData> {
+  const url = new URL(`${env(c).FLAVORS_SCRAPE_BASE_URL}/${slug}`);
+
+  const res = await fetch(url.toString());
+  if (!res.ok) {
+    switch (res.status) {
+      case 404:
+        throw new HTTPExceptionWithJsonBody(404, {
+          error: "Flavor not found",
+        });
+      default:
+        throw new HTTPExceptionWithJsonBody(500, {
+          error: "Failed to fetch flavor",
+        });
+    }
   }
 
-  return output;
+  const body = await res.text();
+
+  return parseNextData({
+    schema: ScrapedFlavorNextData,
+    body,
+  });
 }

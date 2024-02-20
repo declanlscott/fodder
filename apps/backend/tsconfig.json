@@ -14,7 +14,8 @@
     "paths": {
       "~/lib/*": ["lib/*"],
       "~/routes/*": ["routes/*"],
-      "~/schemas/*": ["schemas/*"]
+      "~/schemas/*": ["schemas/*"],
+      "~/types/*": ["types/*"]
     }
   }
 }

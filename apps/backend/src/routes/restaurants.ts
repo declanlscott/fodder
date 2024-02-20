@@ -4,26 +4,28 @@ import { safeParse } from "valibot";
 
 import { ValidationException } from "~/lib/exceptions";
 import { beforeOpening } from "~/lib/expires";
-import { locateRestaurants, scrapeRestaurant } from "~/lib/fetchers";
+import { fetchRestaurants, scrapeRestaurantBySlug } from "~/lib/fetchers";
 import {
-  formatLocatedRestaurants,
-  formatSluggedRestaurant,
+  formatFetchedRestaurants,
+  formatScrapedRestaurant,
 } from "~/lib/formatters";
-import { ByLocationSchema, BySlugSchema } from "~/schemas/restaurants";
+import { LocateRestaurantsSchema, validateSlug } from "~/schemas/api";
 
-const restaurants = new Hono();
+import type { Bindings } from "~/types/env";
+
+const restaurants = new Hono<{ Bindings: Bindings }>();
 
 // By location
 restaurants.get(
   "/",
-  validator("query", (queryParams, c) => {
+  validator("query", (queryParams) => {
     const { success, issues, output } = safeParse(
-      ByLocationSchema,
+      LocateRestaurantsSchema,
       queryParams,
     );
 
     if (!success) {
-      throw new ValidationException<typeof ByLocationSchema>(
+      throw new ValidationException<typeof LocateRestaurantsSchema>(
         400,
         "Invalid query parameters",
         issues,
@@ -37,40 +39,24 @@ restaurants.get(
 
     c.header("Expires", beforeOpening());
 
-    const data = await locateRestaurants({
+    const json = await fetchRestaurants({
       c,
       queryParams,
     });
 
-    return c.json(formatLocatedRestaurants({ c, data }), 200);
+    return c.json(formatFetchedRestaurants({ c, json }), 200);
   },
 );
 
 // By slug
-restaurants.get(
-  "/:slug",
-  validator("param", (pathParams, c) => {
-    const { success, issues, output } = safeParse(BySlugSchema, pathParams);
+restaurants.get("/:slug", validator("param", validateSlug), async (c) => {
+  const { slug } = c.req.valid("param");
 
-    if (!success) {
-      throw new ValidationException<typeof BySlugSchema>(
-        400,
-        "Invalid path parameters",
-        issues,
-      );
-    }
+  c.header("Expires", beforeOpening());
 
-    return output;
-  }),
-  async (c) => {
-    const { slug } = c.req.valid("param");
+  const nextData = await scrapeRestaurantBySlug({ c, slug });
 
-    c.header("Expires", beforeOpening());
-
-    const data = await scrapeRestaurant({ c, slug });
-
-    return c.json(formatSluggedRestaurant({ c, data }), 200);
-  },
-);
+  return c.json(formatScrapedRestaurant({ c, nextData }), 200);
+});
 
 export default restaurants;

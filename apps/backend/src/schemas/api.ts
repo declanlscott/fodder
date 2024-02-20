@@ -5,13 +5,17 @@ import {
   minValue,
   number,
   object,
+  safeParse,
   string,
   union,
 } from "valibot";
 
+import { ValidationException } from "~/lib/exceptions";
+
+import type { ValidationTargets } from "hono";
 import type { Output } from "valibot";
 
-export const ByLocationSchema = union([
+export const LocateRestaurantsSchema = union([
   object({
     address: string("address query parameter is required", [
       minLength(1),
@@ -30,19 +34,33 @@ export const ByLocationSchema = union([
   }),
 ]);
 
-export type ByLocationSchema = Output<typeof ByLocationSchema>;
+export type LocateRestaurantsSchema = Output<typeof LocateRestaurantsSchema>;
 
 export const hasAddress = (
-  query: ByLocationSchema,
+  query: LocateRestaurantsSchema,
 ): query is { address: string } => "address" in query;
 
 export const hasCoordinates = (
-  query: ByLocationSchema,
+  query: LocateRestaurantsSchema,
 ): query is { latitude: number; longitude: number } =>
   "latitude" in query && "longitude" in query;
 
-export const BySlugSchema = object({
+export const SlugSchema = object({
   slug: string(),
 });
 
-export type BySlugSchema = Output<typeof BySlugSchema>;
+export type SlugSchema = Output<typeof SlugSchema>;
+
+export const validateSlug = (pathParams: ValidationTargets["param"]) => {
+  const { success, issues, output } = safeParse(SlugSchema, pathParams);
+
+  if (!success) {
+    throw new ValidationException<typeof SlugSchema>(
+      400,
+      "Invalid path parameters",
+      issues,
+    );
+  }
+
+  return output;
+};

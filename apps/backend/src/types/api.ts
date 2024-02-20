@@ -28,3 +28,16 @@ export type SluggedRestaurant = {
     slug: string;
   }>;
 };
+
+export type AllFlavors = Array<{
+  name: string;
+  imageUrl: string;
+  slug: string;
+}>;
+
+export type SluggedFlavor = {
+  name: string;
+  description: string;
+  imageUrl: string;
+  allergens: string[];
+};

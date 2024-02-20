@@ -1,11 +1,15 @@
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 
+import flavors from "~/routes/flavors";
 import restaurants from "./routes/restaurants";
 
-const api = new Hono();
+import type { Bindings } from "~/types/env";
+
+const api = new Hono<{ Bindings: Bindings }>();
 
 api.route("/restaurants", restaurants);
+api.route("/flavors", flavors);
 
 api.onError((err, c) => {
   if (err instanceof HTTPException) {

@@ -1,24 +1,35 @@
 import { env } from "hono/adapter";
 
 import { HTTPExceptionWithJsonBody } from "~/lib/exceptions";
+import { isFlavorsModule } from "~/schemas/external-api";
 
 import type { Context } from "hono";
-import type { LocatedRestaurant, SluggedRestaurant } from "types/api";
-import type { EnvSchema } from "~/schemas/env";
 import type {
-  FlavorPropsSchema,
-  RestaurantsApiResponseSchema,
-  RestaurantScrapeNextDataSchema,
+  FetchedRestaurants,
+  FlavorProps,
+  FlavorsModule,
+  ScrapedAllFlavorsNextData,
+  ScrapedFlavorNextData,
+  ScrapedRestaurantNextData,
 } from "~/schemas/external-api";
+import type {
+  AllFlavors,
+  LocatedRestaurant,
+  SluggedFlavor,
+  SluggedRestaurant,
+} from "~/types/api";
+import type { Bindings } from "~/types/env";
 
-export function formatLocatedRestaurants({
+const imageWidth = 400;
+
+export function formatFetchedRestaurants({
   c,
-  data: { data },
+  json,
 }: {
-  c: Context;
-  data: RestaurantsApiResponseSchema;
+  c: Context<{ Bindings: Bindings }>;
+  json: FetchedRestaurants;
 }): LocatedRestaurant[] {
-  return data.geofences.reduce((acc, curr) => {
+  return json.data.geofences.reduce((acc, curr) => {
     const name = curr.metadata.flavorOfDayName;
 
     const slug = name
@@ -55,34 +66,34 @@ function formatFodImageUrl({
   c,
   fodImageSlug,
 }: {
-  c: Context;
+  c: Context<{ Bindings: Bindings }>;
   fodImageSlug: string;
 }) {
   if (!fodImageSlug) {
-    return env<EnvSchema>(c).LOGO_SVG_URL;
+    return env(c).LOGO_SVG_URL;
   }
 
-  return `${env<EnvSchema>(c).BASE_IMAGE_URL}/${fodImageSlug}`;
+  return `${env(c).FLAVOR_IMAGE_BASE_URL}/${fodImageSlug}`;
 }
 
-export function formatSluggedRestaurant({
+export function formatScrapedRestaurant({
   c,
-  data,
+  nextData,
 }: {
-  c: Context;
-  data: RestaurantScrapeNextDataSchema;
+  c: Context<{ Bindings: Bindings }>;
+  nextData: ScrapedRestaurantNextData;
 }): SluggedRestaurant {
   const filteredFlavors = filterFlavorsByDate({
-    flavors: data.props.pageProps.page.customData.restaurantCalendar.flavors,
+    flavors:
+      nextData.props.pageProps.page.customData.restaurantCalendar.flavors,
   });
 
   const flavors = filteredFlavors.reduce(
     (acc, curr) => {
-      const width = 400;
-      const imageSlug = curr.image.src.split(`${width}/`)[1];
+      const imageSlug = curr.image.src.split(`${imageWidth}/`)[1];
       const imageUrl = imageSlug
-        ? `${env<EnvSchema>(c).BASE_IMAGE_URL}/${imageSlug}?w=${width}`
-        : env<EnvSchema>(c).LOGO_SVG_URL;
+        ? `${env(c).FLAVOR_IMAGE_BASE_URL}/${imageSlug}?w=${imageWidth}`
+        : env(c).LOGO_SVG_URL;
 
       const flavor: SluggedRestaurant["flavors"][number] = {
         date: curr.onDate,
@@ -97,7 +108,7 @@ export function formatSluggedRestaurant({
   );
 
   const restaurantProps =
-    data.props.pageProps.page.customData.restaurantDetails;
+    nextData.props.pageProps.page.customData.restaurantDetails;
 
   return {
     name: restaurantProps.title,
@@ -110,7 +121,7 @@ export function formatSluggedRestaurant({
   };
 }
 
-function filterFlavorsByDate({ flavors }: { flavors: FlavorPropsSchema[] }) {
+function filterFlavorsByDate({ flavors }: { flavors: FlavorProps[] }) {
   const now = new Date();
 
   const chicagoNow = new Date(
@@ -137,4 +148,55 @@ function filterFlavorsByDate({ flavors }: { flavors: FlavorPropsSchema[] }) {
 
     return false;
   });
+}
+
+export function formatScrapedAllFlavors({
+  c,
+  nextData,
+}: {
+  c: Context<{ Bindings: Bindings }>;
+  nextData: ScrapedAllFlavorsNextData;
+}): AllFlavors {
+  let data: FlavorsModule["customData"]["flavors"] | undefined;
+
+  for (const module of nextData.props.pageProps.page.zones.Content) {
+    if (isFlavorsModule(module)) {
+      data = module.customData.flavors;
+    }
+  }
+
+  if (!data) {
+    throw new HTTPExceptionWithJsonBody(500, {
+      message: "Failed to find flavors module",
+    });
+  }
+
+  return data.reduce((acc, curr) => {
+    const flavor = {
+      name: curr.flavorName,
+      imageUrl: `${env(c).FLAVOR_IMAGE_BASE_URL}/${curr.fotdImage}?w=${imageWidth}`,
+      slug: curr.fotdUrlSlug,
+    };
+
+    return [...acc, flavor];
+  }, [] as AllFlavors);
+}
+
+export function formatScrapedFlavor({
+  c,
+  nextData,
+}: {
+  c: Context<{ Bindings: Bindings }>;
+  nextData: ScrapedFlavorNextData;
+}): SluggedFlavor {
+  const flavorProps = nextData.props.pageProps.page.customData.flavorDetails;
+
+  const flavor = {
+    name: flavorProps.name,
+    imageUrl: `${env(c).FLAVOR_IMAGE_BASE_URL}/${flavorProps.fotdImage}`,
+    description: flavorProps.description,
+    allergens: flavorProps.allergens.split(", "),
+  };
+
+  return flavor;
 }
