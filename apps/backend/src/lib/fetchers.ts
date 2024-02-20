@@ -1,8 +1,11 @@
 import { Context } from "hono";
 import { env } from "hono/adapter";
-import { HTTPException } from "hono/http-exception";
 import { safeParse } from "valibot";
 
+import {
+  HTTPExceptionWithJsonBody,
+  ValidationException,
+} from "~/lib/exceptions";
 import { EnvSchema } from "~/schemas/env";
 import {
   RestaurantsApiResponseSchema,
@@ -35,11 +38,10 @@ export async function locateRestaurants({
   }
 
   url.search = searchParams.toString();
-
   const res = await fetch(url.toString());
   if (!res.ok) {
-    throw new HTTPException(500, {
-      message: "Failed to fetch restaurants",
+    throw new HTTPExceptionWithJsonBody(500, {
+      error: "Failed to fetch restaurants",
     });
   }
 
@@ -51,9 +53,11 @@ export async function locateRestaurants({
   );
 
   if (!success) {
-    throw new HTTPException(500, {
-      message: `Failed to parse restaurants response`,
-    });
+    throw new ValidationException<typeof RestaurantsApiResponseSchema>(
+      500,
+      "Failed to parse restaurants response",
+      issues,
+    );
   }
 
   return output;
@@ -74,12 +78,12 @@ export async function scrapeRestaurant({
   if (!res.ok) {
     switch (res.status) {
       case 404:
-        throw new HTTPException(404, {
-          message: "Restaurant not found",
+        throw new HTTPExceptionWithJsonBody(404, {
+          error: "Restaurant not found",
         });
       default:
-        throw new HTTPException(500, {
-          message: "Failed to fetch restaurant",
+        throw new HTTPExceptionWithJsonBody(500, {
+          error: "Failed to fetch restaurant",
         });
     }
   }
@@ -91,20 +95,22 @@ export async function scrapeRestaurant({
   );
 
   if (matches?.length !== 2) {
-    throw new HTTPException(500, {
-      message: "Failed to match __NEXT_DATA__",
+    throw new HTTPExceptionWithJsonBody(500, {
+      error: "Failed to match __NEXT_DATA__",
     });
   }
 
-  const { success, output } = safeParse(
+  const { success, issues, output } = safeParse(
     RestaurantScrapeNextDataSchema,
     JSON.parse(matches[1]),
   );
 
   if (!success) {
-    throw new HTTPException(500, {
-      message: "Failed to parse __NEXT_DATA__",
-    });
+    throw new ValidationException<typeof RestaurantScrapeNextDataSchema>(
+      500,
+      "Failed to parse __NEXT_DATA__",
+      issues,
+    );
   }
 
   return output;

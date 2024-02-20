@@ -1,7 +1,8 @@
 import { Hono } from "hono";
 import { validator } from "hono/validator";
-import { flatten, safeParse } from "valibot";
+import { safeParse } from "valibot";
 
+import { ValidationException } from "~/lib/exceptions";
 import { beforeOpening } from "~/lib/expires";
 import { locateRestaurants, scrapeRestaurant } from "~/lib/fetchers";
 import {
@@ -22,12 +23,10 @@ restaurants.get(
     );
 
     if (!success) {
-      return c.json(
-        {
-          error: "Invalid query parameters",
-          message: "Invalid query parameters",
-        },
+      throw new ValidationException<typeof ByLocationSchema>(
         400,
+        "Invalid query parameters",
+        issues,
       );
     }
 
@@ -54,12 +53,10 @@ restaurants.get(
     const { success, issues, output } = safeParse(BySlugSchema, pathParams);
 
     if (!success) {
-      return c.json(
-        {
-          error: "Invalid path parameters",
-          message: issues.join(", "),
-        },
+      throw new ValidationException<typeof BySlugSchema>(
         400,
+        "Invalid path parameters",
+        issues,
       );
     }
 

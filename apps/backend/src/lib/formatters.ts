@@ -1,5 +1,6 @@
 import { env } from "hono/adapter";
-import { HTTPException } from "hono/http-exception";
+
+import { HTTPExceptionWithJsonBody } from "~/lib/exceptions";
 
 import type { Context } from "hono";
 import type { LocatedRestaurant, SluggedRestaurant } from "types/api";
@@ -125,7 +126,7 @@ function filterFlavorsByDate({ flavors }: { flavors: FlavorPropsSchema[] }) {
   return flavors.filter((flavor) => {
     const fodDate = new Date(flavor.onDate);
     if (isNaN(fodDate.getTime())) {
-      throw new HTTPException(500, {
+      throw new HTTPExceptionWithJsonBody(500, {
         message: `Failed to parse flavor date: "${flavor.onDate}"`,
       });
     }
