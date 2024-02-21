@@ -12,22 +12,22 @@ const flavors = new Hono<{ Bindings: Bindings }>();
 
 // All flavors
 flavors.get("/", async (c) => {
-  c.header("Expires", beforeOpening());
-
   const nextData = await scrapeAllFlavors({ c });
 
-  return c.json(formatScrapedAllFlavors({ c, nextData }), 200);
+  const body = formatScrapedAllFlavors({ c, nextData });
+
+  return c.json(body, 200, { Expires: beforeOpening() });
 });
 
 // By slug
 flavors.get("/:slug", validator("param", validateSlug), async (c) => {
   const { slug } = c.req.valid("param");
 
-  c.header("Expires", beforeOpening());
-
   const nextData = await scrapeFlavorBySlug({ c, slug });
 
-  return c.json(formatScrapedFlavor({ c, nextData }), 200);
+  const body = formatScrapedFlavor({ c, nextData });
+
+  return c.json(body, 200, { Expires: beforeOpening() });
 });
 
 export default flavors;

@@ -37,14 +37,14 @@ restaurants.get(
   async (c) => {
     const queryParams = c.req.valid("query");
 
-    c.header("Expires", beforeOpening());
-
     const json = await fetchRestaurants({
       c,
       queryParams,
     });
 
-    return c.json(formatFetchedRestaurants({ c, json }), 200);
+    const body = formatFetchedRestaurants({ c, json });
+
+    return c.json(body, 200, { Expires: beforeOpening() });
   },
 );
 
@@ -52,11 +52,11 @@ restaurants.get(
 restaurants.get("/:slug", validator("param", validateSlug), async (c) => {
   const { slug } = c.req.valid("param");
 
-  c.header("Expires", beforeOpening());
-
   const nextData = await scrapeRestaurantBySlug({ c, slug });
 
-  return c.json(formatScrapedRestaurant({ c, nextData }), 200);
+  const body = formatScrapedRestaurant({ c, nextData });
+
+  return c.json(body, 200, { Expires: beforeOpening() });
 });
 
 export default restaurants;
