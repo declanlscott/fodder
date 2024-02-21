@@ -1,5 +1,9 @@
-name = "api"
+name = "fodder-api"
 compatibility_date = "2023-12-01"
+
+routes = [
+	{ pattern = "api.fodder.declanlscott.com", custom_domain = true }
+]
 
 [vars]
 EXTERNAL_API_BASE_URL = "https://www.culvers.com/api"
