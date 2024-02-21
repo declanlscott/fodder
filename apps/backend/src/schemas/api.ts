@@ -1,4 +1,5 @@
 import {
+  coerce,
   maxLength,
   maxValue,
   minLength,
@@ -23,14 +24,20 @@ export const LocateRestaurantsSchema = union([
     ]),
   }),
   object({
-    latitude: number("latitude query parameter is required", [
-      minValue(-90),
-      maxValue(90),
-    ]),
-    longitude: number("longitude query parameter is required", [
-      minValue(-180),
-      maxValue(180),
-    ]),
+    latitude: coerce(
+      number("latitude query parameter is required", [
+        minValue(-90),
+        maxValue(90),
+      ]),
+      Number,
+    ),
+    longitude: coerce(
+      number("longitude query parameter is required", [
+        minValue(-180),
+        maxValue(180),
+      ]),
+      Number,
+    ),
   }),
 ]);
 
