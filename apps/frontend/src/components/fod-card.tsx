@@ -33,7 +33,7 @@ export function FodCard({ restaurant }: FodCardProps) {
           </Link>
         </CardTitle>
 
-        <CardDescription className='z-10'>
+        <CardDescription className="z-10">
           <Link
             to="/restaurants/$slug"
             params={{ slug: restaurant.slug }}
