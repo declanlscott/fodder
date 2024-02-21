@@ -4,4 +4,5 @@ export type Bindings = {
   FLAVORS_SCRAPE_BASE_URL: string;
   FLAVOR_IMAGE_BASE_URL: string;
   LOGO_SVG_URL: string;
+  CORS_ORIGIN: string;
 };
