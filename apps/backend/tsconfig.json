@@ -1,0 +1,21 @@
+{
+  "extends": "@repo/tsconfig/base.json",
+  "include": ["src"],
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "lib": ["ESNext"],
+    "types": ["@cloudflare/workers-types"],
+    "jsx": "react-jsx",
+    "jsxImportSource": "hono/jsx",
+    "baseUrl": "./src",
+    "paths": {
+      "~/lib/*": ["lib/*"],
+      "~/routes/*": ["routes/*"],
+      "~/schemas/*": ["schemas/*"],
+      "~/types/*": ["types/*"]
+    }
+  }
+}

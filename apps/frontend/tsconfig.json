@@ -1,0 +1,36 @@
+{
+  "extends": "@repo/tsconfig/vite.json",
+  "include": [
+    "vite.config.ts",
+    "vite-env.d.ts",
+    "postcss.config.cjs",
+    "**/*.js",
+    "**/*.ts",
+    "**/*.tsx"
+  ],
+  "compilerOptions": {
+    "skipLibCheck": true,
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    /* Linting */
+    "strict": true,
+    "noFallthroughCasesInSwitch": true,
+    /* Absolute imports and module path aliases */
+    "baseUrl": "./src",
+    "paths": {
+      "~/pages/*": ["components/pages/*"],
+      "~/components/*": ["components/*"],
+      "~/hooks/*": ["hooks/*"],
+      "~/lib/*": ["lib/*"],
+      "~/routes/*": ["routes/*"],
+      "~/schemas/*": ["schemas/*"],
+      "~/styles/*": ["styles/*"],
+      "~/types/*": ["types/*"]
+    }
+  }
+}

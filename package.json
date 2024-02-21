@@ -1,0 +1,18 @@
+{
+  "private": true,
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "format:check": "prettier --check .",
+    "format:write": "prettier --write ."
+  },
+  "devDependencies": {
+    "@repo/eslintrc": "workspace:*",
+    "@repo/prettierrc": "workspace:*",
+    "eslint": "^8.56.0",
+    "prettier": "^3.2.5",
+    "turbo": "^1.12.4",
+    "typescript": "5.4.0-beta"
+  },
+  "prettier": "@repo/prettierrc"
+}

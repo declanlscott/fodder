@@ -10,21 +10,21 @@ A few years ago, a certain midwestern fast-food restaurant chain discontinued it
   - Terraform IaC
   - Cloudflare
     - DNS
+    - Workers
   - AWS
     - CloudFront
-    - Lambda
     - S3
-    - ACM
     - IAM
-    - DynamoDB
+    - ACM
+    - DynamoDB (for terraform state)
 - Backend
-  - Golang (unit tested)
-- Frontend
+  - Hono
   - TypeScript
-  - React
-  - Tailwind CSS
+- Frontend
   - Vite
-  - [And more...](frontend/package.json)
+  - React
+  - TypeScript
+  - Tailwind CSS
 
 ## Architecture
 
