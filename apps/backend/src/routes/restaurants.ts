@@ -3,7 +3,6 @@ import { validator } from "hono/validator";
 import { safeParse } from "valibot";
 
 import { ValidationException } from "~/lib/exceptions";
-import { beforeOpening } from "~/lib/expires";
 import { fetchRestaurants, scrapeRestaurantBySlug } from "~/lib/fetchers";
 import {
   formatFetchedRestaurants,
@@ -44,7 +43,7 @@ restaurants.get(
 
     const body = formatFetchedRestaurants({ c, json });
 
-    return c.json(body, 200, { Expires: beforeOpening() });
+    return c.json(body, 200);
   },
 );
 
@@ -56,7 +55,7 @@ restaurants.get("/:slug", validator("param", validateSlug), async (c) => {
 
   const body = formatScrapedRestaurant({ c, nextData });
 
-  return c.json(body, 200, { Expires: beforeOpening() });
+  return c.json(body, 200);
 });
 
 export default restaurants;
