@@ -1,5 +1,4 @@
 import { Hono } from "hono";
-import { HTTPException } from "hono/http-exception";
 import { validator } from "hono/validator";
 
 import { scrapeAllFlavors, scrapeFlavorBySlug } from "~/lib/fetchers";
