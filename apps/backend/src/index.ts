@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { cache } from "hono/cache";
 import { cors } from "hono/cors";
 import { HTTPException } from "hono/http-exception";
 
@@ -13,11 +14,15 @@ api.use("*", async (c, next) => {
   const corsMiddleware = cors({
     origin: c.env.CORS_ORIGIN,
     allowMethods: ["GET"],
-    exposeHeaders: ["Expires"],
   });
 
   return await corsMiddleware(c, next);
 });
+
+api.get(
+  "*",
+  cache({ cacheName: "fodder-api-cache", cacheControl: "max-age=3600" }),
+);
 
 api.route("/restaurants", restaurants);
 api.route("/flavors", flavors);

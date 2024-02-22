@@ -1,7 +1,7 @@
 import { Hono } from "hono";
+import { HTTPException } from "hono/http-exception";
 import { validator } from "hono/validator";
 
-import { beforeOpening } from "~/lib/expires";
 import { scrapeAllFlavors, scrapeFlavorBySlug } from "~/lib/fetchers";
 import { formatScrapedAllFlavors, formatScrapedFlavor } from "~/lib/formatters";
 import { validateSlug } from "~/schemas/api";
@@ -16,7 +16,7 @@ flavors.get("/", async (c) => {
 
   const body = formatScrapedAllFlavors({ c, nextData });
 
-  return c.json(body, 200, { Expires: beforeOpening() });
+  return c.json(body, 200);
 });
 
 // By slug
@@ -27,7 +27,7 @@ flavors.get("/:slug", validator("param", validateSlug), async (c) => {
 
   const body = formatScrapedFlavor({ c, nextData });
 
-  return c.json(body, 200, { Expires: beforeOpening() });
+  return c.json(body, 200);
 });
 
 export default flavors;
