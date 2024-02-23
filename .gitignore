@@ -6,3 +6,4 @@ dist
 .dev.vars
 .turbo
 .terraform
+terraform.tfvars
