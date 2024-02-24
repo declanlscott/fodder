@@ -1,4 +1,4 @@
-import { Card } from "@repo/ui/components/card";
+import { Card } from "@repo/ui";
 
 import { DroppedCone } from "~/components/dropped-cone";
 

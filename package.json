@@ -1,18 +1,19 @@
 {
   "private": true,
   "scripts": {
+    "dev": "turbo dev --parallel",
+    "lint": "turbo lint",
     "build": "turbo build",
-    "dev": "turbo dev",
+    "deploy": "turbo run deploy",
     "format:check": "prettier --check .",
     "format:write": "prettier --write ."
   },
   "devDependencies": {
-    "@repo/eslintrc": "workspace:*",
-    "@repo/prettierrc": "workspace:*",
-    "eslint": "^8.56.0",
+    "@repo/eslint-config": "workspace:*",
+    "@repo/prettier-config": "workspace:*",
     "prettier": "^3.2.5",
     "turbo": "^1.12.4",
     "typescript": "5.4.0-beta"
   },
-  "prettier": "@repo/prettierrc"
+  "prettier": "@repo/prettier-config"
 }

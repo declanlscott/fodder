@@ -11,7 +11,7 @@ export const flavorsRoute = createRoute({
   path: "/flavors",
   loader: ({ context: { queryClient } }) =>
     queryClient.ensureQueryData(queryOptionsFactory.flavors()),
-  component: () => {
+  component: function Flavors() {
     const { data } = useSuspenseQuery(queryOptionsFactory.flavors());
 
     useTitle({ title: "Flavors" });

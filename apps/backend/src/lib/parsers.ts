@@ -1,9 +1,13 @@
-import { BaseSchema, safeParse } from "valibot";
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+import { safeParse } from "valibot";
 
 import {
   HTTPExceptionWithJsonBody,
   ValidationException,
 } from "~/lib/exceptions";
+
+import type { BaseSchema } from "valibot";
 
 export function parseJson<TSchema extends BaseSchema>({
   schema,

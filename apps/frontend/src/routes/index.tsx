@@ -1,4 +1,4 @@
-import { Card } from "@repo/ui/components/card";
+import { Card } from "@repo/ui";
 import { useIsMutating, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createRoute } from "@tanstack/react-router";
 import { Dessert } from "lucide-react";
@@ -12,7 +12,7 @@ import { rootRoute } from "~/routes/root";
 export const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/",
-  component: () => {
+  component: function Home() {
     const queryClient = useQueryClient();
     const { data } = useQuery(
       queryOptionsFactory.restaurants.query(queryClient),

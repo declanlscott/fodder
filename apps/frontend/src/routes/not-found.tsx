@@ -7,7 +7,7 @@ import { rootRoute } from "~/routes/root";
 export const notFoundRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "*",
-  component: () => {
+  component: function NotFound() {
     useTitle({ title: "Page Not Found" });
 
     return (

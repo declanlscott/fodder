@@ -1,5 +1,5 @@
 {
-  "extends": "@repo/tsconfig/vite.json",
+  "extends": "@repo/typescript-config/vite.json",
   "include": [
     "vite.config.ts",
     "vite-env.d.ts",

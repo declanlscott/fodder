@@ -1,5 +1,4 @@
 import { lazy, Suspense } from "react";
-import { QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import {
   createRootRouteWithContext,
@@ -8,15 +7,17 @@ import {
 
 import { Layout } from "~/components/layout";
 
-const TanStackRouterDevtools =
-  process.env.NODE_ENV === "production"
-    ? () => null // Render nothing in production
-    : lazy(() =>
-        // Lazy load in development
-        import("@tanstack/router-devtools").then((res) => ({
-          default: res.TanStackRouterDevtools,
-        })),
-      );
+import type { QueryClient } from "@tanstack/react-query";
+
+// eslint-disable-next-line react-refresh/only-export-components
+const TanStackRouterDevtools = import.meta.env.PROD
+  ? () => null // Render nothing in production
+  : lazy(() =>
+      // Lazy load in development
+      import("@tanstack/router-devtools").then((res) => ({
+        default: res.TanStackRouterDevtools,
+      })),
+    );
 
 const rootRouteWithContext = createRootRouteWithContext<{
   queryClient: QueryClient;

@@ -1,5 +1,5 @@
 {
-  "name": "@repo/prettierrc",
+  "name": "@repo/prettier-config",
   "version": "0.0.0",
   "main": "index.json",
   "private": true,

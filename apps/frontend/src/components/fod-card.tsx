@@ -5,8 +5,8 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@repo/ui/components/card";
-import { Skeleton } from "@repo/ui/components/skeleton";
+  Skeleton,
+} from "@repo/ui";
 import { Link } from "@tanstack/react-router";
 
 import type { RestaurantsData } from "~/types/api";

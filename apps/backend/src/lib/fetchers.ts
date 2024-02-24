@@ -1,4 +1,3 @@
-import { Context } from "hono";
 import { env } from "hono/adapter";
 
 import { HTTPExceptionWithJsonBody } from "~/lib/exceptions";
@@ -11,6 +10,7 @@ import {
   ScrapedRestaurantNextData,
 } from "~/schemas/external-api";
 
+import type { Context } from "hono";
 import type { LocateRestaurantsSchema } from "~/schemas/api";
 import type { Bindings } from "~/types/env";
 

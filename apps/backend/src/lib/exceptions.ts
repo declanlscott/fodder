@@ -1,7 +1,8 @@
 import { HTTPException } from "hono/http-exception";
-import { BaseSchema, flatten, SchemaIssues } from "valibot";
+import { flatten } from "valibot";
 
 import type { StatusCode } from "hono/utils/http-status";
+import type { BaseSchema, SchemaIssues } from "valibot";
 
 export class HTTPExceptionWithJsonBody extends HTTPException {
   constructor(statusCode: StatusCode, body: unknown) {

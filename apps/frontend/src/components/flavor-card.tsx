@@ -4,9 +4,9 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "@repo/ui/components/card";
-import { Skeleton } from "@repo/ui/components/skeleton";
-import { cn } from "@repo/ui/utils";
+  cn,
+  Skeleton,
+} from "@repo/ui";
 import { Link } from "@tanstack/react-router";
 
 import type { FlavorsData } from "~/types/api";

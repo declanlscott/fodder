@@ -1,11 +1,11 @@
-import { Dispatch, SetStateAction, useLayoutEffect, useState } from "react";
-import { Button } from "@repo/ui/components/button";
+import { useLayoutEffect, useState } from "react";
 import {
+  Button,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@repo/ui/components/dropdown-menu";
+} from "@repo/ui";
 import { Link, Outlet } from "@tanstack/react-router";
 import {
   Code2,
@@ -20,7 +20,9 @@ import {
 } from "lucide-react";
 
 import Logo from "~/components/logo";
-import { useTheme } from "~/components/theme-provider";
+import { useTheme } from "~/hooks/theme";
+
+import type { Dispatch, SetStateAction } from "react";
 
 export function Layout() {
   const [showMobileNav, setShowMobileNav] = useState(false);

@@ -1,14 +1,23 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "pipeline": {
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "frontend#dev": {
+      "dependsOn": ["@repo/ui#build"]
+    },
+    "lint": {},
     "build": {
       "dependsOn": ["^build"],
       "outputs": ["dist/**"]
     },
-    "lint": {},
-    "dev": {
-      "cache": false,
-      "persistent": true
+    "deploy": {
+      "dependsOn": ["^build"]
+    },
+    "frontend#deploy": {
+      "dependsOn": ["backend#deploy"]
     }
   }
 }

@@ -1,8 +1,7 @@
 import { env } from "env";
 import ky from "ky";
 
-import { LocateFormSchema } from "~/schemas/locate-form";
-
+import type { LocateFormSchema } from "~/schemas/locate-form";
 import type {
   FlavorData,
   FlavorsData,

@@ -2,6 +2,7 @@
   "name": "backend",
   "scripts": {
     "dev": "wrangler dev src/index.ts",
+    "lint": "eslint src/ --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "deploy": "wrangler deploy --minify src/index.ts"
   },
   "dependencies": {
@@ -9,8 +10,11 @@
     "valibot": "^0.28.1"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20240208.0",
-    "@repo/tsconfig": "workspace:*",
-    "wrangler": "^3.28.4"
-  }
+    "@cloudflare/workers-types": "^4.20240222.0",
+    "@repo/eslint-config": "workspace:*",
+    "@repo/prettier-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "wrangler": "^3.29.0"
+  },
+  "prettier": "@repo/prettier-config"
 }

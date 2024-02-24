@@ -1,27 +1,26 @@
 import { useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { valibotResolver } from "@hookform/resolvers/valibot";
-import { Button } from "@repo/ui/components/button";
 import {
+  Button,
   Card,
   CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@repo/ui/components/card";
-import {
+  cn,
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from "@repo/ui/components/form";
-import { Input } from "@repo/ui/components/input";
-import { Label, labelVariants } from "@repo/ui/components/label";
-import { Toggle } from "@repo/ui/components/toggle";
-import { cn } from "@repo/ui/utils";
+  Input,
+  Label,
+  labelVariants,
+  Toggle,
+} from "@repo/ui";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Ban, Loader2, MapPin, MapPinOff, Send } from "lucide-react";
 

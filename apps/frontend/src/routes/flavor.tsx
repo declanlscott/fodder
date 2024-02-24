@@ -5,9 +5,9 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@repo/ui/components/card";
-import { Skeleton } from "@repo/ui/components/skeleton";
-import { cn } from "@repo/ui/utils";
+  cn,
+  Skeleton,
+} from "@repo/ui";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createRoute } from "@tanstack/react-router";
 import { AlertTriangle } from "lucide-react";
@@ -22,7 +22,7 @@ export const flavorRoute = createRoute({
   path: "/flavors/$slug",
   loader: ({ context: { queryClient }, params }) =>
     queryClient.ensureQueryData(queryOptionsFactory.flavor(params.slug)),
-  component: () => {
+  component: function Flavor() {
     const { slug } = flavorRoute.useParams();
     const { data } = useSuspenseQuery(queryOptionsFactory.flavor(slug));
 

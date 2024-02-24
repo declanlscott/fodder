@@ -2,13 +2,18 @@
   "name": "@repo/ui",
   "version": "0.0.0",
   "license": "MIT",
-  "private": true,
-  "exports": {
-    "./globals.css": "./src/globals.css",
-    "./postcss.config": "./postcss.config.js",
-    "./tailwind.config": "./tailwind.config.ts",
-    "./utils": "./src/utils/index.ts",
-    "./components/*": "./src/components/*.tsx"
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**",
+    "postcss.config.js",
+    "tailwind.config.ts",
+    "globals.css"
+  ],
+  "scripts": {
+    "lint": "eslint src/ --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "build": "tsup src/index.tsx --format esm,cjs --dts --external react"
   },
   "dependencies": {
     "@radix-ui/react-dropdown-menu": "^2.0.6",
@@ -24,12 +29,13 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
-    "@repo/eslintrc": "workspace:*",
-    "@repo/prettierrc": "workspace:*",
-    "@repo/tsconfig": "workspace:*",
-    "@types/react": "^18.2.55",
+    "@repo/eslint-config": "workspace:*",
+    "@repo/prettier-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@types/react": "^18.2.58",
     "tailwindcss": "^3.4.1",
+    "tsup": "^8.0.2",
     "typescript": "^5.3.3"
   },
-  "prettier": "@repo/prettierrc"
+  "prettier": "@repo/prettier-config"
 }
