@@ -9,7 +9,7 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "sync": "aws s3 sync dist/ s3://fodder.declanlscott.com/ --delete --exclude \".DS_Store\"",
-    "invalidate": "aws cloudfront create-invalidation --distribution-id $(terraform -chdir=../../infra output -raw app_distribution_id) --paths \"/**/*\" &",
+    "invalidate": "aws cloudfront create-invalidation --distribution-id $(terraform -chdir=../../infra output -raw app_distribution_id) --paths \"/**/*\"",
     "deploy": "run-s sync invalidate"
   },
   "dependencies": {
