@@ -18,7 +18,7 @@
       "dependsOn": ["^build"]
     },
     "frontend#deploy": {
-      "dependsOn": ["backend#deploy"]
+      "dependsOn": ["backend#deploy", "@repo/ui#build"]
     }
   }
 }
