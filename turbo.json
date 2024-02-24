@@ -6,7 +6,7 @@
       "persistent": true
     },
     "frontend#dev": {
-      "dependsOn": ["@repo/ui#build"]
+      "dependsOn": ["@repo/ui#build", "@repo/env#build"]
     },
     "lint": {},
     "build": {
@@ -18,7 +18,7 @@
       "dependsOn": ["^build"]
     },
     "frontend#deploy": {
-      "dependsOn": ["backend#deploy", "@repo/ui#build"]
+      "dependsOn": ["backend#deploy", "@repo/ui#build", "@repo/env#build"]
     }
   }
 }

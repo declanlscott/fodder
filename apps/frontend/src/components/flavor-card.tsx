@@ -9,10 +9,10 @@ import {
 } from "@repo/ui";
 import { Link } from "@tanstack/react-router";
 
-import type { FlavorsData } from "~/types/api";
+import type { AllFlavors } from "@repo/types";
 
 type FlavorCardProps = {
-  flavor: FlavorsData[number];
+  flavor: AllFlavors[number];
 };
 
 export function FlavorCard({ flavor }: FlavorCardProps) {

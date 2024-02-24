@@ -52,9 +52,7 @@ export const hasCoordinates = (
 ): query is { latitude: number; longitude: number } =>
   "latitude" in query && "longitude" in query;
 
-export const SlugSchema = object({
-  slug: string(),
-});
+export const SlugSchema = object({ slug: string() });
 
 export type SlugSchema = Output<typeof SlugSchema>;
 

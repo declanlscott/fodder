@@ -13,12 +13,12 @@ import { Link } from "@tanstack/react-router";
 import { format, isToday } from "date-fns";
 import { ChevronDown, ChevronUp } from "lucide-react";
 
-import type { RestaurantData } from "~/types/api";
+import type { SluggedRestaurant } from "@repo/types";
 
 export function UpcomingFods({
   flavors,
 }: {
-  flavors: RestaurantData["flavors"];
+  flavors: SluggedRestaurant["flavors"];
 }) {
   const initialShowing = 5;
   const [showing, setShowing] = useState(initialShowing);
@@ -65,7 +65,7 @@ export function UpcomingFods({
 }
 
 type UpcomingFodCardProps = {
-  flavor: RestaurantData["flavors"][number];
+  flavor: SluggedRestaurant["flavors"][number];
 };
 
 function UpcomingFodCard({ flavor }: UpcomingFodCardProps) {

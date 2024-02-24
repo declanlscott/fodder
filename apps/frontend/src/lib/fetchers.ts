@@ -1,13 +1,13 @@
 import { env } from "env";
 import ky from "ky";
 
-import type { LocateFormSchema } from "~/schemas/locate-form";
 import type {
-  FlavorData,
-  FlavorsData,
-  RestaurantData,
-  RestaurantsData,
-} from "~/types/api";
+  AllFlavors,
+  LocatedRestaurant,
+  SluggedFlavor,
+  SluggedRestaurant,
+} from "@repo/types";
+import type { LocateFormSchema } from "~/schemas/locate-form";
 
 export async function locate({ location }: LocateFormSchema) {
   const res = await ky(`${env.VITE_API_BASE_URL}/restaurants`, {
@@ -25,7 +25,7 @@ export async function locate({ location }: LocateFormSchema) {
     return [];
   }
 
-  const restaurants = await res.json<RestaurantsData>();
+  const restaurants = await res.json<LocatedRestaurant[]>();
 
   return restaurants;
 }
@@ -33,7 +33,7 @@ export async function locate({ location }: LocateFormSchema) {
 export async function getRestaurant(slug: string) {
   const res = await ky(`${env.VITE_API_BASE_URL}/restaurants/${slug}`);
 
-  const restaurant = await res.json<RestaurantData>();
+  const restaurant = await res.json<SluggedRestaurant>();
 
   return restaurant;
 }
@@ -41,7 +41,7 @@ export async function getRestaurant(slug: string) {
 export async function getFlavors() {
   const res = await ky(`${env.VITE_API_BASE_URL}/flavors`);
 
-  const flavors = await res.json<FlavorsData>();
+  const flavors = await res.json<AllFlavors>();
 
   return flavors;
 }
@@ -49,7 +49,7 @@ export async function getFlavors() {
 export async function getFlavor(slug: string) {
   const res = await ky(`${env.VITE_API_BASE_URL}/flavors/${slug}`);
 
-  const flavor = await res.json<FlavorData>();
+  const flavor = await res.json<SluggedFlavor>();
 
   return flavor;
 }

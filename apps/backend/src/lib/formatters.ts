@@ -3,6 +3,12 @@ import { env } from "hono/adapter";
 import { HTTPExceptionWithJsonBody } from "~/lib/exceptions";
 import { isFlavorsModule } from "~/schemas/external-api";
 
+import type {
+  AllFlavors,
+  LocatedRestaurant,
+  SluggedFlavor,
+  SluggedRestaurant,
+} from "@repo/types";
 import type { Context } from "hono";
 import type {
   FetchedRestaurants,
@@ -12,12 +18,6 @@ import type {
   ScrapedFlavorNextData,
   ScrapedRestaurantNextData,
 } from "~/schemas/external-api";
-import type {
-  AllFlavors,
-  LocatedRestaurant,
-  SluggedFlavor,
-  SluggedRestaurant,
-} from "~/types/api";
 import type { Bindings } from "~/types/env";
 
 const imageWidth = 400;

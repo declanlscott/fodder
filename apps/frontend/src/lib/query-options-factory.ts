@@ -2,8 +2,8 @@ import { queryOptions } from "@tanstack/react-query";
 
 import { getFlavor, getFlavors, getRestaurant, locate } from "~/lib/fetchers";
 
+import type { LocatedRestaurant } from "@repo/types";
 import type { QueryClient } from "@tanstack/react-query";
-import type { RestaurantsData } from "~/types/api";
 
 export const queryOptionsFactory = {
   restaurant: (slug: string) =>
@@ -21,7 +21,7 @@ export const queryOptionsFactory = {
       queryOptions({
         queryKey: queryOptionsFactory.restaurants.key,
         queryFn: ({ queryKey }) =>
-          queryClient.getQueryData<RestaurantsData>(queryKey) ?? null,
+          queryClient.getQueryData<LocatedRestaurant[]>(queryKey) ?? null,
       }),
   },
   flavor: (slug: string) =>

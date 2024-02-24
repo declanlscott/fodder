@@ -42,6 +42,9 @@ importers:
       '@repo/prettier-config':
         specifier: workspace:*
         version: link:../../configs/prettier
+      '@repo/types':
+        specifier: workspace:*
+        version: link:../../packages/types
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../../configs/typescript
@@ -103,15 +106,15 @@ importers:
       '@repo/prettier-config':
         specifier: workspace:*
         version: link:../../configs/prettier
+      '@repo/types':
+        specifier: workspace:*
+        version: link:../../packages/types
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../../configs/typescript
       '@tanstack/eslint-plugin-query':
         specifier: ^5.20.1
         version: 5.20.1(eslint@8.57.0)(typescript@5.3.3)
-      '@types/node':
-        specifier: ^20.11.20
-        version: 20.11.20
       '@types/react':
         specifier: ^18.2.58
         version: 18.2.58
@@ -138,7 +141,7 @@ importers:
         version: 5.3.3
       vite:
         specifier: ^5.1.4
-        version: 5.1.4(@types/node@20.11.20)
+        version: 5.1.4
       vite-tsconfig-paths:
         specifier: ^4.3.1
         version: 4.3.1(typescript@5.3.3)(vite@5.1.4)
@@ -199,6 +202,18 @@ importers:
       tsup:
         specifier: ^8.0.2
         version: 8.0.2(typescript@5.4.0-beta)
+
+  packages/types:
+    devDependencies:
+      '@repo/eslint-config':
+        specifier: workspace:*
+        version: link:../../configs/eslint
+      '@repo/prettier-config':
+        specifier: workspace:*
+        version: link:../../configs/prettier
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../../configs/typescript
 
   packages/ui:
     dependencies:
@@ -2206,7 +2221,7 @@ packages:
       vite: ^4 || ^5
     dependencies:
       '@swc/core': 1.4.2
-      vite: 5.1.4(@types/node@20.11.20)
+      vite: 5.1.4
     transitivePeerDependencies:
       - '@swc/helpers'
     dev: true
@@ -4881,13 +4896,13 @@ packages:
       debug: 4.3.4
       globrex: 0.1.2
       tsconfck: 3.0.2(typescript@5.3.3)
-      vite: 5.1.4(@types/node@20.11.20)
+      vite: 5.1.4
     transitivePeerDependencies:
       - supports-color
       - typescript
     dev: true
 
-  /vite@5.1.4(@types/node@20.11.20):
+  /vite@5.1.4:
     resolution: {integrity: sha512-n+MPqzq+d9nMVTKyewqw6kSt+R3CkvF9QAKY8obiQn8g1fwTscKxyfaYnC632HtBXAQGc1Yjomphwn1dtwGAHg==}
     engines: {node: ^18.0.0 || >=20.0.0}
     hasBin: true
@@ -4915,7 +4930,6 @@ packages:
       terser:
         optional: true
     dependencies:
-      '@types/node': 20.11.20
       esbuild: 0.19.12
       postcss: 8.4.35
       rollup: 4.12.0

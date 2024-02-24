@@ -9,10 +9,10 @@ import {
 } from "@repo/ui";
 import { Link } from "@tanstack/react-router";
 
-import type { RestaurantsData } from "~/types/api";
+import type { LocatedRestaurant } from "@repo/types";
 
 type FodCardProps = {
-  restaurant: RestaurantsData[number];
+  restaurant: LocatedRestaurant;
 };
 
 export function FodCard({ restaurant }: FodCardProps) {
