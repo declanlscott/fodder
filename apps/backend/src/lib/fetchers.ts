@@ -1,6 +1,6 @@
 import { env } from "hono/adapter";
+import { HTTPException } from "hono/http-exception";
 
-import { HTTPExceptionWithJsonBody } from "~/lib/exceptions";
 import { parseJson, parseNextData } from "~/lib/parsers";
 import { hasAddress } from "~/schemas/api";
 import {
@@ -39,8 +39,8 @@ export async function fetchRestaurants({
   url.search = searchParams.toString();
   const res = await fetch(url.toString());
   if (!res.ok) {
-    throw new HTTPExceptionWithJsonBody(500, {
-      error: "Failed to fetch restaurants",
+    throw new HTTPException(500, {
+      message: "Failed to fetch restaurants",
     });
   }
 
@@ -65,12 +65,12 @@ export async function scrapeRestaurantBySlug({
   if (!res.ok) {
     switch (res.status) {
       case 404:
-        throw new HTTPExceptionWithJsonBody(404, {
-          error: "Restaurant not found",
+        throw new HTTPException(404, {
+          message: "Restaurant not found",
         });
       default:
-        throw new HTTPExceptionWithJsonBody(500, {
-          error: "Failed to fetch restaurant",
+        throw new HTTPException(500, {
+          message: "Failed to fetch restaurant",
         });
     }
   }
@@ -92,8 +92,8 @@ export async function scrapeAllFlavors({
 
   const res = await fetch(url.toString());
   if (!res.ok) {
-    throw new HTTPExceptionWithJsonBody(500, {
-      error: "Failed to fetch flavors",
+    throw new HTTPException(500, {
+      message: "Failed to fetch flavors",
     });
   }
 
@@ -115,17 +115,11 @@ export async function scrapeFlavorBySlug({
   const url = new URL(`${env(c).FLAVORS_SCRAPE_BASE_URL}/${slug}`);
 
   const res = await fetch(url.toString());
+
   if (!res.ok) {
-    switch (res.status) {
-      case 404:
-        throw new HTTPExceptionWithJsonBody(404, {
-          error: "Flavor not found",
-        });
-      default:
-        throw new HTTPExceptionWithJsonBody(500, {
-          error: "Failed to fetch flavor",
-        });
-    }
+    throw new HTTPException(500, {
+      message: "Failed to fetch flavor",
+    });
   }
 
   const body = await res.text();

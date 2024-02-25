@@ -1,7 +1,7 @@
 import { env } from "hono/adapter";
+import { HTTPException } from "hono/http-exception";
 
-import { HTTPExceptionWithJsonBody } from "~/lib/exceptions";
-import { isFlavorsModule } from "~/schemas/external-api";
+import { isFlavorFound, isFlavorsModule } from "~/schemas/external-api";
 
 import type {
   AllFlavors,
@@ -137,7 +137,7 @@ function filterFlavorsByDate({ flavors }: { flavors: FlavorProps[] }) {
   return flavors.filter((flavor) => {
     const fodDate = new Date(flavor.onDate);
     if (isNaN(fodDate.getTime())) {
-      throw new HTTPExceptionWithJsonBody(500, {
+      throw new HTTPException(500, {
         message: `Failed to parse flavor date: "${flavor.onDate}"`,
       });
     }
@@ -166,8 +166,8 @@ export function formatScrapedAllFlavors({
   }
 
   if (!data) {
-    throw new HTTPExceptionWithJsonBody(500, {
-      message: "Failed to find flavors module",
+    throw new HTTPException(404, {
+      message: "Flavors not found",
     });
   }
 
@@ -189,13 +189,17 @@ export function formatScrapedFlavor({
   c: Context<{ Bindings: Bindings }>;
   nextData: ScrapedFlavorNextData;
 }): SluggedFlavor {
-  const flavorProps = nextData.props.pageProps.page.customData.flavorDetails;
+  const flavorDetails = nextData.props.pageProps.page.customData.flavorDetails;
+
+  if (!isFlavorFound(flavorDetails)) {
+    throw new HTTPException(404, { message: "Flavor not found" });
+  }
 
   const flavor = {
-    name: flavorProps.name,
-    imageUrl: `${env(c).FLAVOR_IMAGE_BASE_URL}/${flavorProps.fotdImage}`,
-    description: flavorProps.description,
-    allergens: flavorProps.allergens.split(", "),
+    name: flavorDetails.name,
+    imageUrl: `${env(c).FLAVOR_IMAGE_BASE_URL}/${flavorDetails.fotdImage}`,
+    description: flavorDetails.description,
+    allergens: flavorDetails.allergens.split(", "),
   };
 
   return flavor;

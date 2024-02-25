@@ -2,12 +2,14 @@ import {
   array,
   boolean,
   literal,
+  never,
   notValue,
   nullable,
   number,
   object,
   string,
   tuple,
+  union,
   unknown,
   variant,
 } from "valibot";
@@ -165,31 +167,41 @@ export const isFlavorsModule = (
   module: ScrapedAllFlavorsNextData["props"]["pageProps"]["page"]["zones"]["Content"][number],
 ): module is FlavorsModule => module.moduleName === flavorsModuleName;
 
+export const FlavorDetails = object({
+  idFlavor: number(),
+  idMenuItem: number(),
+  slug: string(),
+  name: string(),
+  description: string(),
+  fotdImage: string(),
+  allergens: string(),
+  ingredients: array(
+    object({
+      id: number(),
+      title: string(),
+      subIngredients: string(),
+    }),
+  ),
+  flavorCategories: array(object({ id: number(), name: string() })),
+});
+export type FlavorDetails = Output<typeof FlavorDetails>;
+export const FlavorDetailsNotFound = object({}, never());
+export type FlavorDetailsNotFound = Output<typeof FlavorDetailsNotFound>;
+export const FlavorDetailsUnion = union([FlavorDetails, FlavorDetailsNotFound]);
+export type FlavorDetailsUnion = Output<typeof FlavorDetailsUnion>;
 export const ScrapedFlavorNextData = object({
   props: object({
     pageProps: object({
       page: object({
         customData: object({
-          flavorDetails: object({
-            idFlavor: number(),
-            idMenuItem: number(),
-            slug: string(),
-            name: string(),
-            description: string(),
-            fotdImage: string(),
-            allergens: string(),
-            ingredients: array(
-              object({
-                id: number(),
-                title: string(),
-                subIngredients: string(),
-              }),
-            ),
-            flavorCategories: array(object({ id: number(), name: string() })),
-          }),
+          flavorDetails: FlavorDetailsUnion,
         }),
       }),
     }),
   }),
 });
 export type ScrapedFlavorNextData = Output<typeof ScrapedFlavorNextData>;
+
+export const isFlavorFound = (
+  flavorDetails: FlavorDetailsUnion,
+): flavorDetails is FlavorDetails => "idFlavor" in flavorDetails;

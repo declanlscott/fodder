@@ -1,11 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
+import { HTTPException } from "hono/http-exception";
 import { safeParse } from "valibot";
 
-import {
-  HTTPExceptionWithJsonBody,
-  ValidationException,
-} from "~/lib/exceptions";
+import { ValidationException } from "~/lib/exceptions";
 
 import type { BaseSchema } from "valibot";
 
@@ -37,8 +35,8 @@ export function parseNextData<TSchema extends BaseSchema>({
   );
 
   if (matches?.length !== 2) {
-    throw new HTTPExceptionWithJsonBody(500, {
-      error: "Failed to match __NEXT_DATA__",
+    throw new HTTPException(500, {
+      message: "Failed to match __NEXT_DATA__",
     });
   }
 
