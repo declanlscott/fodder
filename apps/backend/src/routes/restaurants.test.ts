@@ -59,9 +59,15 @@ describe("/restaurants", () => {
     path: `restaurants/${slug}`,
   });
 
+  const today = new Date();
+  const yesterday = new Date();
+  const tomorrow = new Date();
+  yesterday.setDate(today.getDate() - 1);
+  tomorrow.setDate(today.getDate() + 1);
+
   restaurantInterceptor.reply(
     200,
-    `<html><body><div id="__next"></div><script id="__NEXT_DATA__" type="application/json">{"props":{"pageProps":{"page":{"customData":{"restaurantDetails":{"id":1,"number":"1","title":"Culver's of City, State - 123 Main Street","slug":"city","phoneNumber":"123-456-7890","address":"123 Main Street","city":"City","state":"State","postalCode":"12345","latitude":0,"longitude":0,"onlineOrderUrl":"orderOnlineUrl","ownerFriendlyName":"ownerFriendlyName","ownerMessage":"ownerMessage","jobsApplyUrl":"jobsApplyUrl","flavorOfTheDay":[{"flavorId":2,"menuItemId":2,"onDate":"2024-02-25T00:00:00","title":"Chocolate Custard","urlSlug":"chocolate-custard","image":{"useWhiteBackground":true,"src":"https://cloudfront.net/menu-item-detail/400/img-Chocolate-Custard.png"}},{"flavorId":3,"menuItemId":3,"onDate":"2024-02-26T00:00:00","title":"Strawberry Custard","urlSlug":"strawberry-custard","image":{"useWhiteBackground":true,"src":"https://cloudfront.net/menu-item-detail/400/img-Strawberry-Custard.png"}}]},"restaurantCalendar":{"restaurant":{"id":1,"title":"Culver's of City, State - Main Street","slug":"city"},"flavors":[{"flavorId":1,"menuItemId":1,"onDate":"2024-02-23T00:00:00","title":"Vanilla Custard","urlSlug":"vanilla-custard","image":{"useWhiteBackground":true,"src":"https://cloudfront.net/menu-item-detail/400/img-Vanilla-Custard.png"}},{"flavorId":2,"menuItemId":2,"onDate":"2024-02-24T00:00:00","title":"Chocolate Custard","urlSlug":"chocolate-custard","image":{"useWhiteBackground":true,"src":"https://cloudfront.net/menu-item-detail/400/img-Chocolate-Custard.png"}},{"flavorId":3,"menuItemId":3,"onDate":"2024-02-25T00:00:00","title":"Strawberry Custard","urlSlug":"strawberry-custard","image":{"useWhiteBackground":true,"src":"https://cloudfront.net/menu-item-detail/400/img-Strawberry-Custard.png"}}]}}}}}}</script></body></html>`,
+    `<html><body><div id="__next"></div><script id="__NEXT_DATA__" type="application/json">{"props":{"pageProps":{"page":{"customData":{"restaurantDetails":{"id":1,"number":"1","title":"Culver's of City, State - 123 Main Street","slug":"city","phoneNumber":"123-456-7890","address":"123 Main Street","city":"City","state":"State","postalCode":"12345","latitude":0,"longitude":0,"onlineOrderUrl":"orderOnlineUrl","ownerFriendlyName":"ownerFriendlyName","ownerMessage":"ownerMessage","jobsApplyUrl":"jobsApplyUrl","flavorOfTheDay":[{"flavorId":2,"menuItemId":2,"onDate":"${today.toISOString()}","title":"Chocolate Custard","urlSlug":"chocolate-custard","image":{"useWhiteBackground":true,"src":"https://cloudfront.net/menu-item-detail/400/img-Chocolate-Custard.png"}},{"flavorId":3,"menuItemId":3,"onDate":"${tomorrow.toISOString()}","title":"Strawberry Custard","urlSlug":"strawberry-custard","image":{"useWhiteBackground":true,"src":"https://cloudfront.net/menu-item-detail/400/img-Strawberry-Custard.png"}}]},"restaurantCalendar":{"restaurant":{"id":1,"title":"Culver's of City, State - Main Street","slug":"city"},"flavors":[{"flavorId":1,"menuItemId":1,"onDate":"${yesterday.toISOString()}","title":"Vanilla Custard","urlSlug":"vanilla-custard","image":{"useWhiteBackground":true,"src":"https://cloudfront.net/menu-item-detail/400/img-Vanilla-Custard.png"}},{"flavorId":2,"menuItemId":2,"onDate":"${today.toISOString()}","title":"Chocolate Custard","urlSlug":"chocolate-custard","image":{"useWhiteBackground":true,"src":"https://cloudfront.net/menu-item-detail/400/img-Chocolate-Custard.png"}},{"flavorId":3,"menuItemId":3,"onDate":"${tomorrow.toISOString()}","title":"Strawberry Custard","urlSlug":"strawberry-custard","image":{"useWhiteBackground":true,"src":"https://cloudfront.net/menu-item-detail/400/img-Strawberry-Custard.png"}}]}}}}}}</script></body></html>`,
   );
 
   test("GET /:slug", async () => {
@@ -78,13 +84,13 @@ describe("/restaurants", () => {
       phoneNumber: "123-456-7890",
       flavors: [
         {
-          date: "2024-02-24T00:00:00",
+          date: today.toISOString(),
           name: "Chocolate Custard",
           imageUrl: `${env.FLAVOR_IMAGE_BASE_URL}/img-Chocolate-Custard.png?w=400`,
           slug: "chocolate-custard",
         },
         {
-          date: "2024-02-25T00:00:00",
+          date: tomorrow.toISOString(),
           name: "Strawberry Custard",
           imageUrl: `${env.FLAVOR_IMAGE_BASE_URL}/img-Strawberry-Custard.png?w=400`,
           slug: "strawberry-custard",
