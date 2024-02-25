@@ -46,6 +46,7 @@ describe("/flavors", () => {
       },
     ] satisfies AllFlavors;
 
+    expect(res.status).toEqual(200);
     expect(received).toEqual(expected);
   });
 
@@ -63,7 +64,7 @@ describe("/flavors", () => {
   test("GET /:slug", async () => {
     const res = await flavors.request(`/${slug}`, { method: "GET" }, env);
 
-    const actual = await res.json();
+    const received = await res.json();
 
     const expected = {
       name: "Chocolate Custard",
@@ -72,6 +73,29 @@ describe("/flavors", () => {
       allergens: ["Egg", "Milk"],
     } satisfies SluggedFlavor;
 
-    expect(actual).toEqual(expected);
+    expect(res.status).toEqual(200);
+    expect(received).toEqual(expected);
+  });
+
+  const badSlug = "not-a-flavor";
+  const badSlugFlavorInterceptor = mockPool.intercept({
+    method: "GET",
+    path: `flavor-of-the-day/${badSlug}`,
+  });
+
+  badSlugFlavorInterceptor.reply(
+    200,
+    `<html><body><div id="__next"></div><script id="__NEXT_DATA__" type="application/json">{"props":{"pageProps":{"page":{"customData":{"flavorDetails":{}}}}}}</script></body></html>`,
+  );
+
+  test("GET /:slug (bad slug)", async () => {
+    const res = await flavors.request(`/${badSlug}`, { method: "GET" }, env);
+
+    const received = await res.text();
+
+    const expected = "Flavor not found";
+
+    expect(res.status).toEqual(404);
+    expect(received).toEqual(expected);
   });
 });

@@ -50,7 +50,54 @@ describe("/restaurants", () => {
       },
     ] satisfies LocatedRestaurant[];
 
+    expect(res.status).toEqual(200);
     expect(received).toEqual(expected);
+  });
+
+  test("GET / (no query params)", async () => {
+    const res = await restaurants.request("/", { method: "GET" }, env);
+
+    expect(res.status).toEqual(400);
+  });
+
+  test("GET / (missing latitude)", async () => {
+    const res = await restaurants.request(
+      "/?longitude=0",
+      { method: "GET" },
+      env,
+    );
+
+    expect(res.status).toEqual(400);
+  });
+
+  test("GET / (missing longitude)", async () => {
+    const res = await restaurants.request(
+      "/?latitude=0",
+      { method: "GET" },
+      env,
+    );
+
+    expect(res.status).toEqual(400);
+  });
+
+  test("GET / (invalid latitude)", async () => {
+    const res = await restaurants.request(
+      "/?latitude=91&longitude=0",
+      { method: "GET" },
+      env,
+    );
+
+    expect(res.status).toEqual(400);
+  });
+
+  test("GET / (invalid longitude)", async () => {
+    const res = await restaurants.request(
+      "/?latitude=0&longitude=181",
+      { method: "GET" },
+      env,
+    );
+
+    expect(res.status).toEqual(400);
   });
 
   const slug = "city";
@@ -98,6 +145,30 @@ describe("/restaurants", () => {
       ],
     } satisfies SluggedRestaurant;
 
+    expect(res.status).toEqual(200);
     expect(actual).toEqual(expected);
+  });
+
+  const badSlug = "not-a-restaurant";
+  const badSlugRestaurantInterceptor = mockPool.intercept({
+    method: "GET",
+    path: `restaurants/${badSlug}`,
+  });
+
+  badSlugRestaurantInterceptor.reply(404, `<html></html>`);
+
+  test("GET /:slug (bad slug)", async () => {
+    const res = await restaurants.request(
+      `/${badSlug}`,
+      { method: "GET" },
+      env,
+    );
+
+    const received = await res.text();
+
+    const expected = "Restaurant not found";
+
+    expect(res.status).toEqual(404);
+    expect(received).toEqual(expected);
   });
 });
