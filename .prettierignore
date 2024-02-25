@@ -5,3 +5,4 @@ dist
 .turbo
 .terraform
 .terraform.lock.hcl
+.pnpm-store
