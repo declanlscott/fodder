@@ -19,6 +19,7 @@
     },
     "frontend#deploy": {
       "dependsOn": ["backend#deploy", "@repo/ui#build", "@repo/env#build"]
-    }
+    },
+    "test": {}
   }
 }
