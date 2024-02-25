@@ -17,8 +17,8 @@ A few years ago, a certain midwestern fast-food restaurant chain discontinued it
     - IAM
     - ACM
     - DynamoDB (for terraform state)
-- Backend (unit tested)
-  - Hono
+- Backend
+  - Hono (with integration tests)
   - TypeScript
 - Frontend
   - Vite
