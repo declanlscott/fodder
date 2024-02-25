@@ -1,0 +1,115 @@
+name: Workflow
+
+on: [push]
+
+env:
+  AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_REGION: us-east-2
+
+jobs:
+  ci:
+    name: CI
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18.x"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8
+          run_install: |
+            - recursive: true
+
+      - name: Lint
+        run: pnpm run lint
+
+      - name: Format
+        run: pnpm run format:check
+
+      - name: Write frontend environment variables
+        run: echo "VITE_API_BASE_URL=${{ vars.VITE_API_BASE_URL }}" | cat >> .env
+        working-directory: ./apps/frontend
+
+      - name: Test
+        run: pnpm run test
+
+      - name: Build
+        run: pnpm run build
+
+  cd:
+    name: CD
+    runs-on: ubuntu-22.04
+    needs: [ci]
+    env:
+      TF_VAR_root_domain_name: ${{ vars.ROOT_DOMAIN_NAME }}
+      TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      TF_VAR_cloudflare_zone_id: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18.x"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8
+          run_install: |
+            - recursive: true
+
+      - name: Write frontend environment variables
+        run: echo "VITE_API_BASE_URL=${{ vars.VITE_API_BASE_URL }}" | cat >> .env
+        working-directory: ./apps/frontend
+
+      - name: Build
+        run: pnpm run build
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        run: terraform init
+        working-directory: ./infra
+
+      - name: Terraform Validate
+        run: terraform validate
+        working-directory: ./infra
+
+      - name: Terraform Format
+        run: terraform fmt -check
+        working-directory: ./infra
+
+      - name: Terraform Plan
+        run: terraform plan -input=false
+        working-directory: ./infra
+
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: terraform apply -auto-approve -input=false
+        working-directory: ./infra
+
+      - name: AWS CLI version
+        run: aws --version
+      - name: AWS CLI Configure
+        run: |
+          aws configure set aws_access_key_id $(echo $AWS_ACCESS_KEY)
+          aws configure set aws_secret_access_key $(echo $AWS_SECRET_ACCESS_KEY)
+          aws configure set region $(echo $AWS_REGION)
+
+      - name: Deploy
+        run: pnpm run deploy
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        env:
+          AWS_PAGER: ""
