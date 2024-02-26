@@ -5,9 +5,6 @@
       "cache": false,
       "persistent": true
     },
-    "frontend#dev": {
-      "dependsOn": ["@repo/ui#build", "@repo/env#build"]
-    },
     "lint": {},
     "build": {
       "dependsOn": ["^build"],
@@ -17,9 +14,8 @@
       "cache": false,
       "dependsOn": ["^build"]
     },
-    "frontend#deploy": {
-      "dependsOn": ["backend#deploy", "@repo/ui#build", "@repo/env#build"]
-    },
-    "test": {}
+    "test": {
+      "cache": false
+    }
   }
 }

@@ -106,11 +106,24 @@ describe("/restaurants", () => {
     path: `restaurants/${slug}`,
   });
 
-  const today = new Date();
+  const now = new Date();
+
+  const chicagoNow = new Date(
+    now.toLocaleString("en-US", { timeZone: "America/Chicago" }),
+  );
+
+  const today = new Date(
+    chicagoNow.getFullYear(),
+    chicagoNow.getMonth(),
+    chicagoNow.getDate(),
+  );
   const yesterday = new Date();
   const tomorrow = new Date();
   yesterday.setDate(today.getDate() - 1);
   tomorrow.setDate(today.getDate() + 1);
+  today.setHours(0, 0, 0, 0);
+  yesterday.setHours(0, 0, 0, 0);
+  tomorrow.setHours(0, 0, 0, 0);
 
   restaurantInterceptor.reply(
     200,
