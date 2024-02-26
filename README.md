@@ -66,8 +66,8 @@ act --container-architecture linux/amd64 --var-file act.variables --secret-file 
     - IAM
     - ACM
     - DynamoDB (for terraform state)
-- Backend (unit tested)
-  - Hono
+- Backend
+  - Hono (with integration tests)
   - TypeScript
 - Frontend
   - Vite
