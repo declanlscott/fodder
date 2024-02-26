@@ -9,10 +9,12 @@ import {
   Skeleton,
 } from "@repo/ui";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { createRoute } from "@tanstack/react-router";
+import { createRoute, notFound } from "@tanstack/react-router";
+import { HTTPError } from "ky";
 import { AlertTriangle } from "lucide-react";
 
 import { ErrorCard } from "~/components/error-card";
+import { NotFound } from "~/components/not-found";
 import { useTitle } from "~/hooks/title";
 import { queryOptionsFactory } from "~/lib/query-options-factory";
 import { rootRoute } from "~/routes/root";
@@ -20,8 +22,22 @@ import { rootRoute } from "~/routes/root";
 export const flavorRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/flavors/$slug",
-  loader: ({ context: { queryClient }, params }) =>
-    queryClient.ensureQueryData(queryOptionsFactory.flavor(params.slug)),
+  loader: async ({ context: { queryClient }, params }) => {
+    try {
+      const data = await queryClient.ensureQueryData(
+        queryOptionsFactory.flavor(params.slug),
+      );
+
+      return data;
+    } catch (error) {
+      if (error instanceof HTTPError && error.response.status === 404) {
+        throw notFound();
+      }
+
+      return;
+    }
+  },
+  notFoundComponent: () => <NotFound />,
   component: function Flavor() {
     const { slug } = flavorRoute.useParams();
     const { data } = useSuspenseQuery(queryOptionsFactory.flavor(slug));

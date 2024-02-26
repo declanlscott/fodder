@@ -2,6 +2,7 @@ import { lazy, Suspense } from "react";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import {
   createRootRouteWithContext,
+  Navigate,
   ScrollRestoration,
 } from "@tanstack/react-router";
 
@@ -24,6 +25,7 @@ const rootRouteWithContext = createRootRouteWithContext<{
 }>();
 
 export const rootRoute = rootRouteWithContext({
+  notFoundComponent: () => <Navigate to="/404" />,
   component: () => (
     <>
       <Layout />

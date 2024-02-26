@@ -1,9 +1,11 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { createRoute } from "@tanstack/react-router";
+import { createRoute, notFound } from "@tanstack/react-router";
+import { HTTPError } from "ky";
 import { MapPin, Phone } from "lucide-react";
 
 import { ErrorCard } from "~/components/error-card";
 import { NearbyFods } from "~/components/nearby-fods";
+import { NotFound } from "~/components/not-found";
 import { UpcomingFods } from "~/components/upcoming-fods";
 import { useTitle } from "~/hooks/title";
 import { queryOptionsFactory } from "~/lib/query-options-factory";
@@ -12,8 +14,22 @@ import { rootRoute } from "~/routes/root";
 export const restaurantRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/restaurants/$slug",
-  loader: ({ context: { queryClient }, params }) =>
-    queryClient.ensureQueryData(queryOptionsFactory.restaurant(params.slug)),
+  loader: async ({ context: { queryClient }, params }) => {
+    try {
+      const data = await queryClient.ensureQueryData(
+        queryOptionsFactory.restaurant(params.slug),
+      );
+
+      return data;
+    } catch (error) {
+      if (error instanceof HTTPError && error.response.status === 404) {
+        throw notFound();
+      }
+
+      return;
+    }
+  },
+  notFoundComponent: () => <NotFound />,
   component: function Restaurant() {
     const { slug } = restaurantRoute.useParams();
     const { data } = useSuspenseQuery(queryOptionsFactory.restaurant(slug));
