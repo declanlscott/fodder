@@ -1,4 +1,5 @@
 import { useLayoutEffect, useState } from "react";
+import { SiGithub } from "@icons-pack/react-simple-icons";
 import {
   Button,
   DropdownMenu,
@@ -7,17 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@repo/ui";
 import { Link, Outlet } from "@tanstack/react-router";
-import {
-  Code2,
-  // TODO: Fix deprecated github icon
-  Github,
-  IceCream,
-  Locate,
-  Menu,
-  Moon,
-  Sun,
-  X,
-} from "lucide-react";
+import { Code2, IceCream, Locate, Menu, Moon, Sun, X } from "lucide-react";
 
 import Logo from "~/components/logo";
 import { useTheme } from "~/hooks/theme";
@@ -114,7 +105,7 @@ export function Layout() {
             className="text-muted-foreground"
           >
             <a href="https://github.com/declanlscott/fodder" target="_blank">
-              <Github />
+              <SiGithub />
             </a>
           </Button>
         </div>
