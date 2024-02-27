@@ -41,7 +41,7 @@ export function FlavorCard({ flavor }: FlavorCardProps) {
         )}
       >
         {imageStatus === "loading" ? (
-          <Skeleton className="aspect-square w-full rounded-md" />
+          <Skeleton className="aspect-[80/71] w-full rounded-md" />
         ) : imageStatus === "success" ? (
           <img src={flavor.imageUrl} alt={flavor.name} />
         ) : null}

@@ -5,6 +5,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  cn,
   Skeleton,
 } from "@repo/ui";
 import { Link } from "@tanstack/react-router";
@@ -44,9 +45,14 @@ export function FodCard({ restaurant }: FodCardProps) {
         </CardDescription>
       </CardHeader>
 
-      <CardContent className="pb-0">
+      <CardContent
+        className={cn(
+          "flex justify-center",
+          imageStatus !== "loading" && "pb-0",
+        )}
+      >
         {imageStatus === "loading" ? (
-          <Skeleton className="aspect-square w-full rounded-md" />
+          <Skeleton className="aspect-[80/71] w-full rounded-md" />
         ) : imageStatus === "success" ? (
           <img src={restaurant.fod.imageUrl} alt={restaurant.fod.name} />
         ) : null}
@@ -72,7 +78,7 @@ export function FodCardSkeleton() {
       </CardHeader>
 
       <CardContent>
-        <Skeleton className="aspect-square w-full rounded-md" />
+        <Skeleton className="aspect-[80/71] w-full rounded-md" />
       </CardContent>
     </Card>
   );

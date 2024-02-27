@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 
+import { ErrorCard } from "~/components/error-card";
 import { ThemeProvider } from "~/components/theme-provider";
 import { flavorRoute } from "~/routes/flavor";
 import { flavorsRoute } from "~/routes/flavors";
@@ -31,6 +32,7 @@ const router = createRouter({
   context: {
     queryClient,
   },
+  defaultErrorComponent: () => <ErrorCard />,
 });
 
 declare module "@tanstack/react-router" {
