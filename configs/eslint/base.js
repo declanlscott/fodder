@@ -10,6 +10,7 @@ module.exports = {
   ],
   ignorePatterns: [
     "dist",
+    "lambda",
     ".eslintrc.cjs",
     "postcss.config.js",
     "postcss.config.cjs",

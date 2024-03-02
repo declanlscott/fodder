@@ -16,8 +16,12 @@ provider "aws" {
   region = "us-east-1"
 }
 
-resource "aws_acm_certificate" "app" {
-  domain_name       = var.app_domain_name
+locals {
+  domain_name = "${var.subdomain}.${var.root_domain_name}"
+}
+
+resource "aws_acm_certificate" "cert" {
+  domain_name       = local.domain_name
   validation_method = "DNS"
   provider          = aws.virginia
 
@@ -26,10 +30,10 @@ resource "aws_acm_certificate" "app" {
   }
 }
 
-resource "cloudflare_record" "app" {
+resource "cloudflare_record" "subdomain" {
   zone_id = var.cloudflare_zone_id
 
-  name    = "fodder"
+  name    = var.subdomain
   type    = "CNAME"
   value   = var.cloudfront_distribution_domain_name
   proxied = true
@@ -39,7 +43,7 @@ resource "cloudflare_record" "validation" {
   zone_id = var.cloudflare_zone_id
 
   for_each = {
-    for dvo in aws_acm_certificate.app.domain_validation_options : dvo.domain_name => {
+    for dvo in aws_acm_certificate.cert.domain_validation_options : dvo.domain_name => {
       name   = dvo.resource_record_name
       record = dvo.resource_record_value
       type   = dvo.resource_record_type
@@ -52,7 +56,7 @@ resource "cloudflare_record" "validation" {
 }
 
 resource "aws_acm_certificate_validation" "validation" {
-  certificate_arn         = aws_acm_certificate.app.arn
+  certificate_arn         = aws_acm_certificate.cert.arn
   validation_record_fqdns = [for record in cloudflare_record.validation : record.hostname]
   provider                = aws.virginia
 }

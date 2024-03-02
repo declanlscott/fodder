@@ -16,6 +16,7 @@ A few years ago, a certain midwestern fast-food restaurant chain discontinued it
   - [Terraform](https://www.terraform.io/)
   - [Docker](https://www.docker.com/)
   - [Act](https://nektosact.com/)
+  - [LLRT](https://github.com/awslabs/llrt)
 
 ### Setup
 
@@ -57,18 +58,19 @@ act --container-architecture linux/amd64 --var-file act.variables --secret-file 
 
 - Infrastructure
   - Terraform IaC
-  - Cloudflare
-    - DNS
-    - Workers
+  - Cloudflare DNS
   - AWS
     - CloudFront
-    - S3
-    - IAM
     - ACM
+    - S3
+    - Lambda
+    - CloudWatch (for logs)
     - DynamoDB (for terraform state)
+    - IAM
 - Backend
-  - Hono (with integration tests)
+  - Hono
   - TypeScript
+  - LLRT (Low Latency Runtime)
 - Frontend
   - Vite
   - React

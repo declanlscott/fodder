@@ -1,33 +1,20 @@
 import { Hono } from "hono";
-import { cache } from "hono/cache";
-import { cors } from "hono/cors";
+import { handle } from "hono/aws-lambda";
 import { HTTPException } from "hono/http-exception";
 
 import flavors from "~/routes/flavors";
-import restaurants from "./routes/restaurants";
+import restaurants from "~/routes/restaurants";
 
-import type { Bindings } from "~/types/env";
+import type { Bindings } from "~/lib/bindings";
 
 const api = new Hono<{ Bindings: Bindings }>();
-
-api.use("*", async (c, next) => {
-  const corsMiddleware = cors({
-    origin: c.env.CORS_ORIGIN,
-    allowMethods: ["GET"],
-  });
-
-  return await corsMiddleware(c, next);
-});
-
-api.get(
-  "*",
-  cache({ cacheName: "fodder-api-cache", cacheControl: "max-age=3600" }),
-);
 
 api.route("/restaurants", restaurants);
 api.route("/flavors", flavors);
 
 api.onError((err, c) => {
+  console.error("error: ", err);
+
   if (err instanceof HTTPException) {
     return err.getResponse();
   }
@@ -42,3 +29,5 @@ api.onError((err, c) => {
 });
 
 export default api;
+
+export const handler = handle(api);

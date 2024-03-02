@@ -1,6 +1,7 @@
-import { env } from "hono/adapter";
 import { HTTPException } from "hono/http-exception";
+import { env } from "env";
 
+import { isLambdaBindings } from "~/lib/bindings";
 import { isFlavorFound, isFlavorsModule } from "~/schemas/external-api";
 
 import type {
@@ -10,6 +11,8 @@ import type {
   SluggedRestaurant,
 } from "@repo/types";
 import type { Context } from "hono";
+import type { ApiGatewayRequestContextV2 } from "hono/aws-lambda";
+import type { Bindings } from "~/lib/bindings";
 import type {
   FetchedRestaurants,
   FlavorProps,
@@ -18,17 +21,12 @@ import type {
   ScrapedFlavorNextData,
   ScrapedRestaurantNextData,
 } from "~/schemas/external-api";
-import type { Bindings } from "~/types/env";
 
 const imageWidth = 400;
 
-export function formatFetchedRestaurants({
-  c,
-  json,
-}: {
-  c: Context<{ Bindings: Bindings }>;
-  json: FetchedRestaurants;
-}): LocatedRestaurant[] {
+export function formatFetchedRestaurants(
+  json: FetchedRestaurants,
+): LocatedRestaurant[] {
   return json.data.geofences.reduce((acc, curr) => {
     const name = curr.metadata.flavorOfDayName;
 
@@ -39,10 +37,7 @@ export function formatFetchedRestaurants({
 
     const fod: LocatedRestaurant["fod"] = {
       name,
-      imageUrl: formatFodImageUrl({
-        c,
-        fodImageSlug: curr.metadata.flavorOfDaySlug,
-      }),
+      imageUrl: formatFodImageUrl(curr.metadata.flavorOfDaySlug),
       slug,
     };
 
@@ -62,41 +57,38 @@ export function formatFetchedRestaurants({
   }, [] as LocatedRestaurant[]);
 }
 
-function formatFodImageUrl({
-  c,
-  fodImageSlug,
-}: {
-  c: Context<{ Bindings: Bindings }>;
-  fodImageSlug: string;
-}) {
+function formatFodImageUrl(fodImageSlug: string) {
   if (!fodImageSlug) {
-    return env(c).LOGO_SVG_URL;
+    return env.LOGO_SVG_URL;
   }
 
-  return `${env(c).FLAVOR_IMAGE_BASE_URL}/${fodImageSlug}`;
+  return `${env.FLAVOR_IMAGE_BASE_URL}/${fodImageSlug}`;
 }
 
-export function formatScrapedRestaurant({
-  c,
-  nextData,
-}: {
-  c: Context<{ Bindings: Bindings }>;
-  nextData: ScrapedRestaurantNextData;
-}): SluggedRestaurant {
-  const filteredFlavors = filterFlavorsByDate({
-    flavors:
-      nextData.props.pageProps.page.customData.restaurantCalendar.flavors,
-  });
+export function formatScrapedRestaurant(
+  c: Context<{ Bindings: Bindings }>,
+  nextData: ScrapedRestaurantNextData,
+): SluggedRestaurant {
+  const now = isLambdaBindings(c.env)
+    ? new Date(
+        (c.env.event.requestContext as ApiGatewayRequestContextV2).timeEpoch,
+      )
+    : new Date();
+
+  const filteredFlavors = filterFlavorsByDate(
+    now,
+    nextData.props.pageProps.page.customData.restaurantCalendar.flavors,
+  );
 
   const flavors = filteredFlavors.reduce(
     (acc, curr) => {
       const imageSlug = curr.image.src.split(`${imageWidth}/`)[1];
       const imageUrl = imageSlug
-        ? `${env(c).FLAVOR_IMAGE_BASE_URL}/${imageSlug}?w=${imageWidth}`
-        : env(c).LOGO_SVG_URL;
+        ? `${env.FLAVOR_IMAGE_BASE_URL}/${imageSlug}?w=${imageWidth}`
+        : env.LOGO_SVG_URL;
 
       const flavor: SluggedRestaurant["flavors"][number] = {
-        date: curr.onDate,
+        date: curr.onDate.toISOString(),
         name: curr.title,
         imageUrl,
         slug: curr.urlSlug,
@@ -121,42 +113,15 @@ export function formatScrapedRestaurant({
   };
 }
 
-function filterFlavorsByDate({ flavors }: { flavors: FlavorProps[] }) {
-  const now = new Date();
+function filterFlavorsByDate(now: Date, flavors: FlavorProps[]) {
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-  const chicagoNow = new Date(
-    now.toLocaleString("en-US", { timeZone: "America/Chicago" }),
-  );
-
-  const today = new Date(
-    chicagoNow.getFullYear(),
-    chicagoNow.getMonth(),
-    chicagoNow.getDate(),
-  );
-
-  return flavors.filter((flavor) => {
-    const fodDate = new Date(flavor.onDate);
-    if (isNaN(fodDate.getTime())) {
-      throw new HTTPException(500, {
-        message: `Failed to parse flavor date: "${flavor.onDate}"`,
-      });
-    }
-
-    if (fodDate.getTime() >= today.getTime()) {
-      return true;
-    }
-
-    return false;
-  });
+  return flavors.filter(({ onDate }) => onDate.getTime() >= today.getTime());
 }
 
-export function formatScrapedAllFlavors({
-  c,
-  nextData,
-}: {
-  c: Context<{ Bindings: Bindings }>;
-  nextData: ScrapedAllFlavorsNextData;
-}): AllFlavors {
+export function formatScrapedAllFlavors(
+  nextData: ScrapedAllFlavorsNextData,
+): AllFlavors {
   let data: FlavorsModule["customData"]["flavors"] | undefined;
 
   for (const module of nextData.props.pageProps.page.zones.Content) {
@@ -174,7 +139,7 @@ export function formatScrapedAllFlavors({
   return data.reduce((acc, curr) => {
     const flavor = {
       name: curr.flavorName,
-      imageUrl: `${env(c).FLAVOR_IMAGE_BASE_URL}/${curr.fotdImage}?w=${imageWidth}`,
+      imageUrl: `${env.FLAVOR_IMAGE_BASE_URL}/${curr.fotdImage}?w=${imageWidth}`,
       slug: curr.fotdUrlSlug,
     };
 
@@ -182,13 +147,9 @@ export function formatScrapedAllFlavors({
   }, [] as AllFlavors);
 }
 
-export function formatScrapedFlavor({
-  c,
-  nextData,
-}: {
-  c: Context<{ Bindings: Bindings }>;
-  nextData: ScrapedFlavorNextData;
-}): SluggedFlavor {
+export function formatScrapedFlavor(
+  nextData: ScrapedFlavorNextData,
+): SluggedFlavor {
   const flavorDetails = nextData.props.pageProps.page.customData.flavorDetails;
 
   if (!isFlavorFound(flavorDetails)) {
@@ -197,7 +158,7 @@ export function formatScrapedFlavor({
 
   const flavor = {
     name: flavorDetails.name,
-    imageUrl: `${env(c).FLAVOR_IMAGE_BASE_URL}/${flavorDetails.fotdImage}`,
+    imageUrl: `${env.FLAVOR_IMAGE_BASE_URL}/${flavorDetails.fotdImage}`,
     description: flavorDetails.description,
     allergens: flavorDetails.allergens.split(", "),
   };
