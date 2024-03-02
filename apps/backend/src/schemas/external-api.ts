@@ -1,6 +1,8 @@
 import {
   array,
   boolean,
+  coerce,
+  date,
   literal,
   never,
   notValue,
@@ -69,7 +71,7 @@ export type FetchedRestaurants = Output<typeof FetchedRestaurants>;
 export const FlavorProps = object({
   flavorId: number(),
   menuItemId: number(),
-  onDate: string(),
+  onDate: coerce(date(), (input) => new Date(input as string)),
   title: string(),
   urlSlug: string(),
   image: object({

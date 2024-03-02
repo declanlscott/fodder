@@ -303,7 +303,7 @@ export function createEnv<
   const extendedObj = (opts.extends ?? []).reduce((acc, curr) => {
     return Object.assign(acc, curr);
   }, {});
-  const fullObj = Object.assign(parsed.data, extendedObj);
+  const fullObj = Object.assign(parsed.output, extendedObj);
 
   const env = new Proxy(fullObj, {
     get(target, prop) {

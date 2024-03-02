@@ -1,7 +1,7 @@
 resource "aws_cloudfront_distribution" "app" {
   origin {
-    origin_id                = var.app_bucket_name
-    domain_name              = var.app_bucket_regional_domain_name
+    origin_id                = var.bucket_name
+    domain_name              = var.bucket_regional_domain_name
     origin_access_control_id = aws_cloudfront_origin_access_control.app.id
   }
 
@@ -10,7 +10,7 @@ resource "aws_cloudfront_distribution" "app" {
   default_root_object = "index.html"
 
   default_cache_behavior {
-    target_origin_id       = var.app_bucket_name
+    target_origin_id       = var.bucket_name
     viewer_protocol_policy = "redirect-to-https"
     allowed_methods        = ["GET", "HEAD"]
     cached_methods         = ["GET", "HEAD"]
@@ -26,7 +26,7 @@ resource "aws_cloudfront_distribution" "app" {
   }
 
   viewer_certificate {
-    acm_certificate_arn      = var.app_certificate_arn
+    acm_certificate_arn      = var.certificate_arn
     ssl_support_method       = "sni-only"
     minimum_protocol_version = "TLSv1.2_2021"
   }
@@ -43,7 +43,7 @@ resource "aws_cloudfront_distribution" "app" {
     response_page_path = "/index.html"
   }
 
-  aliases = [var.app_bucket_name]
+  aliases = [var.bucket_name]
 }
 
 resource "aws_cloudfront_origin_access_control" "app" {

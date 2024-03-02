@@ -1,5 +1,5 @@
-import { env } from "hono/adapter";
 import { HTTPException } from "hono/http-exception";
+import { env } from "env";
 
 import { parseJson, parseNextData } from "~/lib/parsers";
 import { hasAddress } from "~/schemas/api";
@@ -10,20 +10,12 @@ import {
   ScrapedRestaurantNextData,
 } from "~/schemas/external-api";
 
-import type { Context } from "hono";
 import type { LocateRestaurantsSchema } from "~/schemas/api";
-import type { Bindings } from "~/types/env";
 
-export async function fetchRestaurants({
-  c,
-  queryParams,
-}: {
-  c: Context<{ Bindings: Bindings }>;
-  queryParams: LocateRestaurantsSchema;
-}): Promise<FetchedRestaurants> {
-  const url = new URL(
-    `${env(c).EXTERNAL_API_BASE_URL}/restaurants/getLocations`,
-  );
+export async function fetchRestaurants(
+  queryParams: LocateRestaurantsSchema,
+): Promise<FetchedRestaurants> {
+  const url = new URL(`${env.EXTERNAL_API_BASE_URL}/restaurants/getLocations`);
 
   const searchParams = new URLSearchParams({
     limit: "1000",
@@ -52,14 +44,10 @@ export async function fetchRestaurants({
   });
 }
 
-export async function scrapeRestaurantBySlug({
-  c,
-  slug,
-}: {
-  c: Context<{ Bindings: Bindings }>;
-  slug: string;
-}): Promise<ScrapedRestaurantNextData> {
-  const url = new URL(`${env(c).RESTAURANT_SCRAPE_BASE_URL}/${slug}`);
+export async function scrapeRestaurantBySlug(
+  slug: string,
+): Promise<ScrapedRestaurantNextData> {
+  const url = new URL(`${env.RESTAURANT_SCRAPE_BASE_URL}/${slug}`);
 
   const res = await fetch(url.toString());
   if (!res.ok) {
@@ -83,12 +71,8 @@ export async function scrapeRestaurantBySlug({
   });
 }
 
-export async function scrapeAllFlavors({
-  c,
-}: {
-  c: Context<{ Bindings: Bindings }>;
-}) {
-  const url = new URL(`${env(c).FLAVORS_SCRAPE_BASE_URL}`);
+export async function scrapeAllFlavors() {
+  const url = new URL(`${env.FLAVORS_SCRAPE_BASE_URL}`);
 
   const res = await fetch(url.toString());
   if (!res.ok) {
@@ -105,14 +89,10 @@ export async function scrapeAllFlavors({
   });
 }
 
-export async function scrapeFlavorBySlug({
-  c,
-  slug,
-}: {
-  c: Context<{ Bindings: Bindings }>;
-  slug: string;
-}): Promise<ScrapedFlavorNextData> {
-  const url = new URL(`${env(c).FLAVORS_SCRAPE_BASE_URL}/${slug}`);
+export async function scrapeFlavorBySlug(
+  slug: string,
+): Promise<ScrapedFlavorNextData> {
+  const url = new URL(`${env.FLAVORS_SCRAPE_BASE_URL}/${slug}`);
 
   const res = await fetch(url.toString());
 

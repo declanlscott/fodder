@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "app" {
-  bucket = var.app_domain_name
+  bucket = var.domain_name
 }
 
 resource "aws_s3_bucket_versioning" "app" {
@@ -48,7 +48,7 @@ data "aws_iam_policy_document" "allow_distribution" {
     condition {
       test     = "StringEquals"
       variable = "AWS:SourceArn"
-      values   = [var.app_distribution_arn]
+      values   = [var.distribution_arn]
     }
   }
 }

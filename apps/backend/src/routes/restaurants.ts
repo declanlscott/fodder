@@ -10,7 +10,7 @@ import {
 } from "~/lib/formatters";
 import { LocateRestaurantsSchema, validateSlug } from "~/schemas/api";
 
-import type { Bindings } from "~/types/env";
+import type { Bindings } from "~/lib/bindings";
 
 const restaurants = new Hono<{ Bindings: Bindings }>();
 
@@ -36,12 +36,9 @@ restaurants.get(
   async (c) => {
     const queryParams = c.req.valid("query");
 
-    const json = await fetchRestaurants({
-      c,
-      queryParams,
-    });
+    const json = await fetchRestaurants(queryParams);
 
-    const body = formatFetchedRestaurants({ c, json });
+    const body = formatFetchedRestaurants(json);
 
     return c.json(body, 200);
   },
@@ -51,9 +48,9 @@ restaurants.get(
 restaurants.get("/:slug", validator("param", validateSlug), async (c) => {
   const { slug } = c.req.valid("param");
 
-  const nextData = await scrapeRestaurantBySlug({ c, slug });
+  const nextData = await scrapeRestaurantBySlug(slug);
 
-  const body = formatScrapedRestaurant({ c, nextData });
+  const body = formatScrapedRestaurant(c, nextData);
 
   return c.json(body, 200);
 });

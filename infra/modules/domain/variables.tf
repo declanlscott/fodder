@@ -11,11 +11,16 @@ variable "cloudflare_zone_id" {
 }
 
 variable "cloudfront_distribution_domain_name" {
-  description = "The CloudFront distribution domain name for the app"
+  description = "The CloudFront distribution domain name"
   type        = string
 }
 
-variable "app_domain_name" {
-  description = "The domain name for the app"
+variable "subdomain" {
+  description = "The subdomain value"
+  type        = string
+}
+
+variable "root_domain_name" {
+  description = "The root domain name"
   type        = string
 }

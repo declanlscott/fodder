@@ -1,4 +1,0 @@
-# This file is used to set environment variables and secrets for local development
-# Copy this file to .dev.vars and set the values as needed
-
-CORS_ORIGIN="http://localhost:5173"
