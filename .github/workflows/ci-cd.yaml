@@ -19,7 +19,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "18.x"
+          node-version: "20.x"
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v3
@@ -32,8 +32,17 @@ jobs:
         run: pnpm run format:check
 
       - name: Write frontend environment variables
-        run: echo "VITE_API_BASE_URL=${{ vars.VITE_API_BASE_URL }}" | cat >> .env
+        run: printf "VITE_API_BASE_URL=%s\n" "${{ vars.VITE_API_BASE_URL }}" >> .env
         working-directory: ./apps/frontend
+
+      - name: Write backend environment variables
+        run: |
+          printf "EXTERNAL_API_BASE_URL=%s\n" "${{ vars.API_FUNCTION_EXTERNAL_API_BASE_URL }}" >> .env
+          printf "RESTAURANT_SCRAPE_BASE_URL=%s\n" "${{ vars.API_FUNCTION_RESTAURANT_SCRAPE_BASE_URL }}" >> .env
+          printf "FLAVORS_SCRAPE_BASE_URL=%s\n" "${{ vars.API_FUNCTION_FLAVORS_SCRAPE_BASE_URL }}" >> .env
+          printf "FLAVOR_IMAGE_BASE_URL=%s\n" "${{ vars.API_FUNCTION_FLAVOR_IMAGE_BASE_URL }}" >> .env
+          printf "LOGO_SVG_URL=%s\n" "${{ vars.API_FUNCTION_LOGO_SVG_URL }}" >> .env
+        working-directory: ./apps/backend
 
       - name: Build
         run: pnpm run build
@@ -52,6 +61,11 @@ jobs:
       TF_VAR_root_domain_name: ${{ vars.ROOT_DOMAIN_NAME }}
       TF_VAR_cloudflare_api_token: ${{ secrets.TERRAFORM_CLOUDFLARE_API_TOKEN }}
       TF_VAR_cloudflare_zone_id: ${{ secrets.TERRAFORM_CLOUDFLARE_ZONE_ID }}
+      TF_VAR_api_function_external_api_base_url: ${{ vars.API_FUNCTION_EXTERNAL_API_BASE_URL }}
+      TF_VAR_api_function_restaurant_scrape_base_url: ${{ vars.API_FUNCTION_RESTAURANT_SCRAPE_BASE_URL }}
+      TF_VAR_api_function_flavors_scrape_base_url: ${{ vars.API_FUNCTION_FLAVORS_SCRAPE_BASE_URL }}
+      TF_VAR_api_function_flavor_image_base_url: ${{ vars.API_FUNCTION_FLAVOR_IMAGE_BASE_URL }}
+      TF_VAR_api_function_logo_svg_url: ${{ vars.API_FUNCTION_LOGO_SVG_URL }}
 
     steps:
       - name: Checkout
@@ -60,7 +74,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "18.x"
+          node-version: "20.x"
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v3
@@ -70,11 +84,25 @@ jobs:
             - recursive: true
 
       - name: Write frontend environment variables
-        run: echo "VITE_API_BASE_URL=${{ vars.VITE_API_BASE_URL }}" | cat >> .env
+        run: printf "VITE_API_BASE_URL=%s\n" "${{ vars.VITE_API_BASE_URL }}" >> .env
         working-directory: ./apps/frontend
 
       - name: Build
         run: pnpm run build
+
+      - name: Download LLRT
+        run: curl -L -o llrt.zip https://github.com/awslabs/llrt/releases/latest/download/llrt-lambda-arm64.zip
+        working-directory: ./apps/backend
+      - name: Unzip LLRT
+        run: unzip llrt.zip
+        working-directory: ./apps/backend
+      - name: Copy bootstrap
+        run: cp bootstrap ./lambda/
+        working-directory: ./apps/backend
+
+      - name: Zip lambda
+        run: pnpm run zip
+        working-directory: ./apps/backend
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
@@ -122,4 +150,3 @@ jobs:
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         env:
           AWS_PAGER: ""
-          CLOUDFLARE_API_TOKEN: ${{ secrets.WRANGLER_CLOUDFLARE_API_TOKEN }}
