@@ -31,7 +31,7 @@ pnpm i
 Create the necessary environment files:
 
 ```bash
-cp apps/backend/.dev.vars.example apps/backend/.dev.vars
+cp apps/backend/.env.example apps/backend/.env
 cp apps/frontend/.env.example apps/frontend/.env
 ```
 
@@ -46,7 +46,7 @@ pnpm dev
 
 This project uses GitHub Actions for CI/CD. To run the CI/CD pipeline locally, you can use [Act](https://nektosact.com/). Follow the [installation instructions](https://nektosact.com/installation/index.html) for your operating system.
 
-Create an `act.secrets` file in the root of the repository similar to [`act.secrets.example`](https://github.com/declanlscott/fodder/blob/main/act.secrets.example).
+Create an `act.secrets` file in the root of the repository similar to [`act.secrets.example`](act.secrets.example).
 
 On an Apple silicon Mac, I run the following command. If you are running on a different platform, you may not need the `--container-architecture` flag.
 
