@@ -42,7 +42,7 @@ jobs:
           printf "FLAVORS_SCRAPE_BASE_URL=%s\n" "${{ vars.API_FUNCTION_FLAVORS_SCRAPE_BASE_URL }}" >> .env
           printf "FLAVOR_IMAGE_BASE_URL=%s\n" "${{ vars.API_FUNCTION_FLAVOR_IMAGE_BASE_URL }}" >> .env
           printf "LOGO_SVG_URL=%s\n" "${{ vars.API_FUNCTION_LOGO_SVG_URL }}" >> .env
-          printf "CORS_ORIGIN=%s\n" "${{ vars.CORS_ORIGIN }}" >> .env
+          printf "CORS_ORIGIN=%s\n" "${{ vars.API_FUNCTION_CORS_ORIGIN }}" >> .env
         working-directory: ./apps/backend
 
       - name: Build
@@ -67,6 +67,7 @@ jobs:
       TF_VAR_api_function_flavors_scrape_base_url: ${{ vars.API_FUNCTION_FLAVORS_SCRAPE_BASE_URL }}
       TF_VAR_api_function_flavor_image_base_url: ${{ vars.API_FUNCTION_FLAVOR_IMAGE_BASE_URL }}
       TF_VAR_api_function_logo_svg_url: ${{ vars.API_FUNCTION_LOGO_SVG_URL }}
+      TF_VAR_api_function_cors_origin: ${{ vars.API_FUNCTION_CORS_ORIGIN }}
 
     steps:
       - name: Checkout
