@@ -44,7 +44,12 @@ export function Layout() {
           ) : null}
 
           <nav className="flex items-center sm:gap-12">
-            <Link to="/">
+            <Link
+              to="/"
+              search={{ type: "address", address: "" }}
+              activeOptions={{ includeSearch: false }}
+              preload={false}
+            >
               <Logo />
             </Link>
 
@@ -52,8 +57,11 @@ export function Layout() {
               <li>
                 <Link
                   to="/"
+                  search={{ type: "address", address: "" }}
                   className={linkClassNames}
                   inactiveProps={{ className: inactiveLinkClassNames }}
+                  activeOptions={{ includeSearch: false }}
+                  preload={false}
                 >
                   <Locate />
                   <span>Locate</span>
@@ -140,8 +148,11 @@ function MobileNav({ setIsVisible }: MobileNavProps) {
           <li>
             <Link
               to="/"
+              search={{ type: "address", address: "" }}
               className={linkClassNames}
               inactiveProps={{ className: inactiveLinkClassNames }}
+              activeOptions={{ includeSearch: false }}
+              preload={false}
               onClick={() => setIsVisible(false)}
             >
               <Locate />

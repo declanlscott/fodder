@@ -7,36 +7,34 @@ import {
   locate,
 } from "~/lib/fetchers";
 
-import type { LocatedRestaurant } from "@repo/types";
-import type { QueryClient } from "@tanstack/react-query";
+import type { LocateRestaurantsSchema } from "~/schemas/locate-restaurants";
 
 export const queryOptionsFactory = {
   restaurant: (slug: string) =>
     queryOptions({
-      queryKey: ["restaurant", slug],
+      queryKey: ["restaurant", slug] as const,
       queryFn: ({ queryKey }) => getRestaurant(queryKey[1]),
     }),
-  restaurants: {
-    key: ["restaurants"] as const,
-    mutation: () => ({
-      mutationKey: queryOptionsFactory.restaurants.key,
-      mutationFn: locate,
+  restaurants: (data: LocateRestaurantsSchema) =>
+    queryOptions({
+      queryKey: ["restaurants", data] as const,
+      queryFn: ({ queryKey }) => locate(queryKey[1]),
+      enabled: false,
     }),
-    query: (queryClient: QueryClient) =>
-      queryOptions({
-        queryKey: queryOptionsFactory.restaurants.key,
-        queryFn: ({ queryKey }) =>
-          queryClient.getQueryData<LocatedRestaurant[]>(queryKey) ?? null,
-      }),
-  },
+  nearbyRestaurants: (slug: string, data: LocateRestaurantsSchema) =>
+    queryOptions({
+      queryKey: ["nearby-restaurants", slug] as const,
+      queryFn: () => locate(data),
+      select: (data) => data.filter((restaurant) => restaurant.slug !== slug),
+    }),
   flavor: (slug: string) =>
     queryOptions({
-      queryKey: ["flavor", slug],
+      queryKey: ["flavor", slug] as const,
       queryFn: ({ queryKey }) => getFlavor(queryKey[1]),
     }),
   flavors: () =>
     queryOptions({
-      queryKey: ["flavors"],
+      queryKey: ["flavors"] as const,
       queryFn: getAllFlavors,
     }),
 };
