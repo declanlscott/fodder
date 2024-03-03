@@ -2,8 +2,10 @@ import { Hono } from "hono";
 import { handle } from "hono/aws-lambda";
 import { cors } from "hono/cors";
 import { HTTPException } from "hono/http-exception";
+import { logger } from "hono/logger";
 import { env } from "env";
 
+import { isHttpBindings } from "~/lib/bindings";
 import flavors from "~/routes/flavors";
 import restaurants from "~/routes/restaurants";
 
@@ -12,13 +14,21 @@ import type { Bindings } from "~/lib/bindings";
 const api = new Hono<{ Bindings: Bindings }>();
 
 api.use("*", async (c, next) => {
-  const corsMiddleware = cors({
-    origin: env.CORS_ORIGIN,
-    allowMethods: ["GET"],
-  });
+  // Only enable CORS for HTTP bindings in Node.js for local development
+  if (isHttpBindings(c.env)) {
+    const corsMiddleware = cors({
+      origin: env.CORS_ORIGIN,
+      allowMethods: ["GET"],
+    });
 
-  return await corsMiddleware(c, next);
+    await corsMiddleware(c, next);
+    return;
+  }
+
+  await next();
 });
+
+api.use(logger());
 
 api.route("/restaurants", restaurants);
 api.route("/flavors", flavors);
