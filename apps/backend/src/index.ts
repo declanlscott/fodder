@@ -1,6 +1,8 @@
 import { Hono } from "hono";
 import { handle } from "hono/aws-lambda";
+import { cors } from "hono/cors";
 import { HTTPException } from "hono/http-exception";
+import { env } from "env";
 
 import flavors from "~/routes/flavors";
 import restaurants from "~/routes/restaurants";
@@ -8,6 +10,15 @@ import restaurants from "~/routes/restaurants";
 import type { Bindings } from "~/lib/bindings";
 
 const api = new Hono<{ Bindings: Bindings }>();
+
+api.use("*", async (c, next) => {
+  const corsMiddleware = cors({
+    origin: env.CORS_ORIGIN,
+    allowMethods: ["GET"],
+  });
+
+  return await corsMiddleware(c, next);
+});
 
 api.route("/restaurants", restaurants);
 api.route("/flavors", flavors);

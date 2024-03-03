@@ -42,6 +42,7 @@ jobs:
           printf "FLAVORS_SCRAPE_BASE_URL=%s\n" "${{ vars.API_FUNCTION_FLAVORS_SCRAPE_BASE_URL }}" >> .env
           printf "FLAVOR_IMAGE_BASE_URL=%s\n" "${{ vars.API_FUNCTION_FLAVOR_IMAGE_BASE_URL }}" >> .env
           printf "LOGO_SVG_URL=%s\n" "${{ vars.API_FUNCTION_LOGO_SVG_URL }}" >> .env
+          printf "CORS_ORIGIN=%s\n" "${{ vars.CORS_ORIGIN }}" >> .env
         working-directory: ./apps/backend
 
       - name: Build

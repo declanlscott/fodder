@@ -34,3 +34,7 @@ variable "api_function_flavor_image_base_url" {
 variable "api_function_logo_svg_url" {
   type = string
 }
+
+variable "api_function_cors_origin" {
+  type = string
+}
