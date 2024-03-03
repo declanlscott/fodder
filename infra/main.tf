@@ -88,5 +88,6 @@ module "api_function" {
     FLAVORS_SCRAPE_BASE_URL    = var.api_function_flavors_scrape_base_url
     FLAVOR_IMAGE_BASE_URL      = var.api_function_flavor_image_base_url
     LOGO_SVG_URL               = var.api_function_logo_svg_url
+    CORS_ORIGIN                = var.api_function_cors_origin
   }
 }

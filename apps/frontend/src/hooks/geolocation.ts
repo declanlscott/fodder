@@ -82,6 +82,8 @@ export function useGeolocation({
         onEventError,
         optionsRef.current,
       );
+    } else {
+      setGeolocation({ status: "ready" });
     }
 
     return () => {

@@ -1,0 +1,25 @@
+{
+  "name": "@repo/schemas",
+  "version": "0.0.0",
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**"
+  ],
+  "scripts": {
+    "lint": "eslint src/ --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "build": "tsup src/index.ts --format esm,cjs --dts"
+  },
+  "dependencies": {
+    "valibot": "^0.29.0"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@repo/prettier-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "tsup": "^8.0.2"
+  },
+  "prettier": "@repo/prettier-config"
+}

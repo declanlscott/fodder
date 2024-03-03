@@ -5,5 +5,6 @@ API_FUNCTION_RESTAURANT_SCRAPE_BASE_URL=https://www.culvers.com/restaurants
 API_FUNCTION_FLAVORS_SCRAPE_BASE_URL=https://www.culvers.com/flavor-of-the-day
 API_FUNCTION_FLAVOR_IMAGE_BASE_URL=https://cdn.culvers.com/menu-item-detail
 API_FUNCTION_LOGO_SVG_URL=https://cdn.culvers.com/layout/logo.svg
+API_FUNCTION_CORS_ORIGIN=https://fodder.declanlscott.com
 
 VITE_API_BASE_URL=https://fodder-api.declanlscott.com

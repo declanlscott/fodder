@@ -8,6 +8,7 @@ export const env = createEnv({
     FLAVORS_SCRAPE_BASE_URL: string([url()]),
     FLAVOR_IMAGE_BASE_URL: string([url()]),
     LOGO_SVG_URL: string([url()]),
+    CORS_ORIGIN: string([url()]),
   },
   runtimeEnv: process.env,
 });

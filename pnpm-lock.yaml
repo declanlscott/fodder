@@ -29,6 +29,9 @@ importers:
       '@repo/env':
         specifier: workspace:*
         version: link:../../packages/env
+      '@repo/schemas':
+        specifier: workspace:*
+        version: link:../../packages/schemas
       hono:
         specifier: ^4.0.8
         version: 4.0.8
@@ -84,6 +87,9 @@ importers:
       '@repo/env':
         specifier: workspace:*
         version: link:../../packages/env
+      '@repo/schemas':
+        specifier: workspace:*
+        version: link:../../packages/schemas
       '@repo/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -117,9 +123,6 @@ importers:
       react-error-boundary:
         specifier: ^4.0.13
         version: 4.0.13(react@18.2.0)
-      react-hook-form:
-        specifier: ^7.51.0
-        version: 7.51.0(react@18.2.0)
       tailwindcss-animate:
         specifier: ^1.0.7
         version: 1.0.7(tailwindcss@3.4.1)
@@ -236,6 +239,25 @@ importers:
         specifier: ^8.0.2
         version: 8.0.2(typescript@5.4.0-beta)
 
+  packages/schemas:
+    dependencies:
+      valibot:
+        specifier: ^0.29.0
+        version: 0.29.0
+    devDependencies:
+      '@repo/eslint-config':
+        specifier: workspace:*
+        version: link:../../configs/eslint
+      '@repo/prettier-config':
+        specifier: workspace:*
+        version: link:../../configs/prettier
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../../configs/typescript
+      tsup:
+        specifier: ^8.0.2
+        version: 8.0.2(typescript@5.4.0-beta)
+
   packages/types:
     devDependencies:
       '@repo/eslint-config':
@@ -274,9 +296,6 @@ importers:
       react:
         specifier: ^18.2.0
         version: 18.2.0
-      react-hook-form:
-        specifier: ^7.51.0
-        version: 7.51.0(react@18.2.0)
       tailwind-merge:
         specifier: ^2.2.1
         version: 2.2.1

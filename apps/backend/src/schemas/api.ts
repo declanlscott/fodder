@@ -1,15 +1,5 @@
-import {
-  coerce,
-  maxLength,
-  maxValue,
-  minLength,
-  minValue,
-  number,
-  object,
-  safeParse,
-  string,
-  union,
-} from "valibot";
+import { AddressSchema, CoordinatesSchema } from "@repo/schemas";
+import { object, safeParse, string, union } from "valibot";
 
 import { ValidationException } from "~/lib/exceptions";
 
@@ -17,30 +7,7 @@ import type { ValidationTargets } from "hono";
 import type { Output } from "valibot";
 
 export const LocateRestaurantsSchema = union(
-  [
-    object({
-      address: string([
-        minLength(1, "address must be at least 1 character long"),
-        maxLength(100, "address must be at most 100 characters long"),
-      ]),
-    }),
-    object({
-      latitude: coerce(
-        number([
-          minValue(-90, "latitude must be between -90 and 90"),
-          maxValue(90, "latitude must be between -90 and 90"),
-        ]),
-        Number,
-      ),
-      longitude: coerce(
-        number([
-          minValue(-180, "longitude must be between -180 and 180"),
-          maxValue(180, "longitude must be between -180 and 180"),
-        ]),
-        Number,
-      ),
-    }),
-  ],
+  [AddressSchema, CoordinatesSchema],
   "address or latitude/longitude query parameters are required",
 );
 

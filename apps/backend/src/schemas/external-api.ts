@@ -100,7 +100,7 @@ export const ScrapedRestaurantNextData = object({
             longitude: number(),
             onlineOrderUrl: string(),
             ownerFriendlyName: string(),
-            ownerMessage: string(),
+            ownerMessage: nullable(string()),
             jobsApplyUrl: string(),
             flavorOfTheDay: array(FlavorProps),
           }),

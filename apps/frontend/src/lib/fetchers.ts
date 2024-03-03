@@ -7,19 +7,15 @@ import type {
   SluggedFlavor,
   SluggedRestaurant,
 } from "@repo/types";
-import type { LocateFormSchema } from "~/schemas/locate-form";
+import type { LocateRestaurantsSchema } from "~/schemas/locate-restaurants";
 
-export async function locate({ location }: LocateFormSchema) {
+export async function locate(data: LocateRestaurantsSchema) {
   const restaurants = await ky
     .get(`${env.VITE_API_BASE_URL}/restaurants`, {
-      searchParams: {
-        ...(location.type === "address"
-          ? { address: location.address }
-          : {
-              latitude: location.latitude,
-              longitude: location.longitude,
-            }),
-      },
+      searchParams:
+        data.type === "address"
+          ? { address: data.address }
+          : { latitude: data.latitude, longitude: data.longitude },
     })
     .json<LocatedRestaurant[]>();
 
