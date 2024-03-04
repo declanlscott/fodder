@@ -14,6 +14,19 @@ export const queryOptionsFactory = {
     queryOptions({
       queryKey: ["restaurant", slug] as const,
       queryFn: ({ queryKey }) => getRestaurant(queryKey[1]),
+      select: (data) => ({
+        ...data,
+        flavors: data.flavors.filter((flavor) => {
+          const now = new Date();
+          const today = new Date(
+            now.getFullYear(),
+            now.getMonth(),
+            now.getDate(),
+          );
+
+          return new Date(flavor.date).getTime() >= today.getTime();
+        }),
+      }),
     }),
   restaurants: (data: LocateRestaurantsSchema) =>
     queryOptions({

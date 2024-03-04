@@ -1,7 +1,6 @@
 import { HTTPException } from "hono/http-exception";
 import { env } from "env";
 
-import { isLambdaBindings } from "~/lib/bindings";
 import { isFlavorFound, isFlavorsModule } from "~/schemas/external-api";
 
 import type {
@@ -10,12 +9,8 @@ import type {
   SluggedFlavor,
   SluggedRestaurant,
 } from "@repo/types";
-import type { Context } from "hono";
-import type { ApiGatewayRequestContextV2 } from "hono/aws-lambda";
-import type { Bindings } from "~/lib/bindings";
 import type {
   FetchedRestaurants,
-  FlavorProps,
   FlavorsModule,
   ScrapedAllFlavorsNextData,
   ScrapedFlavorNextData,
@@ -66,38 +61,27 @@ function formatFodImageUrl(fodImageSlug: string) {
 }
 
 export function formatScrapedRestaurant(
-  c: Context<{ Bindings: Bindings }>,
   nextData: ScrapedRestaurantNextData,
 ): SluggedRestaurant {
-  const now = isLambdaBindings(c.env)
-    ? new Date(
-        (c.env.event.requestContext as ApiGatewayRequestContextV2).timeEpoch,
-      )
-    : new Date();
+  const flavors =
+    nextData.props.pageProps.page.customData.restaurantCalendar.flavors.reduce(
+      (acc, curr) => {
+        const imageSlug = curr.image.src.split(`${imageWidth}/`)[1];
+        const imageUrl = imageSlug
+          ? `${env.FLAVOR_IMAGE_BASE_URL}/${imageSlug}?w=${imageWidth}`
+          : env.LOGO_SVG_URL;
 
-  const filteredFlavors = filterFlavorsByDate(
-    now,
-    nextData.props.pageProps.page.customData.restaurantCalendar.flavors,
-  );
+        const flavor: SluggedRestaurant["flavors"][number] = {
+          date: curr.onDate,
+          name: curr.title,
+          imageUrl,
+          slug: curr.urlSlug,
+        };
 
-  const flavors = filteredFlavors.reduce(
-    (acc, curr) => {
-      const imageSlug = curr.image.src.split(`${imageWidth}/`)[1];
-      const imageUrl = imageSlug
-        ? `${env.FLAVOR_IMAGE_BASE_URL}/${imageSlug}?w=${imageWidth}`
-        : env.LOGO_SVG_URL;
-
-      const flavor: SluggedRestaurant["flavors"][number] = {
-        date: curr.onDate.toISOString(),
-        name: curr.title,
-        imageUrl,
-        slug: curr.urlSlug,
-      };
-
-      return [...acc, flavor];
-    },
-    [] as SluggedRestaurant["flavors"],
-  );
+        return [...acc, flavor];
+      },
+      [] as SluggedRestaurant["flavors"],
+    );
 
   const restaurantProps =
     nextData.props.pageProps.page.customData.restaurantDetails;
@@ -111,12 +95,6 @@ export function formatScrapedRestaurant(
     phoneNumber: restaurantProps.phoneNumber,
     flavors,
   };
-}
-
-function filterFlavorsByDate(now: Date, flavors: FlavorProps[]) {
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-
-  return flavors.filter(({ onDate }) => onDate.getTime() >= today.getTime());
 }
 
 export function formatScrapedAllFlavors(

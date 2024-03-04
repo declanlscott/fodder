@@ -2,6 +2,7 @@ import {
   array,
   boolean,
   coerce,
+  custom,
   date,
   literal,
   never,
@@ -9,6 +10,7 @@ import {
   nullable,
   number,
   object,
+  safeParse,
   string,
   tuple,
   union,
@@ -71,7 +73,17 @@ export type FetchedRestaurants = Output<typeof FetchedRestaurants>;
 export const FlavorProps = object({
   flavorId: number(),
   menuItemId: number(),
-  onDate: coerce(date(), (input) => new Date(input as string)),
+  // Parse `onDate` as a string but validate it as a date
+  onDate: string([
+    custom(
+      (input) =>
+        safeParse(
+          coerce(date(), (d) => new Date(d as string)),
+          input,
+        ).success,
+      "Invalid date",
+    ),
+  ]),
   title: string(),
   urlSlug: string(),
   image: object({

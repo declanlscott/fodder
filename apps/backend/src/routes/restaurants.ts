@@ -50,7 +50,7 @@ restaurants.get("/:slug", validator("param", validateSlug), async (c) => {
 
   const nextData = await scrapeRestaurantBySlug(slug);
 
-  const body = formatScrapedRestaurant(c, nextData);
+  const body = formatScrapedRestaurant(nextData);
 
   return c.json(body, 200);
 });
