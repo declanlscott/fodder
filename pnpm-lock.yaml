@@ -33,8 +33,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/schemas
       hono:
-        specifier: ^4.0.8
-        version: 4.0.8
+        specifier: ^4.0.9
+        version: 4.0.9
       valibot:
         specifier: ^0.29.0
         version: 0.29.0
@@ -94,17 +94,17 @@ importers:
         specifier: workspace:*
         version: link:../../packages/ui
       '@tanstack/react-query':
-        specifier: ^5.24.6
-        version: 5.24.6(react@18.2.0)
+        specifier: ^5.24.8
+        version: 5.24.8(react@18.2.0)
       '@tanstack/react-query-devtools':
-        specifier: ^5.24.6
-        version: 5.24.6(@tanstack/react-query@5.24.6)(react@18.2.0)
+        specifier: ^5.24.8
+        version: 5.24.8(@tanstack/react-query@5.24.8)(react@18.2.0)
       '@tanstack/react-router':
-        specifier: ^1.18.3
-        version: 1.18.3(react-dom@18.2.0)(react@18.2.0)
+        specifier: ^1.19.1
+        version: 1.19.1(react-dom@18.2.0)(react@18.2.0)
       '@tanstack/router-devtools':
-        specifier: ^1.18.3
-        version: 1.18.3(csstype@3.1.3)(react-dom@18.2.0)(react@18.2.0)
+        specifier: ^1.19.1
+        version: 1.19.1(csstype@3.1.3)(react-dom@18.2.0)(react@18.2.0)
       date-fns:
         specifier: ^3.3.1
         version: 3.3.1
@@ -112,8 +112,8 @@ importers:
         specifier: ^1.2.2
         version: 1.2.2
       lucide-react:
-        specifier: ^0.341.0
-        version: 0.341.0(react@18.2.0)
+        specifier: ^0.344.0
+        version: 0.344.0(react@18.2.0)
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -291,8 +291,8 @@ importers:
         specifier: npm:class-variance-authority@^0.7.0
         version: /class-variance-authority@0.7.0
       lucide-react:
-        specifier: ^0.341.0
-        version: 0.341.0(react@18.2.0)
+        specifier: ^0.344.0
+        version: 0.344.0(react@18.2.0)
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -1929,36 +1929,36 @@ packages:
     engines: {node: '>=12'}
     dev: false
 
-  /@tanstack/query-core@5.24.6:
-    resolution: {integrity: sha512-xYhxiMUPh1JzamVK8VwwkBpIBXVYRyIBW9gjSN+/BB4kL1nS86gnRWeW8L+sacCj1RiyEsysJe3GSvtbIpHdWw==}
+  /@tanstack/query-core@5.24.8:
+    resolution: {integrity: sha512-yH7KnfXMf10p1U5GffTQzFi2Miiw6WJZImGYGdV7eqa5ZbKO8qVx9lOA9SfhIaJXomrMp1Yz5w/CBhVM3yWeTA==}
     dev: false
 
   /@tanstack/query-devtools@5.24.0:
     resolution: {integrity: sha512-pThim455t69zrZaQKa7IRkEIK8UBTS+gHVAdNfhO72Xh4rWpMc63ovRje5/n6iw63+d6QiJzVadsJVdPoodSeQ==}
     dev: false
 
-  /@tanstack/react-query-devtools@5.24.6(@tanstack/react-query@5.24.6)(react@18.2.0):
-    resolution: {integrity: sha512-Fx7Wdy3hNjsE5Kpk1NLHDLWb+J6C90x/JQb1thTVTfaX5DpH+Y9e1OPcZ7NbwToTGIsMRTHEC9+NVWGweY8Rqg==}
+  /@tanstack/react-query-devtools@5.24.8(@tanstack/react-query@5.24.8)(react@18.2.0):
+    resolution: {integrity: sha512-OfNbyOF07/3PXH1fdLs/2BxjpXv2hFI777iym2L0lVGQbyVSJAUbGXYaCvgjZIdan/vfiXf3sjCVkO8mD9hf0Q==}
     peerDependencies:
-      '@tanstack/react-query': ^5.24.6
+      '@tanstack/react-query': ^5.24.8
       react: ^18.0.0
     dependencies:
       '@tanstack/query-devtools': 5.24.0
-      '@tanstack/react-query': 5.24.6(react@18.2.0)
+      '@tanstack/react-query': 5.24.8(react@18.2.0)
       react: 18.2.0
     dev: false
 
-  /@tanstack/react-query@5.24.6(react@18.2.0):
-    resolution: {integrity: sha512-eyIWwHiO1ZirYGzqs0kfRMkf8icuXroFunjnsgntk9YgGFbGoPs3Hxy9/OushNvpnkHT9RwPZb8UfEKzMzzEaQ==}
+  /@tanstack/react-query@5.24.8(react@18.2.0):
+    resolution: {integrity: sha512-jB3JS9SzDmBySk9VVOTPt/0ixWEb3K3dy9IExlVl/1NouY3N7HzAqG/1d4m6E9eFfKJoLvA/hBksaLu0lw627A==}
     peerDependencies:
       react: ^18.0.0
     dependencies:
-      '@tanstack/query-core': 5.24.6
+      '@tanstack/query-core': 5.24.8
       react: 18.2.0
     dev: false
 
-  /@tanstack/react-router@1.18.3(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-SaP3myClq8VLrIy+ZCQb+azRa55quWeKVCyjbRZUfNWS0mzRRWkCeNfWBb8M9dYimTLeGHck8GthZDuQBiBkbw==}
+  /@tanstack/react-router@1.19.1(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-a4Xf074qo2fQLmSi8PTncEFn8XakaH3+DT7Dted4OPClzQFS+c6yU3HONVNAsuYWZ7lDK1HMKoHPDFbnHPEWvA==}
     engines: {node: '>=12'}
     peerDependencies:
       react: '>=16'
@@ -1984,14 +1984,14 @@ packages:
       use-sync-external-store: 1.2.0(react@18.2.0)
     dev: false
 
-  /@tanstack/router-devtools@1.18.3(csstype@3.1.3)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-mB/2DQcaAiP2GxzfSa8ssBq7FjbsJ8LzfiLYlO9VQSODe/zI0gEdR04OOSJkMwo7oeigxxAlSBVRvBZ4RZyQRA==}
+  /@tanstack/router-devtools@1.19.1(csstype@3.1.3)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-l560JHnffcDccSTo/sOtB+gKvtgaWYpOKOu9MyvswN9XB2pt752UFFIN1Yt/Gsp2Iooq/FcYlYnEPHb4GFzalg==}
     engines: {node: '>=12'}
     peerDependencies:
       react: '>=16'
       react-dom: '>=16'
     dependencies:
-      '@tanstack/react-router': 1.18.3(react-dom@18.2.0)(react@18.2.0)
+      '@tanstack/react-router': 1.19.1(react-dom@18.2.0)(react@18.2.0)
       clsx: 2.1.0
       date-fns: 2.30.0
       goober: 2.1.14(csstype@3.1.3)
@@ -3179,8 +3179,8 @@ packages:
     dependencies:
       function-bind: 1.1.2
 
-  /hono@4.0.8:
-    resolution: {integrity: sha512-zhTXu32vXeEXajsqZVjPfoyO0/fgAKLLmPBpSDzRBMr7zZ5N8yV1FmsfWl2MYtm+MD8hD7knLCovx8Oaqubd4w==}
+  /hono@4.0.9:
+    resolution: {integrity: sha512-XkFx6y6jAl08bGmoy53oGtHl8eHUixvmBulfcghrSySoJD3cW4UfFUa7JDGLOsIeJUv/a9d2pBFQUX7rzRnjvA==}
     engines: {node: '>=16.0.0'}
     dev: false
 
@@ -3428,8 +3428,8 @@ packages:
       yallist: 4.0.0
     dev: true
 
-  /lucide-react@0.341.0(react@18.2.0):
-    resolution: {integrity: sha512-fqI0TLU/VbzC3p90MHP3kdCRRUMTRT5qBfxwaXlllkZieYfRrMVd/RORXytqJUC2GBrvZdWYs6yvJIrqdsOmDQ==}
+  /lucide-react@0.344.0(react@18.2.0):
+    resolution: {integrity: sha512-6YyBnn91GB45VuVT96bYCOKElbJzUHqp65vX8cDcu55MQL9T969v4dhGClpljamuI/+KMO9P6w9Acq1CVQGvIQ==}
     peerDependencies:
       react: ^16.5.1 || ^17.0.0 || ^18.0.0
     dependencies:
