@@ -7,13 +7,10 @@ import { ValidationException } from "~/lib/exceptions";
 
 import type { BaseSchema } from "valibot";
 
-export function parseJson<TSchema extends BaseSchema>({
-  schema,
-  json,
-}: {
-  schema: TSchema;
-  json: unknown;
-}) {
+export function parseJson<TSchema extends BaseSchema>(
+  schema: TSchema,
+  json: unknown,
+) {
   const { success, issues, output } = safeParse(schema, json);
 
   if (!success) {
@@ -23,13 +20,10 @@ export function parseJson<TSchema extends BaseSchema>({
   return output;
 }
 
-export function parseNextData<TSchema extends BaseSchema>({
-  schema,
-  body,
-}: {
-  schema: TSchema;
-  body: string;
-}) {
+export function parseNextData<TSchema extends BaseSchema>(
+  schema: TSchema,
+  body: string,
+) {
   const matches = body.match(
     /<script id="__NEXT_DATA__" type="application\/json">(.*?)<\/script>/,
   );
@@ -42,5 +36,5 @@ export function parseNextData<TSchema extends BaseSchema>({
 
   const json = JSON.parse(matches[1]);
 
-  return parseJson<TSchema>({ schema, json });
+  return parseJson<TSchema>(schema, json);
 }

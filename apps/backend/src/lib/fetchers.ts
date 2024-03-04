@@ -38,10 +38,7 @@ export async function fetchRestaurants(
 
   const json = await res.json();
 
-  return parseJson({
-    schema: FetchedRestaurants,
-    json,
-  });
+  return parseJson(FetchedRestaurants, json);
 }
 
 export async function scrapeRestaurantBySlug(
@@ -65,10 +62,7 @@ export async function scrapeRestaurantBySlug(
 
   const body = await res.text();
 
-  return parseNextData({
-    schema: ScrapedRestaurantNextData,
-    body,
-  });
+  return parseNextData(ScrapedRestaurantNextData, body);
 }
 
 export async function scrapeAllFlavors() {
@@ -83,10 +77,7 @@ export async function scrapeAllFlavors() {
 
   const body = await res.text();
 
-  return parseNextData({
-    schema: ScrapedAllFlavorsNextData,
-    body,
-  });
+  return parseNextData(ScrapedAllFlavorsNextData, body);
 }
 
 export async function scrapeFlavorBySlug(
@@ -104,8 +95,5 @@ export async function scrapeFlavorBySlug(
 
   const body = await res.text();
 
-  return parseNextData({
-    schema: ScrapedFlavorNextData,
-    body,
-  });
+  return parseNextData(ScrapedFlavorNextData, body);
 }

@@ -133,7 +133,7 @@ export type ScrapedRestaurantNextData = Output<
   typeof ScrapedRestaurantNextData
 >;
 
-const flavorsModuleName = "FlavorOfTheDayAllFlavors";
+export const flavorsModuleName = "FlavorOfTheDayAllFlavors";
 export const FlavorsModule = object({
   moduleName: literal(flavorsModuleName),
   customData: object({

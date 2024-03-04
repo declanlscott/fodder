@@ -23,17 +23,10 @@ export function formatFetchedRestaurants(
   json: FetchedRestaurants,
 ): LocatedRestaurant[] {
   return json.data.geofences.reduce((acc, curr) => {
-    const name = curr.metadata.flavorOfDayName;
-
-    const slug = name
-      .replace(/[^a-zA-Z\s]+/g, "")
-      .toLowerCase()
-      .replace(/\s+/g, "-");
-
     const fod: LocatedRestaurant["fod"] = {
-      name,
-      imageUrl: formatFodImageUrl(curr.metadata.flavorOfDaySlug),
-      slug,
+      name: curr.metadata.flavorOfDayName,
+      imageUrl: formatFlavorImageUrl(curr.metadata.flavorOfDaySlug).toString(),
+      slug: formatFlavorSlug(curr.metadata.flavorOfDayName),
     };
 
     const restaurant: LocatedRestaurant = {
@@ -52,12 +45,25 @@ export function formatFetchedRestaurants(
   }, [] as LocatedRestaurant[]);
 }
 
-function formatFodImageUrl(fodImageSlug: string) {
-  if (!fodImageSlug) {
-    return env.LOGO_SVG_URL;
+export function formatFlavorSlug(name: string) {
+  return name
+    .replace(/[^a-zA-Z\s]+/g, "")
+    .toLowerCase()
+    .replace(/\s+/g, "-");
+}
+
+export function formatFlavorImageUrl(imageSlug: string, includeWidth = false) {
+  if (!imageSlug) {
+    return new URL(env.LOGO_SVG_URL);
   }
 
-  return `${env.FLAVOR_IMAGE_BASE_URL}/${fodImageSlug}`;
+  const url = new URL(`${env.FLAVOR_IMAGE_BASE_URL}/${imageSlug}`);
+
+  if (includeWidth) {
+    url.searchParams.set("w", `${imageWidth}`);
+  }
+
+  return url;
 }
 
 export function formatScrapedRestaurant(
@@ -67,9 +73,7 @@ export function formatScrapedRestaurant(
     nextData.props.pageProps.page.customData.restaurantCalendar.flavors.reduce(
       (acc, curr) => {
         const imageSlug = curr.image.src.split(`${imageWidth}/`)[1];
-        const imageUrl = imageSlug
-          ? `${env.FLAVOR_IMAGE_BASE_URL}/${imageSlug}?w=${imageWidth}`
-          : env.LOGO_SVG_URL;
+        const imageUrl = formatFlavorImageUrl(imageSlug, true).toString();
 
         const flavor: SluggedRestaurant["flavors"][number] = {
           date: curr.onDate,
@@ -117,7 +121,7 @@ export function formatScrapedAllFlavors(
   return data.reduce((acc, curr) => {
     const flavor = {
       name: curr.flavorName,
-      imageUrl: `${env.FLAVOR_IMAGE_BASE_URL}/${curr.fotdImage}?w=${imageWidth}`,
+      imageUrl: formatFlavorImageUrl(curr.fotdImage, true).toString(),
       slug: curr.fotdUrlSlug,
     };
 
@@ -136,7 +140,7 @@ export function formatScrapedFlavor(
 
   const flavor = {
     name: flavorDetails.name,
-    imageUrl: `${env.FLAVOR_IMAGE_BASE_URL}/${flavorDetails.fotdImage}`,
+    imageUrl: formatFlavorImageUrl(flavorDetails.fotdImage).toString(),
     description: flavorDetails.description,
     allergens: flavorDetails.allergens.split(", "),
   };

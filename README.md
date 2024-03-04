@@ -71,6 +71,7 @@ act --container-architecture linux/amd64 --var-file act.variables --secret-file 
   - Hono
   - TypeScript
   - LLRT (Low Latency Runtime)
+  - Unit tests (with Vitest)
 - Frontend
   - Vite
   - React
