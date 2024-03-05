@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import {
   Button,
   Card,
@@ -13,7 +13,7 @@ import {
   labelVariants,
   Toggle,
 } from "@repo/ui";
-import { useQuery } from "@tanstack/react-query";
+import { useIsFetching, useQuery } from "@tanstack/react-query";
 import { getRouteApi, useNavigate } from "@tanstack/react-router";
 import { Dessert, Loader2, MapPin, MapPinOff, Send } from "lucide-react";
 import { safeParse } from "valibot";
@@ -23,8 +23,12 @@ import { ErrorCard } from "~/components/error-card";
 import { FodCard, FodCardSkeleton } from "~/components/fod-card";
 import { useGeolocation } from "~/hooks/geolocation";
 import { queryOptionsFactory } from "~/lib/query-options-factory";
-import { LocateRestaurantsSchema } from "~/schemas/locate-restaurants";
+import {
+  initialSearch,
+  LocateRestaurantsSchema,
+} from "~/schemas/locate-restaurants";
 
+import type { SchemaIssues } from "valibot";
 import type { Coordinates } from "~/hooks/geolocation";
 
 const route = getRouteApi("/");
@@ -45,11 +49,13 @@ export function Component() {
   );
 }
 
+type FormErrors = SchemaIssues | undefined;
+
 function LocateForm() {
   const search = route.useSearch();
 
   const [formData, setFormData] = useState(search);
-  const [error, setError] = useState<string | null>(null);
+  const [formErrors, setFormErrors] = useState<FormErrors>();
 
   const gpsSuccessCallback = useCallback(
     (coordinates: Coordinates) =>
@@ -62,7 +68,7 @@ function LocateForm() {
   );
 
   const gpsErrorCallback = useCallback(
-    () => setFormData({ type: "address", address: "" }),
+    () => setFormData(initialSearch),
     [setFormData],
   );
 
@@ -76,7 +82,10 @@ function LocateForm() {
     initiallyEnabled: search.type === "coordinates",
   });
 
-  const query = useQuery(queryOptionsFactory.restaurants(search));
+  const isFetching =
+    useIsFetching({
+      queryKey: [queryOptionsFactory.restaurants(search).queryKey[0]],
+    }) > 0;
 
   const navigate = useNavigate();
 
@@ -88,17 +97,24 @@ function LocateForm() {
       formData,
     );
 
+    setFormErrors(issues);
+
     if (!success) {
-      setError(issues.map((issue) => issue.message).join(", "));
+      if (hasError(issues, "address")) {
+        return inputRef.current?.focus();
+      }
+
       return;
     }
 
-    setError(null);
-
     await navigate({ search: output });
-
-    await query.refetch();
   }
+
+  function hasError(formErrors: FormErrors, key: string) {
+    return formErrors?.some((issue) => issue.path?.[0].key === key);
+  }
+
+  const inputRef = useRef<HTMLInputElement>(null);
 
   return (
     <form onSubmit={handleSubmit}>
@@ -113,7 +129,13 @@ function LocateForm() {
           <div className="flex flex-col gap-4">
             <div className="space-y-2">
               <div className="flex justify-between">
-                <label className={cn(labelVariants())} htmlFor="location">
+                <label
+                  className={cn(
+                    labelVariants(),
+                    hasError(formErrors, "address") && "text-red-500",
+                  )}
+                  htmlFor="location"
+                >
                   City, State, or ZIP code
                 </label>
 
@@ -125,7 +147,11 @@ function LocateForm() {
               <div className="flex justify-between">
                 <Input
                   id="location"
-                  className="shrink"
+                  className={cn(
+                    "shrink",
+                    hasError(formErrors, "address") &&
+                      "border-red-500 focus-visible:ring-red-500 text-red-500",
+                  )}
                   value={formData.type === "address" ? formData.address : ""}
                   onChange={(e) => {
                     setFormData({
@@ -134,6 +160,7 @@ function LocateForm() {
                     });
                   }}
                   onFocus={() => setGpsEnabled(false)}
+                  ref={inputRef}
                 />
 
                 <div className="before:bg-muted-foreground/50 after:bg-muted-foreground/50 mx-4 flex h-10 w-4 shrink-0 select-none flex-col items-center gap-1 whitespace-nowrap text-xs uppercase before:h-full before:w-0.5 before:flex-grow after:h-full after:w-0.5 after:flex-grow">
@@ -171,8 +198,6 @@ function LocateForm() {
                 </Toggle>
               </div>
             </div>
-
-            {error ? <p className="text-sm text-red-500">{error}</p> : null}
           </div>
         </CardContent>
 
@@ -181,11 +206,10 @@ function LocateForm() {
             className="w-full gap-2"
             type="submit"
             disabled={
-              query.isFetching ||
-              (gpsEnabled && geolocation.status !== "success")
+              isFetching || (gpsEnabled && geolocation.status !== "success")
             }
           >
-            {query.isFetching ? (
+            {isFetching ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Loading...
@@ -197,6 +221,14 @@ function LocateForm() {
               </>
             )}
           </Button>
+
+          <ul className="flex flex-col gap-2 self-start">
+            {formErrors?.map(({ message }, index) => (
+              <li key={index} className="text-sm text-red-500">
+                {message}
+              </li>
+            ))}
+          </ul>
         </CardFooter>
       </Card>
     </form>
@@ -207,8 +239,12 @@ function LocatedFods() {
   const search = route.useSearch();
 
   const query = useQuery(queryOptionsFactory.restaurants(search));
+  const isFetching =
+    useIsFetching({
+      queryKey: [queryOptionsFactory.restaurants(search).queryKey[0]],
+    }) > 0;
 
-  if (query.isFetching) {
+  if (isFetching) {
     return Array.from({ length: 3 }).map((_, index) => (
       <FodCardSkeleton key={index} />
     ));
