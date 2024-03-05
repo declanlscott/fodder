@@ -9,3 +9,8 @@ export const LocateRestaurantsSchema = variant("type", [
 ]);
 
 export type LocateRestaurantsSchema = Output<typeof LocateRestaurantsSchema>;
+
+export const initialSearch = {
+  type: "address",
+  address: "",
+} satisfies LocateRestaurantsSchema;

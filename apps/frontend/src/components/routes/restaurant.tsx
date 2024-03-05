@@ -186,18 +186,18 @@ function NearbyFods({ source: { slug, address } }: NearbyFodsProps) {
     queryOptionsFactory.nearbyRestaurants(slug, { type: "address", address }),
   );
 
-  const isEmpty = (data?.length ?? -1) === 0;
+  if (data.length === 0) {
+    return (
+      <Card className="text-muted-foreground col-span-full flex h-64 flex-col items-center justify-center gap-4">
+        <DroppedCone className="fill-muted-foreground h-28" />
+        {"No locations found..."}
+      </Card>
+    );
+  }
 
-  return isEmpty ? (
-    <Card className="text-muted-foreground col-span-full flex h-64 flex-col items-center justify-center gap-4">
-      <DroppedCone className="fill-muted-foreground h-28" />
-      {"No locations found..."}
-    </Card>
-  ) : (
-    data.map((restaurant) => (
-      <FodCard key={restaurant.slug} restaurant={restaurant} />
-    ))
-  );
+  return data.map((restaurant) => (
+    <FodCard key={restaurant.slug} restaurant={restaurant} />
+  ));
 }
 
 export function PendingComponent() {
