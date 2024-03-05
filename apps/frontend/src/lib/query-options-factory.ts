@@ -36,7 +36,7 @@ export const queryOptionsFactory = {
     }),
   nearbyRestaurants: (slug: string, data: LocateRestaurantsSchema) =>
     queryOptions({
-      queryKey: ["nearby-restaurants", slug] as const,
+      queryKey: ["nearby-restaurants", slug, data] as const,
       queryFn: () => locate(data),
       select: (data) => data.filter((restaurant) => restaurant.slug !== slug),
     }),
