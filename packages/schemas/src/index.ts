@@ -13,8 +13,8 @@ import type { Output } from "valibot";
 
 export const AddressSchema = object({
   address: string([
-    minLength(1, "address must be at least 1 character long"),
-    maxLength(100, "address must be at most 100 characters long"),
+    minLength(1, "Address must be at least 1 character long"),
+    maxLength(100, "Address must be at most 100 characters long"),
   ]),
 });
 export type AddressSchema = Output<typeof AddressSchema>;
@@ -22,15 +22,15 @@ export type AddressSchema = Output<typeof AddressSchema>;
 export const CoordinatesSchema = object({
   latitude: coerce(
     number([
-      minValue(-90, "latitude must be between -90 and 90"),
-      maxValue(90, "latitude must be between -90 and 90"),
+      minValue(-90, "Latitude must be between -90 and 90"),
+      maxValue(90, "Latitude must be between -90 and 90"),
     ]),
     Number,
   ),
   longitude: coerce(
     number([
-      minValue(-180, "longitude must be between -180 and 180"),
-      maxValue(180, "longitude must be between -180 and 180"),
+      minValue(-180, "Longitude must be between -180 and 180"),
+      maxValue(180, "Longitude must be between -180 and 180"),
     ]),
     Number,
   ),
