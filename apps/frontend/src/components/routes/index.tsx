@@ -222,13 +222,15 @@ function LocateForm() {
             )}
           </Button>
 
-          <ul className="flex flex-col gap-2 self-start">
-            {formErrors?.map(({ message }, index) => (
-              <li key={index} className="text-sm text-red-500">
-                {message}
-              </li>
-            ))}
-          </ul>
+          {formErrors ? (
+            <ul className="flex flex-col gap-2 self-start">
+              {formErrors.map(({ message }, index) => (
+                <li key={index} className="text-sm text-red-500">
+                  {message}
+                </li>
+              ))}
+            </ul>
+          ) : null}
         </CardFooter>
       </Card>
     </form>
