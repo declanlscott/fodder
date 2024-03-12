@@ -10,7 +10,8 @@
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@repo/prettier-config": "workspace:*",
-    "@repo/typescript-config": "workspace:*"
+    "@repo/typescript-config": "workspace:*",
+    "typescript": "^5.4.2"
   },
   "prettier": "@repo/prettier-config"
 }

@@ -19,7 +19,8 @@
     "@repo/eslint-config": "workspace:*",
     "@repo/prettier-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
-    "tsup": "^8.0.2"
+    "tsup": "^8.0.2",
+    "typescript": "^5.4.2"
   },
   "prettier": "@repo/prettier-config"
 }

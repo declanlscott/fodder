@@ -20,7 +20,8 @@
     "@repo/prettier-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@types/node": "^20.11.26",
-    "tsup": "^8.0.2"
+    "tsup": "^8.0.2",
+    "typescript": "^5.4.2"
   },
   "prettier": "@repo/prettier-config"
 }
