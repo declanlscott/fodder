@@ -12,6 +12,7 @@ import { Code2, IceCream, Locate, Menu, Moon, Sun, X } from "lucide-react";
 
 import Logo from "~/components/logo";
 import { useTheme } from "~/hooks/theme";
+import { initialSearch } from "~/schemas/locate-restaurants";
 
 import type { Dispatch, SetStateAction } from "react";
 
@@ -46,9 +47,8 @@ export function Layout() {
           <nav className="flex items-center sm:gap-12">
             <Link
               to="/"
-              search={{ type: "address", address: "" }}
+              search={initialSearch}
               activeOptions={{ includeSearch: false }}
-              preload={false}
             >
               <Logo />
             </Link>
@@ -57,11 +57,10 @@ export function Layout() {
               <li>
                 <Link
                   to="/"
-                  search={{ type: "address", address: "" }}
+                  search={initialSearch}
                   className={linkClassNames}
                   inactiveProps={{ className: inactiveLinkClassNames }}
                   activeOptions={{ includeSearch: false }}
-                  preload={false}
                 >
                   <Locate />
                   <span>Locate</span>
@@ -148,11 +147,10 @@ function MobileNav({ setIsVisible }: MobileNavProps) {
           <li>
             <Link
               to="/"
-              search={{ type: "address", address: "" }}
+              search={initialSearch}
               className={linkClassNames}
               inactiveProps={{ className: inactiveLinkClassNames }}
               activeOptions={{ includeSearch: false }}
-              preload={false}
               onClick={() => setIsVisible(false)}
             >
               <Locate />
