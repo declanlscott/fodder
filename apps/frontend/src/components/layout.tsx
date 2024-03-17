@@ -95,7 +95,7 @@ export function Layout() {
             <p>
               {"Developed by "}
               <a
-                href="https://github.com/declanlscott"
+                href="https://declanlscott.com"
                 className="font-semibold hover:underline"
                 target="_blank"
               >
