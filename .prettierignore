@@ -6,3 +6,4 @@ dist
 .terraform.lock.hcl
 .pnpm-store
 lambda
+routeTree.gen.ts
