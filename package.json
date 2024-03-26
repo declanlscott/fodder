@@ -13,8 +13,8 @@
     "@repo/eslint-config": "workspace:*",
     "@repo/prettier-config": "workspace:*",
     "prettier": "^3.2.5",
-    "turbo": "^1.12.5",
-    "typescript": "^5.4.2"
+    "turbo": "^1.13.0",
+    "typescript": "^5.4.3"
   },
   "prettier": "@repo/prettier-config"
 }
