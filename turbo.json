@@ -1,5 +1,6 @@
 {
   "$schema": "https://turbo.build/schema.json",
+  "globalEnv": ["PROD"],
   "pipeline": {
     "dev": {
       "cache": false,
