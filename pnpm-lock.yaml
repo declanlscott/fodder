@@ -81,9 +81,6 @@ importers:
 
   apps/frontend:
     dependencies:
-      '@hookform/resolvers':
-        specifier: ^3.3.4
-        version: 3.3.4(react-hook-form@7.51.1)
       '@icons-pack/react-simple-icons':
         specifier: ^9.4.0
         version: 9.4.0(react@18.2.0)
@@ -108,6 +105,9 @@ importers:
       '@tanstack/router-devtools':
         specifier: ^1.22.5
         version: 1.22.5(csstype@3.1.3)(react-dom@18.2.0)(react@18.2.0)
+      '@tanstack/router-vite-plugin':
+        specifier: ^1.24.1
+        version: 1.24.1
       date-fns:
         specifier: ^3.6.0
         version: 3.6.0
@@ -151,9 +151,6 @@ importers:
       '@tanstack/eslint-plugin-query':
         specifier: ^5.28.6
         version: 5.28.6(eslint@8.57.0)(typescript@5.4.3)
-      '@tanstack/router-cli':
-        specifier: ^1.20.5
-        version: 1.20.5
       '@types/react':
         specifier: ^18.2.70
         version: 18.2.70
@@ -1058,14 +1055,6 @@ packages:
     resolution: {integrity: sha512-oJjk7WXBlENeHhWiMqSyxPIZ3Kmf5ZYxqdlcSIXyN8Rn50bNJsPl99G4POBS03Jxh56FdfRJ0SEnC8mAVIiavQ==}
     engines: {node: '>=18.14.1'}
     dev: true
-
-  /@hookform/resolvers@3.3.4(react-hook-form@7.51.1):
-    resolution: {integrity: sha512-o5cgpGOuJYrd+iMKvkttOclgwRW86EsWJZZRC23prf0uU2i48Htq4PuT73AVb9ionFyZrwYEITuOFGF+BydEtQ==}
-    peerDependencies:
-      react-hook-form: ^7.0.0
-    dependencies:
-      react-hook-form: 7.51.1(react@18.2.0)
-    dev: false
 
   /@humanwhocodes/config-array@0.11.14:
     resolution: {integrity: sha512-3T8LkOmg45BV5FICb15QQMsyUSWrQ8AygVfC7ZG32zOalnqrilm018ZVCw0eapXux8FtA33q8PSRSstjee3jSg==}
@@ -2005,16 +1994,6 @@ packages:
       use-sync-external-store: 1.2.0(react@18.2.0)
     dev: false
 
-  /@tanstack/router-cli@1.20.5:
-    resolution: {integrity: sha512-sJGrwfI7MAwgQ4BGZ/WxDXdHBPqO4O3dpWC0touKNt8g1qowNC0R0sS1/5D0RQZm00lGAhPOpvw5AYHrdDdK9w==}
-    engines: {node: '>=12'}
-    hasBin: true
-    dependencies:
-      '@tanstack/router-generator': 1.20.5
-      chokidar: 3.6.0
-      yargs: 17.7.2
-    dev: true
-
   /@tanstack/router-devtools@1.22.5(csstype@3.1.3)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-FPkkzOz/iFjF2KrC7LU5bYPRfyNxXxBrAq76pwZIPQi3CFeSCQip2vIKtlBmuo6Z7imtV56CZevOr+08dZKutQ==}
     engines: {node: '>=12'}
@@ -2032,13 +2011,20 @@ packages:
       - csstype
     dev: false
 
-  /@tanstack/router-generator@1.20.5:
-    resolution: {integrity: sha512-rE0C4dvDMx/lT1mZghORQGCy1GCqwWcTBrO3ZuEHnswzVxBwKMZvFOw/7h5IZ3DkC2rkGXZaRM1JccgwvQDnvA==}
+  /@tanstack/router-generator@1.23.0:
+    resolution: {integrity: sha512-iOZP489rueCdDeNYkZ3wtmnMaxiQxPZJwJeW3x7ODqhxPzZEtlnsrzxTyuLZ27kc9wUV09IQxJEFegQ6RuMOOg==}
     engines: {node: '>=12'}
     dependencies:
       prettier: 3.2.5
       zod: 3.22.4
-    dev: true
+    dev: false
+
+  /@tanstack/router-vite-plugin@1.24.1:
+    resolution: {integrity: sha512-LcjJzRYYN7XMFH3lWHRIhUbpybG412QwhcYhbo9LXagvmrpW8522BeL293gXEo9dD0vnerTvy3NkRn/QCdI7Uw==}
+    engines: {node: '>=12'}
+    dependencies:
+      '@tanstack/router-generator': 1.23.0
+    dev: false
 
   /@tanstack/store@0.1.3:
     resolution: {integrity: sha512-GnolmC8Fr4mvsHE1fGQmR3Nm0eBO3KnZjDU0a+P3TeQNM/dDscFGxtA7p31NplQNW3KwBw4t1RVFmz0VeKLxcw==}
@@ -2570,15 +2556,6 @@ packages:
       clsx: 2.0.0
     dev: false
 
-  /cliui@8.0.1:
-    resolution: {integrity: sha512-BSeNnyus75C4//NQ9gQt1/csTXyo/8Sb+afLAkzAptFuMsod9HFokGNudZpi/oQV73hnVK+sR+5PVRMd+Dr7YQ==}
-    engines: {node: '>=12'}
-    dependencies:
-      string-width: 4.2.3
-      strip-ansi: 6.0.1
-      wrap-ansi: 7.0.0
-    dev: true
-
   /clone@2.1.2:
     resolution: {integrity: sha512-3Pe/CF1Nn94hyhIYpjtiLhdCoEoz0DqQ+988E9gmeEdQZlojxnOb74wctFyuwWQHzqyf9X7C7MG8juUpqBJT8w==}
     engines: {node: '>=0.8'}
@@ -3106,11 +3083,6 @@ packages:
   /gensync@1.0.0-beta.2:
     resolution: {integrity: sha512-3hN7NaskYvMDLQY55gnW3NQ+mesEAepTqlg+VEbj7zzqEMBVNhzcGYYeqFo/TlYz6eQiFcp1HcsCZO+nGgS8zg==}
     engines: {node: '>=6.9.0'}
-    dev: true
-
-  /get-caller-file@2.0.5:
-    resolution: {integrity: sha512-DyFP3BM/3YHTQOCUL/w0OZHR0lpKeGrxotcHWcqNEdnltqFwXVfhEBQ94eIo34AfQpo0rGki4cyIiftY06h2Fg==}
-    engines: {node: 6.* || 8.* || >= 10.*}
     dev: true
 
   /get-func-name@2.0.2:
@@ -3852,7 +3824,6 @@ packages:
     resolution: {integrity: sha512-3/GWa9aOC0YeD7LUfvOG2NiDyhOWRvt1k+rcKhOuYnMY24iiCphgneUfJDyFXd6rZCAnuLBv6UeAULtrhT/F4A==}
     engines: {node: '>=14'}
     hasBin: true
-    dev: true
 
   /pretty-format@29.7.0:
     resolution: {integrity: sha512-Pdlw/oPxN+aXdmM9R00JVC9WVFoCLTKJvDVLgmJ+qAffBMxsV85l/Lu7sNx4zSzPyoL2euImuEwHhOXdEgNFZQ==}
@@ -3887,15 +3858,6 @@ packages:
       react: '>=16.13.1'
     dependencies:
       '@babel/runtime': 7.24.1
-      react: 18.2.0
-    dev: false
-
-  /react-hook-form@7.51.1(react@18.2.0):
-    resolution: {integrity: sha512-ifnBjl+kW0ksINHd+8C/Gp6a4eZOdWyvRv0UBaByShwU8JbVx5hTcTWEcd5VdybvmPTATkVVXk9npXArHmo56w==}
-    engines: {node: '>=12.22.0'}
-    peerDependencies:
-      react: ^16.8.0 || ^17 || ^18
-    dependencies:
       react: 18.2.0
     dev: false
 
@@ -3993,11 +3955,6 @@ packages:
   /remeda@1.56.0:
     resolution: {integrity: sha512-ZGebbddlHYNIc4P6o6B/LRiUIZyuFvO9/aKxKpzzFjJxb9maUmYk5E72VpvAooh5uFw0rSbfygIV3rc49NW2xg==}
     dev: false
-
-  /require-directory@2.1.1:
-    resolution: {integrity: sha512-fGxEI7+wsG9xrvdjsrlmL22OMTTiHRwAMroiEeMgq8gzoLC/PQr7RsRDSTLUg/bZAZtF+TVIkHc6/4RIKrui+Q==}
-    engines: {node: '>=0.10.0'}
-    dev: true
 
   /resolve-from@4.0.0:
     resolution: {integrity: sha512-pb/MYmXstAkysRFx8piNI1tGFNQIFA3vkE3Gq4EuA1dF6gHp/+vgZqsCGJapvy8N3Q+4o7FwvquPJcnZ7RYy4g==}
@@ -4878,11 +4835,6 @@ packages:
     resolution: {integrity: sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==}
     dev: true
 
-  /y18n@5.0.8:
-    resolution: {integrity: sha512-0pfFzegeDWJHJIAmTLRP2DwHjdF5s7jo9tuztdQxAhINCdvS+3nGINqPd00AphqJR/0LhANUS6/+7SCb98YOfA==}
-    engines: {node: '>=10'}
-    dev: true
-
   /yallist@3.1.1:
     resolution: {integrity: sha512-a4UGQaWPH59mOXUYnAG2ewncQS4i4F43Tv3JoAM+s2VDAmS9NsK8GpDMLrCHPksFT7h3K6TOoUNn2pb7RoXx4g==}
     dev: true
@@ -4894,24 +4846,6 @@ packages:
   /yaml@2.3.4:
     resolution: {integrity: sha512-8aAvwVUSHpfEqTQ4w/KMlf3HcRdt50E5ODIQJBw1fQ5RL34xabzxtUlzTXVqc4rkZsPbvrXKWnABCD7kWSmocA==}
     engines: {node: '>= 14'}
-
-  /yargs-parser@21.1.1:
-    resolution: {integrity: sha512-tVpsJW7DdjecAiFpbIB1e3qxIQsE6NoPc5/eTdrbbIC4h0LVsWhnoa3g+m2HclBIujHzsxZ4VJVA+GUuc2/LBw==}
-    engines: {node: '>=12'}
-    dev: true
-
-  /yargs@17.7.2:
-    resolution: {integrity: sha512-7dSzzRQ++CKnNI/krKnYRV7JKKPUXMEh61soaHKg9mrWEhzFWhFnxPxGl+69cD1Ou63C13NUPCnmIcrvqCuM6w==}
-    engines: {node: '>=12'}
-    dependencies:
-      cliui: 8.0.1
-      escalade: 3.1.2
-      get-caller-file: 2.0.5
-      require-directory: 2.1.1
-      string-width: 4.2.3
-      y18n: 5.0.8
-      yargs-parser: 21.1.1
-    dev: true
 
   /yocto-queue@0.1.0:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
@@ -4925,4 +4859,4 @@ packages:
 
   /zod@3.22.4:
     resolution: {integrity: sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==}
-    dev: true
+    dev: false
