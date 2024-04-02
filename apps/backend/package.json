@@ -18,12 +18,12 @@
     "valibot": "^0.30.0"
   },
   "devDependencies": {
-    "@hono/node-server": "^1.9.1",
+    "@hono/node-server": "^1.9.0",
     "@repo/eslint-config": "workspace:*",
     "@repo/prettier-config": "workspace:*",
     "@repo/types": "workspace:*",
     "@repo/typescript-config": "workspace:*",
-    "@types/node": "^20.12.2",
+    "@types/node": "^20.11.30",
     "dotenv": "^16.4.5",
     "esbuild": "^0.20.2",
     "npm-run-all2": "^6.1.2",
