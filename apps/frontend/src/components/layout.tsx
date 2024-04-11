@@ -112,7 +112,6 @@ export function Layout() {
             className="text-muted-foreground"
           >
             <a href="https://github.com/declanlscott/fodder" target="_blank">
-              {/* @ts-expect-error - TODO: Remove this when this issue is resolved: https://github.com/icons-pack/react-simple-icons/issues/215 */}
               <SiGithub />
             </a>
           </Button>

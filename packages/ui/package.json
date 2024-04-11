@@ -34,7 +34,7 @@
     "@types/react": "^18.2.75",
     "tailwindcss": "^3.4.3",
     "tsup": "^8.0.2",
-    "typescript": "^5.4.4"
+    "typescript": "^5.4.5"
   },
   "prettier": "@repo/prettier-config"
 }
