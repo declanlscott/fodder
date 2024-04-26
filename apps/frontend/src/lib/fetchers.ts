@@ -1,5 +1,5 @@
 import { env } from "env";
-import ky from "ky";
+import ky, { HTTPError } from "ky";
 
 import type {
   AllFlavors,
@@ -10,16 +10,20 @@ import type {
 import type { LocateRestaurantsSchema } from "~/schemas/locate-restaurants";
 
 export async function locate(data: LocateRestaurantsSchema) {
-  const restaurants = await ky
-    .get(`${env.VITE_API_BASE_URL}/restaurants`, {
-      searchParams:
-        data.type === "address"
-          ? { address: data.address }
-          : { latitude: data.latitude, longitude: data.longitude },
-    })
-    .json<LocatedRestaurant[]>();
+  try {
+    return await ky
+      .get(`${env.VITE_API_BASE_URL}/restaurants`, {
+        searchParams:
+          data.type === "address"
+            ? { address: data.address }
+            : { latitude: data.latitude, longitude: data.longitude },
+      })
+      .json<LocatedRestaurant[]>();
+  } catch (e) {
+    if (e instanceof HTTPError && e.response.status === 404) return [];
 
-  return restaurants;
+    throw e;
+  }
 }
 
 export async function getRestaurant(slug: string) {
