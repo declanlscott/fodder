@@ -68,7 +68,7 @@ function Component() {
 type FormErrors = SchemaIssues | undefined;
 
 function LocateForm() {
-  const { isFetching: isRoutePending } = Route.useMatch();
+  const isRoutePending = !!Route.useMatch().isFetching;
 
   const search = Route.useSearch();
 
