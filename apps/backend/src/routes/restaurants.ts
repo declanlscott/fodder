@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { HTTPException } from "hono/http-exception";
 import { validator } from "hono/validator";
 import { safeParse } from "valibot";
 
@@ -37,6 +38,10 @@ restaurants.get(
     const queryParams = c.req.valid("query");
 
     const json = await fetchRestaurants(queryParams);
+
+    if (json.data.totalResults === 0) {
+      throw new HTTPException(404, { message: "No restaurants found" });
+    }
 
     const body = formatFetchedRestaurants(json);
 

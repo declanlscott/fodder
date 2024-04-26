@@ -30,42 +30,16 @@ export async function fetchRestaurants(
 
   url.search = searchParams.toString();
 
-  // NOTE: I don't know what happened, but their API has become inconsistent and sometimes
-  // returns 0 results so I give it up to half a dozen attempts before giving up. I hope this
-  // hack is only temporary. This isn't ideal if the location really is empty because it will
-  // take all 6 attempts to realize that.
-  const attempts = 6;
-  let data = {} as FetchedRestaurants;
-  let res: Response;
-  let json: unknown;
-  for (let i = 0; i < attempts; i++) {
-    res = await fetch(url.toString());
-
-    if (!res.ok)
-      throw new HTTPException(500, {
-        message: "Failed to fetch restaurants",
-      });
-
-    json = await res.json();
-
-    data = parseJson(FetchedRestaurants, json);
-
-    const totalResults = data.data.totalResults;
-    if (totalResults > 0) {
-      console.log(`✅ Success on attempt ${i}, ${totalResults} results found`);
-      break;
-    } else {
-      console.log(`❌ Failed on attempt ${i}, no results found`);
-    }
-  }
-
-  if (data.data.totalResults === 0) {
-    throw new HTTPException(404, {
-      message: "No restaurants found",
+  const res = await fetch(url.toString());
+  if (!res.ok) {
+    throw new HTTPException(500, {
+      message: "Failed to fetch restaurants",
     });
   }
 
-  return data;
+  const json = await res.json();
+
+  return parseJson(FetchedRestaurants, json);
 }
 
 export async function scrapeRestaurantBySlug(
