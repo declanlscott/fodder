@@ -62,7 +62,6 @@ export const FetchedRestaurants = object({
           type: string(),
           coordinates: array(array(tuple([number(), number()]))),
         }),
-        enabled: boolean(),
       }),
     ),
     totalResults: number(),
