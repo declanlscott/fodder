@@ -14,7 +14,7 @@
   "dependencies": {
     "@repo/env": "workspace:*",
     "@repo/schemas": "workspace:*",
-    "hono": "^4.2.6",
+    "hono": "^4.3.2",
     "valibot": "^0.30.0"
   },
   "devDependencies": {
