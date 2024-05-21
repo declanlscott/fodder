@@ -33,8 +33,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/schemas
       hono:
-        specifier: ^4.3.6
-        version: 4.3.8
+        specifier: ^4.3.9
+        version: 4.3.9
       valibot:
         specifier: ^0.30.0
         version: 0.30.0
@@ -3560,8 +3560,8 @@ packages:
     dependencies:
       function-bind: 1.1.2
 
-  /hono@4.3.8:
-    resolution: {integrity: sha512-IepU1cWz7oWY/os4Dbgq8dAjQh+APbS0LvLf85bL3cnh4sqMZ1MSBCYFkpm+MIpGoRUMmX8v9CeQh+TmBX3RUA==}
+  /hono@4.3.9:
+    resolution: {integrity: sha512-6c5LVE23HnIS8iBhY+XPmYJlPeeClznOi7mBNsAsJCgxo8Ciz75LTjqRUf5wv4RYq8kL+1KPLUZHCtKmbZssNg==}
     engines: {node: '>=16.0.0'}
     dev: false
 
