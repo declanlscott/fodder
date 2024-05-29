@@ -100,11 +100,11 @@ importers:
         specifier: ^5.37.1
         version: 5.40.0(@tanstack/react-query@5.40.0)(react@18.3.1)
       '@tanstack/react-router':
-        specifier: ^1.33.4
-        version: 1.34.3(react-dom@18.3.1)(react@18.3.1)
+        specifier: ^1.34.5
+        version: 1.34.5(react-dom@18.3.1)(react@18.3.1)
       '@tanstack/router-devtools':
-        specifier: ^1.33.4
-        version: 1.34.4(@tanstack/react-router@1.34.3)(csstype@3.1.3)(react-dom@18.3.1)(react@18.3.1)
+        specifier: ^1.34.5
+        version: 1.34.5(@tanstack/react-router@1.34.5)(csstype@3.1.3)(react-dom@18.3.1)(react@18.3.1)
       '@tanstack/router-vite-plugin':
         specifier: ^1.32.17
         version: 1.34.1(vite@5.2.11)
@@ -115,8 +115,8 @@ importers:
         specifier: ^1.2.4
         version: 1.2.4
       lucide-react:
-        specifier: ^0.378.0
-        version: 0.378.0(react@18.3.1)
+        specifier: ^0.379.0
+        version: 0.379.0(react@18.3.1)
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -306,8 +306,8 @@ importers:
         specifier: npm:class-variance-authority@^0.7.0
         version: /class-variance-authority@0.7.0
       lucide-react:
-        specifier: ^0.378.0
-        version: 0.378.0(react@18.3.1)
+        specifier: ^0.379.0
+        version: 0.379.0(react@18.3.1)
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -2252,8 +2252,8 @@ packages:
       react: 18.3.1
     dev: false
 
-  /@tanstack/react-router@1.34.3(react-dom@18.3.1)(react@18.3.1):
-    resolution: {integrity: sha512-0pB+4qnp+5snHu5T93gvFmLcpXuIfSEhXZG7ipf3Rq8kmv4y0DGwcbvgFLiYKSZ/3x58faE8U0MD6F9vR9JUtg==}
+  /@tanstack/react-router@1.34.5(react-dom@18.3.1)(react@18.3.1):
+    resolution: {integrity: sha512-mOMbNHSJ1cAgRuJj9W35wteQL7zFiCNJYgg3QHkxj+obO9zQWiAwycFs0hQTRxqzGfC+jhVLJe1+cW93BhqKyA==}
     engines: {node: '>=12'}
     peerDependencies:
       react: '>=16.8'
@@ -2279,15 +2279,15 @@ packages:
       use-sync-external-store: 1.2.2(react@18.3.1)
     dev: false
 
-  /@tanstack/router-devtools@1.34.4(@tanstack/react-router@1.34.3)(csstype@3.1.3)(react-dom@18.3.1)(react@18.3.1):
-    resolution: {integrity: sha512-Fjn3Tb1MBcvAs1AJZsbUnQaEzS/epWMvpfZhAhau6zjmv03RmQpGO/4AzJbj9+RJFtB2bJRZ6EJvNLQq4xTJvg==}
+  /@tanstack/router-devtools@1.34.5(@tanstack/react-router@1.34.5)(csstype@3.1.3)(react-dom@18.3.1)(react@18.3.1):
+    resolution: {integrity: sha512-ps0SC14ijFkYkmvqRDlIo7M182Kinvs9syNbQJ5NZT3HjC4yNSZpKWIFkEEDL9IhQvIXQbk0FROz/c7Us7VpsA==}
     engines: {node: '>=12'}
     peerDependencies:
-      '@tanstack/react-router': ^1.34.3
+      '@tanstack/react-router': ^1.34.5
       react: '>=16.8'
       react-dom: '>=16.8'
     dependencies:
-      '@tanstack/react-router': 1.34.3(react-dom@18.3.1)(react@18.3.1)
+      '@tanstack/react-router': 1.34.5(react-dom@18.3.1)(react@18.3.1)
       clsx: 2.1.1
       date-fns: 2.30.0
       goober: 2.1.14(csstype@3.1.3)
@@ -3795,8 +3795,8 @@ packages:
     dependencies:
       yallist: 3.1.1
 
-  /lucide-react@0.378.0(react@18.3.1):
-    resolution: {integrity: sha512-u6EPU8juLUk9ytRcyapkWI18epAv3RU+6+TC23ivjR0e+glWKBobFeSgRwOIJihzktILQuy6E0E80P2jVTDR5g==}
+  /lucide-react@0.379.0(react@18.3.1):
+    resolution: {integrity: sha512-KcdeVPqmhRldldAAgptb8FjIunM2x2Zy26ZBh1RsEUcdLIvsEmbcw7KpzFYUy5BbpGeWhPu9Z9J5YXfStiXwhg==}
     peerDependencies:
       react: ^16.5.1 || ^17.0.0 || ^18.0.0
     dependencies:
