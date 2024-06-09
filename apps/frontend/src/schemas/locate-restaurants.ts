@@ -1,14 +1,14 @@
 import { AddressSchema, CoordinatesSchema } from "@repo/schemas";
-import { literal, merge, object, variant } from "valibot";
+import * as v from "valibot";
 
-import type { Output } from "valibot";
-
-export const LocateRestaurantsSchema = variant("type", [
-  merge([object({ type: literal("address") }), AddressSchema]),
-  merge([object({ type: literal("coordinates") }), CoordinatesSchema]),
+export const LocateRestaurantsSchema = v.variant("type", [
+  v.object({ type: v.literal("address"), ...AddressSchema.entries }),
+  v.object({ type: v.literal("coordinates"), ...CoordinatesSchema.entries }),
 ]);
 
-export type LocateRestaurantsSchema = Output<typeof LocateRestaurantsSchema>;
+export type LocateRestaurantsSchema = v.InferOutput<
+  typeof LocateRestaurantsSchema
+>;
 
 export const initialSearch = {
   type: "address",

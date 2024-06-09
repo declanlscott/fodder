@@ -1,12 +1,12 @@
 import { HTTPException } from "hono/http-exception";
-import { literal, object } from "valibot";
+import * as v from "valibot";
 import { describe, expect, it } from "vitest";
 
 import { ValidationException } from "~/lib/exceptions";
 import { parseJson, parseNextData } from "~/lib/parsers";
 
-const TestSchema = object({
-  hello: literal("world"),
+const TestSchema = v.object({
+  hello: v.literal("world"),
 });
 
 describe("parseJson", () => {

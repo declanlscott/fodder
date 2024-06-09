@@ -1,14 +1,14 @@
 import { createEnv } from "@repo/env";
-import { string, url } from "valibot";
+import * as v from "valibot";
 
 export const env = createEnv({
   server: {
-    EXTERNAL_API_BASE_URL: string([url()]),
-    RESTAURANT_SCRAPE_BASE_URL: string([url()]),
-    FLAVORS_SCRAPE_BASE_URL: string([url()]),
-    FLAVOR_IMAGE_BASE_URL: string([url()]),
-    LOGO_SVG_URL: string([url()]),
-    CORS_ORIGIN: string([url()]),
+    EXTERNAL_API_BASE_URL: v.pipe(v.string(), v.url()),
+    RESTAURANT_SCRAPE_BASE_URL: v.pipe(v.string(), v.url()),
+    FLAVORS_SCRAPE_BASE_URL: v.pipe(v.string(), v.url()),
+    FLAVOR_IMAGE_BASE_URL: v.pipe(v.string(), v.url()),
+    LOGO_SVG_URL: v.pipe(v.string(), v.url()),
+    CORS_ORIGIN: v.pipe(v.string(), v.url()),
   },
   runtimeEnv: process.env,
 });

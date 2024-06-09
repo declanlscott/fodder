@@ -36,9 +36,7 @@ api.route("/flavors", flavors);
 api.onError((err, c) => {
   console.error("error: ", err);
 
-  if (err instanceof HTTPException) {
-    return err.getResponse();
-  }
+  if (err instanceof HTTPException) return err.getResponse();
 
   return c.json(
     {

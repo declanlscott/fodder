@@ -26,9 +26,8 @@ export const Route = createFileRoute("/flavors/$slug")({
 
       return data;
     } catch (error) {
-      if (error instanceof HTTPError && error.response.status === 404) {
+      if (error instanceof HTTPError && error.response.status === 404)
         throw notFound();
-      }
 
       throw error;
     }

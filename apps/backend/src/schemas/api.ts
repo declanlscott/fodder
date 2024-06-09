@@ -1,17 +1,18 @@
 import { AddressSchema, CoordinatesSchema } from "@repo/schemas";
-import { object, safeParse, string, union } from "valibot";
+import * as v from "valibot";
 
 import { ValidationException } from "~/lib/exceptions";
 
 import type { ValidationTargets } from "hono";
-import type { Output } from "valibot";
 
-export const LocateRestaurantsSchema = union(
+export const LocateRestaurantsSchema = v.union(
   [AddressSchema, CoordinatesSchema],
   "address or latitude/longitude query parameters are required",
 );
 
-export type LocateRestaurantsSchema = Output<typeof LocateRestaurantsSchema>;
+export type LocateRestaurantsSchema = v.InferOutput<
+  typeof LocateRestaurantsSchema
+>;
 
 export const hasAddress = (
   query: LocateRestaurantsSchema,
@@ -22,20 +23,19 @@ export const hasCoordinates = (
 ): query is { latitude: number; longitude: number } =>
   "latitude" in query && "longitude" in query;
 
-export const SlugSchema = object({ slug: string() });
+export const SlugSchema = v.object({ slug: v.string() });
 
-export type SlugSchema = Output<typeof SlugSchema>;
+export type SlugSchema = v.InferOutput<typeof SlugSchema>;
 
 export const validateSlug = (pathParams: ValidationTargets["param"]) => {
-  const { success, issues, output } = safeParse(SlugSchema, pathParams);
+  const { success, issues, output } = v.safeParse(SlugSchema, pathParams);
 
-  if (!success) {
+  if (!success)
     throw new ValidationException<typeof SlugSchema>(
       400,
       "Invalid path parameters",
       issues,
     );
-  }
 
   return output;
 };

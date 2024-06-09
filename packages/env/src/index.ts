@@ -27,9 +27,7 @@
 // https://github.com/t3-oss/t3-env/blob/f1e07911af6f7c41290d112abe8e7dae63f084e5/packages/core/src/index.ts
 // Ported from Zod to Valibot by Declan L. Scott
 
-import { flatten, merge, object, safeParse } from "valibot";
-
-import type { BaseSchema, ObjectSchema, Output, SchemaIssues } from "valibot";
+import * as v from "valibot";
 
 export type ErrorMessage<T extends string> = T;
 export type Simplify<T> = {
@@ -55,7 +53,7 @@ type Reduce<
     : never;
 
 export interface BaseOptions<
-  TShared extends Record<string, BaseSchema>,
+  TShared extends Record<string, v.GenericSchema>,
   TExtends extends Array<Record<string, unknown>>,
 > {
   /**
@@ -79,7 +77,9 @@ export interface BaseOptions<
    * Called when validation fails. By default the error is logged,
    * and an error is thrown telling what environment variables are invalid.
    */
-  onValidationError?: (issues: SchemaIssues) => never;
+  onValidationError?: <TSchema extends v.GenericSchema>(
+    issues: [v.InferIssue<TSchema>, ...v.InferIssue<TSchema>[]],
+  ) => never;
 
   /**
    * Called when a server-side environment variable is accessed on the client.
@@ -110,7 +110,7 @@ export interface BaseOptions<
 }
 
 export interface LooseOptions<
-  TShared extends Record<string, BaseSchema>,
+  TShared extends Record<string, v.GenericSchema>,
   TExtends extends Array<Record<string, unknown>>,
 > extends BaseOptions<TShared, TExtends> {
   runtimeEnvStrict?: never;
@@ -125,9 +125,9 @@ export interface LooseOptions<
 
 export interface StrictOptions<
   TPrefix extends string | undefined,
-  TServer extends Record<string, BaseSchema>,
-  TClient extends Record<string, BaseSchema>,
-  TShared extends Record<string, BaseSchema>,
+  TServer extends Record<string, v.GenericSchema>,
+  TClient extends Record<string, v.GenericSchema>,
+  TShared extends Record<string, v.GenericSchema>,
   TExtends extends Array<Record<string, unknown>>,
 > extends BaseOptions<TShared, TExtends> {
   /**
@@ -159,7 +159,7 @@ export interface StrictOptions<
 
 export interface ClientOptions<
   TPrefix extends string | undefined,
-  TClient extends Record<string, BaseSchema>,
+  TClient extends Record<string, v.GenericSchema>,
 > {
   /**
    * The prefix that client-side variables must have. This is enforced both at
@@ -182,7 +182,7 @@ export interface ClientOptions<
 
 export interface ServerOptions<
   TPrefix extends string | undefined,
-  TServer extends Record<string, BaseSchema>,
+  TServer extends Record<string, v.GenericSchema>,
 > {
   /**
    * Specify your server-side environment variables schema here. This way you can ensure the app isn't
@@ -203,8 +203,8 @@ export interface ServerOptions<
 
 export type ServerClientOptions<
   TPrefix extends string | undefined,
-  TServer extends Record<string, BaseSchema>,
-  TClient extends Record<string, BaseSchema>,
+  TServer extends Record<string, v.GenericSchema>,
+  TClient extends Record<string, v.GenericSchema>,
 > =
   | (ClientOptions<TPrefix, TClient> & ServerOptions<TPrefix, TServer>)
   | (ServerOptions<TPrefix, TServer> & Impossible<ClientOptions<never, never>>)
@@ -212,9 +212,9 @@ export type ServerClientOptions<
 
 export type EnvOptions<
   TPrefix extends string | undefined,
-  TServer extends Record<string, BaseSchema>,
-  TClient extends Record<string, BaseSchema>,
-  TShared extends Record<string, BaseSchema>,
+  TServer extends Record<string, v.GenericSchema>,
+  TClient extends Record<string, v.GenericSchema>,
+  TShared extends Record<string, v.GenericSchema>,
   TExtends extends Array<Record<string, unknown>>,
 > =
   | (LooseOptions<TShared, TExtends> &
@@ -224,30 +224,27 @@ export type EnvOptions<
 
 export function createEnv<
   TPrefix extends string | undefined,
-  TServer extends Record<string, BaseSchema> = NonNullable<unknown>,
-  TClient extends Record<string, BaseSchema> = NonNullable<unknown>,
-  TShared extends Record<string, BaseSchema> = NonNullable<unknown>,
+  TServer extends Record<string, v.GenericSchema> = NonNullable<unknown>,
+  TClient extends Record<string, v.GenericSchema> = NonNullable<unknown>,
+  TShared extends Record<string, v.GenericSchema> = NonNullable<unknown>,
   const TExtends extends Array<Record<string, unknown>> = [],
 >(
   opts: EnvOptions<TPrefix, TServer, TClient, TShared, TExtends>,
 ): Readonly<
   Simplify<
-    Output<ObjectSchema<TServer>> &
-      Output<ObjectSchema<TClient>> &
-      Output<ObjectSchema<TShared>> &
+    v.InferOutput<v.ObjectSchema<TServer, "">> &
+      v.InferOutput<v.ObjectSchema<TClient, "">> &
+      v.InferOutput<v.ObjectSchema<TShared, "">> &
       UnReadonlyObject<Reduce<TExtends>>
   >
 > {
   const runtimeEnv = opts.runtimeEnvStrict ?? opts.runtimeEnv ?? process.env;
 
   const emptyStringAsUndefined = opts.emptyStringAsUndefined ?? false;
-  if (emptyStringAsUndefined) {
+  if (emptyStringAsUndefined)
     for (const [key, value] of Object.entries(runtimeEnv)) {
-      if (value === "") {
-        delete runtimeEnv[key];
-      }
+      if (value === "") delete runtimeEnv[key];
     }
-  }
 
   const skip = !!opts.skipValidation;
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
@@ -256,14 +253,18 @@ export function createEnv<
   const _client = typeof opts.client === "object" ? opts.client : {};
   const _server = typeof opts.server === "object" ? opts.server : {};
   const _shared = typeof opts.shared === "object" ? opts.shared : {};
-  const client = object(_client);
-  const server = object(_server);
-  const shared = object(_shared);
+  const client = v.object(_client);
+  const server = v.object(_server);
+  const shared = v.object(_shared);
   const isServer = opts.isServer ?? typeof window === "undefined";
 
-  const allClient = merge([client, shared]);
-  const allServer = merge([client, shared, server]);
-  const parsed = safeParse(
+  const allClient = v.object({ ...client.entries, ...shared.entries });
+  const allServer = v.object({
+    ...client.entries,
+    ...shared.entries,
+    ...server.entries,
+  });
+  const parsed = v.safeParse(
     isServer
       ? allServer // on server we can validate all env vars
       : allClient, // on client we can only validate the ones that are exposed
@@ -272,8 +273,13 @@ export function createEnv<
 
   const onValidationError =
     opts.onValidationError ??
-    ((issues: SchemaIssues) => {
-      console.error("❌ Invalid environment variables:", flatten(issues));
+    ((
+      issues: [
+        v.InferIssue<typeof allServer | typeof allClient>,
+        ...v.InferIssue<typeof allServer | typeof allClient>[],
+      ],
+    ) => {
+      console.error("❌ Invalid environment variables:", v.flatten(issues));
       throw new Error("Invalid environment variables");
     });
 
@@ -285,24 +291,21 @@ export function createEnv<
       );
     });
 
-  if (parsed.success === false) {
-    return onValidationError(parsed.issues);
-  }
+  if (parsed.success === false) return onValidationError(parsed.issues);
 
   const isServerAccess = (prop: string) => {
     if (!opts.clientPrefix) return true;
     return !prop.startsWith(opts.clientPrefix) && !(prop in shared.entries);
   };
-  const isValidServerAccess = (prop: string) => {
-    return isServer || !isServerAccess(prop);
-  };
-  const ignoreProp = (prop: string) => {
-    return prop === "__esModule" || prop === "$$typeof";
-  };
+  const isValidServerAccess = (prop: string) =>
+    isServer || !isServerAccess(prop);
+  const ignoreProp = (prop: string) =>
+    prop === "__esModule" || prop === "$$typeof";
 
-  const extendedObj = (opts.extends ?? []).reduce((acc, curr) => {
-    return Object.assign(acc, curr);
-  }, {});
+  const extendedObj = (opts.extends ?? []).reduce(
+    (acc, curr) => Object.assign(acc, curr),
+    {},
+  );
   const fullObj = Object.assign(parsed.output, extendedObj);
 
   const env = new Proxy(fullObj, {

@@ -17,7 +17,7 @@ import { useIsFetching, useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Dessert, Loader2, MapPin, MapPinOff, Send } from "lucide-react";
 import { isDeepEqual } from "remeda";
-import { fallback, parse, safeParse } from "valibot";
+import * as v from "valibot";
 
 import { DroppedCone } from "~/components/dropped-cone";
 import { ErrorCard } from "~/components/error-card";
@@ -30,17 +30,14 @@ import {
   LocateRestaurantsSchema,
 } from "~/schemas/locate-restaurants";
 
-import type { SchemaIssues } from "valibot";
 import type { Coordinates } from "~/hooks/geolocation";
 
 export const Route = createFileRoute("/")({
   validateSearch: (search) =>
-    parse(fallback(LocateRestaurantsSchema, initialSearch), search),
+    v.parse(v.fallback(LocateRestaurantsSchema, initialSearch), search),
   loaderDeps: ({ search }) => ({ search }),
   loader: async ({ deps: { search }, context: { queryClient } }) => {
-    if (isDeepEqual(search, initialSearch)) {
-      return;
-    }
+    if (isDeepEqual(search, initialSearch)) return;
 
     await queryClient.ensureQueryData(queryOptionsFactory.restaurants(search));
   },
@@ -65,7 +62,12 @@ function Component() {
   );
 }
 
-type FormErrors = SchemaIssues | undefined;
+type FormErrors =
+  | [
+      v.InferIssue<typeof LocateRestaurantsSchema>,
+      ...v.InferIssue<typeof LocateRestaurantsSchema>[],
+    ]
+  | undefined;
 
 function LocateForm() {
   const isRoutePending = !!Route.useMatch().isFetching;
@@ -110,26 +112,25 @@ function LocateForm() {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    const { output, success, issues } = safeParse(
+    const { output, success, issues } = v.safeParse(
       LocateRestaurantsSchema,
       formData,
     );
 
     setFormErrors(issues);
 
-    if (!success) {
-      if (hasError(issues, "address")) {
-        return inputRef.current?.focus();
-      }
-
-      return;
-    }
+    if (!success) return inputRef.current?.focus();
 
     await navigate({ search: output });
   }
 
   function hasError(formErrors: FormErrors, key: string) {
-    return formErrors?.some((issue) => issue.path?.[0].key === key);
+    return formErrors?.some(
+      (issue) =>
+        issue.path?.[0] &&
+        issue.path[0].type !== "set" &&
+        issue.path[0].key === key,
+    );
   }
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -270,33 +271,28 @@ function LocatedFods() {
       queryKey: [queryOptionsFactory.restaurants(search).queryKey[0]],
     }) > 0;
 
-  if (isFetching || isRoutePending) {
+  if (isFetching || isRoutePending)
     return Array.from({ length: 3 }).map((_, index) => (
       <FodCardSkeleton key={index} />
     ));
-  }
 
-  if (query.isError) {
-    return <ErrorCard className="col-span-full" />;
-  }
+  if (query.isError) return <ErrorCard className="col-span-full" />;
 
-  if (!query.data) {
+  if (!query.data)
     return (
       <Card className="text-muted-foreground col-span-full flex h-64 flex-col items-center justify-center gap-4">
         <Dessert className="text-muted-foreground h-28 w-28" />
         Nothing here yet...
       </Card>
     );
-  }
 
-  if (query.data.length === 0) {
+  if (query.data.length === 0)
     return (
       <Card className="text-muted-foreground col-span-full flex h-64 flex-col items-center justify-center gap-4">
         <DroppedCone className="fill-muted-foreground h-28" />
         No locations found...
       </Card>
     );
-  }
 
   return query.data.map((restaurant) => (
     <FodCard key={restaurant.slug} restaurant={restaurant} />

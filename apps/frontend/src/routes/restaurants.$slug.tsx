@@ -170,9 +170,7 @@ function UpcomingFods({ flavors }: { flavors: SluggedRestaurant["flavors"] }) {
           className="w-full gap-2 md:w-fit"
           onClick={() =>
             setShowing((prev) => {
-              if (!canShowMore) {
-                return initialShowing;
-              }
+              if (!canShowMore) return initialShowing;
 
               const next = prev + 5;
               return next > flavors.length ? flavors.length : next;
@@ -262,14 +260,13 @@ function NearbyFods({ source: { slug, address } }: NearbyFodsProps) {
     queryOptionsFactory.nearbyRestaurants(slug, { type: "address", address }),
   );
 
-  if (data.length === 0) {
+  if (data.length === 0)
     return (
       <Card className="text-muted-foreground col-span-full flex h-64 flex-col items-center justify-center gap-4">
         <DroppedCone className="fill-muted-foreground h-28" />
         {"No locations found..."}
       </Card>
     );
-  }
 
   return data.map((restaurant) => (
     <FodCard key={restaurant.slug} restaurant={restaurant} />

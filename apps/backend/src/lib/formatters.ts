@@ -53,15 +53,11 @@ export function formatFlavorSlug(name: string) {
 }
 
 export function formatFlavorImageUrl(imageSlug: string, includeWidth = false) {
-  if (!imageSlug) {
-    return new URL(env.LOGO_SVG_URL);
-  }
+  if (!imageSlug) return new URL(env.LOGO_SVG_URL);
 
   const url = new URL(`${env.FLAVOR_IMAGE_BASE_URL}/${imageSlug}`);
 
-  if (includeWidth) {
-    url.searchParams.set("w", `${imageWidth}`);
-  }
+  if (includeWidth) url.searchParams.set("w", imageWidth.toString());
 
   return url;
 }
@@ -107,16 +103,13 @@ export function formatScrapedAllFlavors(
   let data: FlavorsModule["customData"]["flavors"] | undefined;
 
   for (const module of nextData.props.pageProps.page.zones.Content) {
-    if (isFlavorsModule(module)) {
-      data = module.customData.flavors;
-    }
+    if (isFlavorsModule(module)) data = module.customData.flavors;
   }
 
-  if (!data) {
+  if (!data)
     throw new HTTPException(404, {
       message: "Flavors not found",
     });
-  }
 
   return data.reduce((acc, curr) => {
     const flavor = {
@@ -134,9 +127,8 @@ export function formatScrapedFlavor(
 ): SluggedFlavor {
   const flavorDetails = nextData.props.pageProps.page.customData.flavorDetails;
 
-  if (!isFlavorFound(flavorDetails)) {
+  if (!isFlavorFound(flavorDetails))
     throw new HTTPException(404, { message: "Flavor not found" });
-  }
 
   const flavor = {
     name: flavorDetails.name,

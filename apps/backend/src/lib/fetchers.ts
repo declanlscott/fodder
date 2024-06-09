@@ -31,11 +31,10 @@ export async function fetchRestaurants(
   url.search = searchParams.toString();
 
   const res = await fetch(url.toString());
-  if (!res.ok) {
+  if (!res.ok)
     throw new HTTPException(500, {
       message: "Failed to fetch restaurants",
     });
-  }
 
   const json = await res.json();
 
@@ -48,7 +47,7 @@ export async function scrapeRestaurantBySlug(
   const url = new URL(`${env.RESTAURANT_SCRAPE_BASE_URL}/${slug}`);
 
   const res = await fetch(url.toString());
-  if (!res.ok) {
+  if (!res.ok)
     switch (res.status) {
       case 404:
         throw new HTTPException(404, {
@@ -59,7 +58,6 @@ export async function scrapeRestaurantBySlug(
           message: "Failed to fetch restaurant",
         });
     }
-  }
 
   const body = await res.text();
 
@@ -70,11 +68,10 @@ export async function scrapeAllFlavors() {
   const url = new URL(`${env.FLAVORS_SCRAPE_BASE_URL}`);
 
   const res = await fetch(url.toString());
-  if (!res.ok) {
+  if (!res.ok)
     throw new HTTPException(500, {
       message: "Failed to fetch flavors",
     });
-  }
 
   const body = await res.text();
 
@@ -88,11 +85,10 @@ export async function scrapeFlavorBySlug(
 
   const res = await fetch(url.toString());
 
-  if (!res.ok) {
+  if (!res.ok)
     throw new HTTPException(500, {
       message: "Failed to fetch flavor",
     });
-  }
 
   const body = await res.text();
 

@@ -1,22 +1,21 @@
 import { HTTPException } from "hono/http-exception";
-import { flatten } from "valibot";
+import * as v from "valibot";
 
 import type { StatusCode } from "hono/utils/http-status";
-import type { BaseSchema, SchemaIssues } from "valibot";
 
 export class ValidationException<
-  Schema extends BaseSchema,
+  TSchema extends v.GenericSchema,
 > extends HTTPException {
   constructor(
     statusCode: StatusCode,
     errorMessage: string,
-    issues: SchemaIssues,
+    issues: [v.InferIssue<TSchema>, ...v.InferIssue<TSchema>[]],
   ) {
     super(statusCode, {
       res: new Response(
         JSON.stringify({
           error: errorMessage,
-          reasons: flatten<Schema>(issues),
+          reasons: v.flatten(issues),
         }),
         {
           status: statusCode,

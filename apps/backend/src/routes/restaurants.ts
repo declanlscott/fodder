@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { validator } from "hono/validator";
-import { safeParse } from "valibot";
+import * as v from "valibot";
 
 import { ValidationException } from "~/lib/exceptions";
 import { fetchRestaurants, scrapeRestaurantBySlug } from "~/lib/fetchers";
@@ -19,18 +19,17 @@ const restaurants = new Hono<{ Bindings: Bindings }>();
 restaurants.get(
   "/",
   validator("query", (queryParams) => {
-    const { success, issues, output } = safeParse(
+    const { success, issues, output } = v.safeParse(
       LocateRestaurantsSchema,
       queryParams,
     );
 
-    if (!success) {
+    if (!success)
       throw new ValidationException<typeof LocateRestaurantsSchema>(
         400,
         "Invalid query parameters",
         issues,
       );
-    }
 
     return output;
   }),
@@ -39,9 +38,8 @@ restaurants.get(
 
     const json = await fetchRestaurants(queryParams);
 
-    if (json.data.totalResults === 0) {
+    if (json.data.totalResults === 0)
       throw new HTTPException(404, { message: "No restaurants found" });
-    }
 
     const body = formatFetchedRestaurants(json);
 

@@ -65,7 +65,6 @@ describe("formatFetchedRestaurants", () => {
             geometryCenter: { type: "type", coordinates: [0, 0] },
             geometryRadius: 0,
             geometry: { type: "type", coordinates: [[[0, 0]]] },
-            enabled: true,
           },
         ],
         totalResults: 1,
@@ -212,7 +211,7 @@ describe("formatScrapedRestaurant", () => {
 describe("formatScrapedAllFlavors", () => {
   it("correctly formats with flavors module", () => {
     const flavorsModule = {
-      moduleName: flavorsModuleName,
+      module: flavorsModuleName,
       customData: {
         flavors: [
           {
@@ -261,7 +260,7 @@ describe("formatScrapedAllFlavors", () => {
 
   it("throws HTTPException without flavors module", () => {
     const unknownModule = {
-      moduleName: "UnknownModule",
+      module: "UnknownModule",
     } satisfies UnknownModule;
 
     const input = {

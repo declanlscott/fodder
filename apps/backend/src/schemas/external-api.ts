@@ -1,219 +1,195 @@
-import {
-  array,
-  boolean,
-  coerce,
-  custom,
-  date,
-  literal,
-  never,
-  notValue,
-  nullable,
-  number,
-  object,
-  safeParse,
-  string,
-  tuple,
-  union,
-  unknown,
-  variant,
-} from "valibot";
+import * as v from "valibot";
 
-import type { Output } from "valibot";
-
-export const FetchedRestaurants = object({
-  isSuccessful: boolean(),
-  message: nullable(string()),
-  data: object({
-    meta: object({
-      code: number(),
+export const FetchedRestaurants = v.object({
+  isSuccessful: v.boolean(),
+  message: v.nullable(v.string()),
+  data: v.object({
+    meta: v.object({
+      code: v.number(),
     }),
-    geofences: array(
-      object({
-        _id: string(),
-        live: boolean(),
-        description: string(),
-        metadata: object({
-          dineInHours: string(),
-          driveThruHours: string(),
-          onlineOrderStatus: number(),
-          flavorOfDayName: string(),
-          flavorOfDaySlug: string(),
-          openDate: string(),
-          isTemporarilyClosed: boolean(),
-          utcOffset: number(),
-          street: string(),
-          state: string(),
-          city: string(),
-          postalCode: string(),
-          oloId: string(),
-          slug: string(),
-          jobsearchurl: string(),
-          handoffOptions: string(),
+    geofences: v.array(
+      v.object({
+        _id: v.string(),
+        live: v.boolean(),
+        description: v.string(),
+        metadata: v.object({
+          dineInHours: v.string(),
+          driveThruHours: v.string(),
+          onlineOrderStatus: v.number(),
+          flavorOfDayName: v.string(),
+          flavorOfDaySlug: v.string(),
+          openDate: v.string(),
+          isTemporarilyClosed: v.boolean(),
+          utcOffset: v.number(),
+          street: v.string(),
+          state: v.string(),
+          city: v.string(),
+          postalCode: v.string(),
+          oloId: v.string(),
+          slug: v.string(),
+          jobsearchurl: v.string(),
+          handoffOptions: v.string(),
         }),
-        tag: string(),
-        externalId: string(),
-        type: string(),
-        geometryCenter: object({
-          type: string(),
-          coordinates: tuple([number(), number()]),
+        tag: v.string(),
+        externalId: v.string(),
+        type: v.string(),
+        geometryCenter: v.object({
+          type: v.string(),
+          coordinates: v.tuple([v.number(), v.number()]),
         }),
-        geometryRadius: number(),
-        geometry: object({
-          type: string(),
-          coordinates: array(array(tuple([number(), number()]))),
+        geometryRadius: v.number(),
+        geometry: v.object({
+          type: v.string(),
+          coordinates: v.array(v.array(v.tuple([v.number(), v.number()]))),
         }),
       }),
     ),
-    totalResults: number(),
+    totalResults: v.number(),
   }),
 });
-export type FetchedRestaurants = Output<typeof FetchedRestaurants>;
+export type FetchedRestaurants = v.InferOutput<typeof FetchedRestaurants>;
 
-export const FlavorProps = object({
-  flavorId: number(),
-  menuItemId: number(),
-  // Parse `onDate` as a string but validate it as a date
-  onDate: string([
-    custom(
-      (input) =>
-        safeParse(
-          coerce(date(), (d) => new Date(d as string)),
-          input,
-        ).success,
-      "Invalid date",
-    ),
-  ]),
-  title: string(),
-  urlSlug: string(),
-  image: object({
-    useWhiteBackground: boolean(),
-    src: string(),
+export const FlavorProps = v.object({
+  flavorId: v.number(),
+  menuItemId: v.number(),
+  onDate: v.pipe(
+    v.string(),
+    v.transform((input) => new Date(input).toISOString()),
+  ),
+  title: v.string(),
+  urlSlug: v.string(),
+  image: v.object({
+    useWhiteBackground: v.boolean(),
+    src: v.string(),
   }),
 });
-export type FlavorProps = Output<typeof FlavorProps>;
+export type FlavorProps = v.InferOutput<typeof FlavorProps>;
 
-export const ScrapedRestaurantNextData = object({
-  props: object({
-    pageProps: object({
-      page: object({
-        customData: object({
-          restaurantDetails: object({
-            id: number(),
-            number: string(),
-            title: string(),
-            slug: string(),
-            phoneNumber: string(),
-            address: string(),
-            city: string(),
-            state: string(),
-            postalCode: string(),
-            latitude: number(),
-            longitude: number(),
-            onlineOrderUrl: string(),
-            ownerFriendlyName: string(),
-            ownerMessage: nullable(string()),
-            jobsApplyUrl: string(),
-            flavorOfTheDay: array(FlavorProps),
+export const ScrapedRestaurantNextData = v.object({
+  props: v.object({
+    pageProps: v.object({
+      page: v.object({
+        customData: v.object({
+          restaurantDetails: v.object({
+            id: v.number(),
+            number: v.string(),
+            title: v.string(),
+            slug: v.string(),
+            phoneNumber: v.string(),
+            address: v.string(),
+            city: v.string(),
+            state: v.string(),
+            postalCode: v.string(),
+            latitude: v.number(),
+            longitude: v.number(),
+            onlineOrderUrl: v.string(),
+            ownerFriendlyName: v.string(),
+            ownerMessage: v.nullable(v.string()),
+            jobsApplyUrl: v.string(),
+            flavorOfTheDay: v.array(FlavorProps),
           }),
-          restaurantCalendar: object({
-            restaurant: object({
-              id: number(),
-              title: string(),
-              slug: string(),
+          restaurantCalendar: v.object({
+            restaurant: v.object({
+              id: v.number(),
+              title: v.string(),
+              slug: v.string(),
             }),
-            flavors: array(FlavorProps),
+            flavors: v.array(FlavorProps),
           }),
         }),
       }),
     }),
   }),
 });
-export type ScrapedRestaurantNextData = Output<
+export type ScrapedRestaurantNextData = v.InferOutput<
   typeof ScrapedRestaurantNextData
 >;
 
 export const flavorsModuleName = "FlavorOfTheDayAllFlavors";
-export const FlavorsModule = object({
-  moduleName: literal(flavorsModuleName),
-  customData: object({
-    flavors: array(
-      object({
-        idFlavor: number(),
-        idMenuItem: number(),
-        longFlavorName: string(),
-        flavorName: string(),
-        flavorCategories: array(object({ id: number(), name: string() })),
-        flavorNameLocalized: nullable(string()),
-        fotdImage: string(),
-        fotdUrlSlug: string(),
-        flavorNameSpanish: nullable(string()),
-        fotdDescriptionSpanish: nullable(string()),
+export const FlavorsModule = v.object({
+  module: v.literal(flavorsModuleName),
+  customData: v.object({
+    flavors: v.array(
+      v.object({
+        idFlavor: v.number(),
+        idMenuItem: v.number(),
+        longFlavorName: v.string(),
+        flavorName: v.string(),
+        flavorCategories: v.array(
+          v.object({ id: v.number(), name: v.string() }),
+        ),
+        flavorNameLocalized: v.nullable(v.string()),
+        fotdImage: v.string(),
+        fotdUrlSlug: v.string(),
+        flavorNameSpanish: v.nullable(v.string()),
+        fotdDescriptionSpanish: v.nullable(v.string()),
       }),
     ),
   }),
 });
-export type FlavorsModule = Output<typeof FlavorsModule>;
-export const UnknownModule = object(
-  {
-    moduleName: string([notValue(flavorsModuleName)]),
-  },
-  unknown(),
+export type FlavorsModule = v.InferOutput<typeof FlavorsModule>;
+export const UnknownModule = v.objectWithRest(
+  { module: v.pipe(v.string(), v.notValue(flavorsModuleName)) },
+  v.unknown(),
 );
-export type UnknownModule = Output<typeof UnknownModule>;
+export type UnknownModule = v.InferOutput<typeof UnknownModule>;
 
-export const ScrapedAllFlavorsNextData = object({
-  props: object({
-    pageProps: object({
-      page: object({
-        zones: object({
-          Content: array(variant("moduleName", [FlavorsModule, UnknownModule])),
+export const ScrapedAllFlavorsNextData = v.object({
+  props: v.object({
+    pageProps: v.object({
+      page: v.object({
+        zones: v.object({
+          Content: v.array(v.variant("module", [FlavorsModule, UnknownModule])),
         }),
       }),
     }),
   }),
 });
-export type ScrapedAllFlavorsNextData = Output<
+export type ScrapedAllFlavorsNextData = v.InferOutput<
   typeof ScrapedAllFlavorsNextData
 >;
 
 export const isFlavorsModule = (
   module: ScrapedAllFlavorsNextData["props"]["pageProps"]["page"]["zones"]["Content"][number],
-): module is FlavorsModule => module.moduleName === flavorsModuleName;
+): module is FlavorsModule => module.module === flavorsModuleName;
 
-export const FlavorDetails = object({
-  idFlavor: number(),
-  idMenuItem: number(),
-  slug: string(),
-  name: string(),
-  description: string(),
-  fotdImage: string(),
-  allergens: string(),
-  ingredients: array(
-    object({
-      id: number(),
-      title: string(),
-      subIngredients: string(),
+export const FlavorDetails = v.object({
+  idFlavor: v.number(),
+  idMenuItem: v.number(),
+  slug: v.string(),
+  name: v.string(),
+  description: v.string(),
+  fotdImage: v.string(),
+  allergens: v.string(),
+  ingredients: v.array(
+    v.object({
+      id: v.number(),
+      title: v.string(),
+      subIngredients: v.string(),
     }),
   ),
-  flavorCategories: array(object({ id: number(), name: string() })),
+  flavorCategories: v.array(v.object({ id: v.number(), name: v.string() })),
 });
-export type FlavorDetails = Output<typeof FlavorDetails>;
-export const FlavorDetailsNotFound = object({}, never());
-export type FlavorDetailsNotFound = Output<typeof FlavorDetailsNotFound>;
-export const FlavorDetailsUnion = union([FlavorDetails, FlavorDetailsNotFound]);
-export type FlavorDetailsUnion = Output<typeof FlavorDetailsUnion>;
-export const ScrapedFlavorNextData = object({
-  props: object({
-    pageProps: object({
-      page: object({
-        customData: object({
+export type FlavorDetails = v.InferOutput<typeof FlavorDetails>;
+export const FlavorDetailsNotFound = v.objectWithRest({}, v.never());
+export type FlavorDetailsNotFound = v.InferOutput<typeof FlavorDetailsNotFound>;
+export const FlavorDetailsUnion = v.union([
+  FlavorDetails,
+  FlavorDetailsNotFound,
+]);
+export type FlavorDetailsUnion = v.InferOutput<typeof FlavorDetailsUnion>;
+export const ScrapedFlavorNextData = v.object({
+  props: v.object({
+    pageProps: v.object({
+      page: v.object({
+        customData: v.object({
           flavorDetails: FlavorDetailsUnion,
         }),
       }),
     }),
   }),
 });
-export type ScrapedFlavorNextData = Output<typeof ScrapedFlavorNextData>;
+export type ScrapedFlavorNextData = v.InferOutput<typeof ScrapedFlavorNextData>;
 
 export const isFlavorFound = (
   flavorDetails: FlavorDetailsUnion,
