@@ -8,3 +8,5 @@ API_FUNCTION_LOGO_SVG_URL=https://cdn.culvers.com/layout/logo.svg
 API_FUNCTION_CORS_ORIGIN=https://fodder.declanlscott.com
 
 VITE_API_BASE_URL=https://fodder-api.declanlscott.com
+
+TURBO_TEAM=declan-l-scotts-projects
