@@ -119,17 +119,6 @@ jobs:
         run: zip -j lambda.zip ./lambda/*
         working-directory: ./apps/backend
 
-      # Download and install AWS CLI in act environment
-      - name: Download AWS CLI
-        if: ${{ env.ACT }}
-        run: curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-      - name: Unzip AWS CLI
-        if: ${{ env.ACT }}
-        run: unzip -q awscliv2.zip
-      - name: Install AWS CLI
-        if: ${{ env.ACT }}
-        run: ./aws/install
-
       - name: AWS CLI version
         run: aws --version
 
@@ -175,17 +164,21 @@ jobs:
         # Deploy frontend and backend
 
       - name: Update api lambda function code
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: aws lambda update-function-code --zip-file fileb://lambda.zip --function-name ${{ steps.terraform.outputs.API_FUNCTION_NAME }}
         working-directory: ./apps/backend
 
       - name: Invalidate api distribution
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: aws cloudfront create-invalidation --distribution-id ${{ steps.terraform.outputs.API_DISTRIBUTION_ID }} --paths "/**/*"
         working-directory: ./apps/backend
 
       - name: Sync app s3 bucket
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: aws s3 sync dist/ s3://fodder.declanlscott.com/ --delete --exclude ".DS_Store"
         working-directory: ./apps/frontend
 
       - name: Invalidate app distribution
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: aws cloudfront create-invalidation --distribution-id ${{ steps.terraform.outputs.APP_DISTRIBUTION_ID }} --paths "/**/*"
         working-directory: ./apps/frontend

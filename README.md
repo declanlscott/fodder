@@ -75,7 +75,7 @@ GitHub Actions authenticates with AWS using OIDC. Be sure to have an identity pr
 }
 ```
 
-Don't forget to set the necessary [secrets](github-actions.secrets.example) and environment [variables](github-actions.variables) in GitHub Actions.
+Don't forget to set the necessary [secrets](github-actions.secrets.example) and environment [variables](github-actions.variables) for GitHub Actions and Dependabot.
 
 ### Terraform
 
@@ -108,10 +108,11 @@ AWS_PROFILE=dev terraform plan
   - React
   - TypeScript
   - Tailwind CSS
-
-```
+- CI/CD
+  - GitHub Actions
+  - Dependabot
+  - Monorepo with `pnpm` and `turborepo`
 
 ## Architecture
 
 ![Architecture Diagram](architecture.png)
-```
