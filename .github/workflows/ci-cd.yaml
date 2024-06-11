@@ -1,11 +1,18 @@
 name: Workflow
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
 
 env:
-  AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  AWS_REGION: us-east-2
+  AWS_REGION: ${{ secrets.AWS_REGION }}
 
 jobs:
   ci:
@@ -59,6 +66,7 @@ jobs:
     runs-on: ubuntu-22.04
     needs: [ci]
     env:
+      TF_VAR_aws_region: ${{ secrets.AWS_REGION }}
       TF_VAR_root_domain_name: ${{ vars.ROOT_DOMAIN_NAME }}
       TF_VAR_cloudflare_api_token: ${{ secrets.TERRAFORM_CLOUDFLARE_API_TOKEN }}
       TF_VAR_cloudflare_zone_id: ${{ secrets.TERRAFORM_CLOUDFLARE_ZONE_ID }}
@@ -106,6 +114,26 @@ jobs:
         run: pnpm run zip
         working-directory: ./apps/backend
 
+      # Download and install AWS CLI in act environment
+      - name: Download AWS CLI
+        if: ${{ env.ACT }}
+        run: curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+      - name: Unzip AWS CLI
+        if: ${{ env.ACT }}
+        run: unzip -q awscliv2.zip
+      - name: Install AWS CLI
+        if: ${{ env.ACT }}
+        run: ./aws/install
+
+      - name: AWS CLI version
+        run: aws --version
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
@@ -122,6 +150,7 @@ jobs:
         working-directory: ./infra
 
       - name: Terraform Plan
+        if: github.event_name == "pull_request"
         run: terraform plan -input=false
         working-directory: ./infra
 
@@ -129,23 +158,6 @@ jobs:
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: terraform apply -auto-approve -input=false
         working-directory: ./infra
-
-      - name: Download AWS CLI
-        if: ${{ env.ACT }}
-        run: curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-      - name: Unzip AWS CLI
-        if: ${{ env.ACT }}
-        run: unzip -q awscliv2.zip
-      - name: Install AWS CLI
-        if: ${{ env.ACT }}
-        run: ./aws/install
-      - name: AWS CLI version
-        run: aws --version
-      - name: AWS CLI Configure
-        run: |
-          aws configure set aws_access_key_id $(echo $AWS_ACCESS_KEY)
-          aws configure set aws_secret_access_key $(echo $AWS_SECRET_ACCESS_KEY)
-          aws configure set region $(echo $AWS_REGION)
 
       - name: Deploy
         run: pnpm run deploy
