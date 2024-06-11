@@ -78,6 +78,14 @@ act --container-architecture linux/amd64 --var-file act.variables --secret-file 
   - TypeScript
   - Tailwind CSS
 
+## Terraform
+
+When running Terraform commands locally, you may need to set the `AWS_PROFILE` environment variable to the appropriate profile. For example:
+
+```bash
+export AWS_PROFILE=dev
+```
+
 ## Architecture
 
 ![Architecture Diagram](architecture.png)
