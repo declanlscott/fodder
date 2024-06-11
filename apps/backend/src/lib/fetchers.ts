@@ -15,7 +15,7 @@ import type { LocateRestaurantsSchema } from "~/schemas/api";
 export async function fetchRestaurants(
   queryParams: LocateRestaurantsSchema,
 ): Promise<FetchedRestaurants> {
-  const url = new URL(`${env.EXTERNAL_API_BASE_URL}/restaurants/getLocations`);
+  const url = new URL(`${env.EXTERNAL_API_BASE_URL}/locator/getLocations`);
 
   const searchParams = new URLSearchParams({
     limit: "10",
