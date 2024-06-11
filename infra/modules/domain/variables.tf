@@ -1,3 +1,8 @@
+variable "aws_profile" {
+  description = "AWS profile"
+  type        = string
+}
+
 variable "cloudflare_api_token" {
   description = "Cloudflare API token"
   type        = string

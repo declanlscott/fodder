@@ -7,4 +7,5 @@ lambda.zip
 .turbo
 .terraform
 terraform.tfvars
+config.s3.tfbackend
 act.secrets

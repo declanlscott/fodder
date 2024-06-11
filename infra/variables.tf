@@ -1,3 +1,14 @@
+variable "aws_profile" {
+  description = "AWS profile"
+  type        = string
+  default     = "default"
+}
+
+variable "aws_region" {
+  description = "AWS region"
+  type        = string
+}
+
 variable "root_domain_name" {
   description = "Root domain name"
   type        = string

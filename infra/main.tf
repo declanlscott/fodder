@@ -9,20 +9,21 @@ terraform {
   #######################################################################
   ## After running `terraform apply` (with local backend)
   ## verify that the bucket name matches the one in the remote backend.
-  ## Uncomment this block and then re-run `terraform init`
+  ## Uncomment this block and then re-run
+  ## `terraform init -backend-config=config.s3.tfbackend`
   ## to switch from local backend to remote AWS backend
   #######################################################################
   backend "s3" {
-    bucket         = "terraform-state-6dc4a2a1-458f-b4cb-d388-da84462a0dc7"
-    key            = "fodder/prod/terraform.tfstate"
-    region         = "us-east-2"
-    dynamodb_table = "terraform-state-locking"
+    bucket         = "fodder-terraform-state-ce63a378-7a7e-0df2-37f8-7d8dfb495f9b"
+    key            = "terraform.tfstate"
+    dynamodb_table = "fodder-terraform-state-locking"
     encrypt        = true
   }
 }
 
 provider "aws" {
-  region = "us-east-2"
+  profile = var.aws_profile
+  region  = var.aws_region
 }
 
 module "remote_backend" {
@@ -36,6 +37,7 @@ locals {
 
 module "app_domain" {
   source                              = "./modules/domain"
+  aws_profile                         = var.aws_profile
   cloudflare_api_token                = var.cloudflare_api_token
   cloudflare_zone_id                  = var.cloudflare_zone_id
   cloudfront_distribution_domain_name = module.app_distribution.domain_name
@@ -62,6 +64,7 @@ locals {
 
 module "api_domain" {
   source                              = "./modules/domain"
+  aws_profile                         = var.aws_profile
   cloudflare_api_token                = var.cloudflare_api_token
   cloudflare_zone_id                  = var.cloudflare_zone_id
   cloudfront_distribution_domain_name = module.api_distribution.domain_name
