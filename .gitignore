@@ -8,4 +8,4 @@ lambda.zip
 .terraform
 terraform.tfvars
 config.s3.tfbackend
-act.secrets
+github-actions.secrets

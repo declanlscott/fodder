@@ -22,8 +22,7 @@ terraform {
 }
 
 provider "aws" {
-  profile = var.aws_profile
-  region  = var.aws_region
+  region = var.aws_region
 }
 
 module "remote_backend" {
@@ -37,7 +36,6 @@ locals {
 
 module "app_domain" {
   source                              = "./modules/domain"
-  aws_profile                         = var.aws_profile
   cloudflare_api_token                = var.cloudflare_api_token
   cloudflare_zone_id                  = var.cloudflare_zone_id
   cloudfront_distribution_domain_name = module.app_distribution.domain_name
@@ -64,7 +62,6 @@ locals {
 
 module "api_domain" {
   source                              = "./modules/domain"
-  aws_profile                         = var.aws_profile
   cloudflare_api_token                = var.cloudflare_api_token
   cloudflare_zone_id                  = var.cloudflare_zone_id
   cloudfront_distribution_domain_name = module.api_distribution.domain_name
