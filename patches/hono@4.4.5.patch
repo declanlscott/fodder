@@ -1,0 +1,34 @@
+diff --git a/dist/adapter/aws-lambda/handler.js b/dist/adapter/aws-lambda/handler.js
+index 806cd91fd1bbef2e3dfbe353a97aebe7ae94e28a..a1b7ae82494e5d585169036da8b965dc25f48835 100644
+--- a/dist/adapter/aws-lambda/handler.js
++++ b/dist/adapter/aws-lambda/handler.js
+@@ -241,10 +241,10 @@ var getProcessor = (event) => {
+   return v1Processor;
+ };
+ var isProxyEventALB = (event) => {
+-  return Object.hasOwn(event.requestContext, "elb");
++  return Object.prototype.hasOwnProperty.call(event.requestContext, 'elb');
+ };
+ var isProxyEventV2 = (event) => {
+-  return Object.hasOwn(event, "rawPath");
++  return Object.prototype.hasOwnProperty.call(event, 'rawPath');
+ };
+ var isContentTypeBinary = (contentType) => {
+   return !/^(text\/(plain|html|css|javascript|csv).*|application\/(.*json|.*xml).*|image\/svg\+xml.*)$/.test(
+diff --git a/dist/cjs/adapter/aws-lambda/handler.js b/dist/cjs/adapter/aws-lambda/handler.js
+index be3dc0e799deebfc93698ce1a05506d378466ec3..3eb6a4352487c4bff81fb39d033599fa22d9cc44 100644
+--- a/dist/cjs/adapter/aws-lambda/handler.js
++++ b/dist/cjs/adapter/aws-lambda/handler.js
+@@ -273,10 +273,10 @@ const getProcessor = (event) => {
+   return v1Processor;
+ };
+ const isProxyEventALB = (event) => {
+-  return Object.hasOwn(event.requestContext, "elb");
++  return Object.prototype.hasOwnProperty.call(event.requestContext, 'elb');
+ };
+ const isProxyEventV2 = (event) => {
+-  return Object.hasOwn(event, "rawPath");
++  return Object.prototype.hasOwnProperty.call(event, 'rawPath');
+ };
+ const isContentTypeBinary = (contentType) => {
+   return !/^(text\/(plain|html|css|javascript|csv).*|application\/(.*json|.*xml).*|image\/svg\+xml.*)$/.test(

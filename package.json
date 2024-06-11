@@ -18,5 +18,10 @@
     "typescript": "^5.4.5"
   },
   "prettier": "@repo/prettier-config",
-  "packageManager": "pnpm@9.2.0"
+  "packageManager": "pnpm@9.3.0",
+  "pnpm": {
+    "patchedDependencies": {
+      "hono@4.4.5": "patches/hono@4.4.5.patch"
+    }
+  }
 }
