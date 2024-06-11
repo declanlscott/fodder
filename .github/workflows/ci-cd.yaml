@@ -1,4 +1,4 @@
-name: Workflow
+name: ci/cd
 
 on:
   push:
@@ -16,7 +16,7 @@ env:
 
 jobs:
   ci:
-    name: CI
+    name: ci
     runs-on: ubuntu-22.04
 
     steps:
@@ -61,8 +61,20 @@ jobs:
       - name: Test
         run: pnpm run test
 
+      - name: Upload backend build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend
+          path: ./apps/backend/lambda
+
+      - name: Upload frontend build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend
+          path: ./apps/frontend/dist
+
   cd:
-    name: CD
+    name: cd
     runs-on: ubuntu-22.04
     needs: [ci]
     env:
@@ -81,24 +93,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup node
-        uses: actions/setup-node@v4
+      - name: Download backend build artifact
+        uses: actions/download-artifact@v4
         with:
-          node-version: "20.x"
+          name: backend
+          path: ./apps/backend
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v3
+      - name: Download frontend build artifact
+        uses: actions/download-artifact@v4
         with:
-          version: 9
-          run_install: |
-            - recursive: true
-
-      - name: Write frontend environment variables
-        run: printf "VITE_API_BASE_URL=%s\n" "${{ vars.VITE_API_BASE_URL }}" >> .env
-        working-directory: ./apps/frontend
-
-      - name: Build
-        run: pnpm run build
+          name: frontend
+          path: ./apps/frontend
 
       - name: Download LLRT
         run: curl -L -o llrt.zip https://github.com/awslabs/llrt/releases/latest/download/llrt-lambda-arm64.zip
@@ -111,7 +116,7 @@ jobs:
         working-directory: ./apps/backend
 
       - name: Zip lambda
-        run: pnpm run zip
+        run: zip -j lambda.zip ./lambda/*
         working-directory: ./apps/backend
 
       # Download and install AWS CLI in act environment
