@@ -14,8 +14,6 @@ A few years ago, a certain midwestern fast-food restaurant chain discontinued it
 - Optional
   - [AWS CLI](https://aws.amazon.com/cli/)
   - [Terraform](https://www.terraform.io/)
-  - [Docker](https://www.docker.com/)
-  - [Act](https://nektosact.com/)
   - [LLRT](https://github.com/awslabs/llrt)
 
 ### Setup
@@ -44,14 +42,47 @@ pnpm dev
 
 ### GitHub Actions
 
-This project uses GitHub Actions for CI/CD. To run the CI/CD pipeline locally, you can use [Act](https://nektosact.com/). Follow the [installation instructions](https://nektosact.com/installation/index.html) for your operating system.
+GitHub Actions authenticates with AWS using OIDC. Be sure to have an identity provider and role set up with the necessary permissions and trust relationship. Below is an example of the necessary configurations.
 
-Create an `act.secrets` file in the root of the repository similar to [`act.secrets.example`](act.secrets.example).
+#### IAM Identity Provider
 
-On an Apple silicon Mac, I run the following command. If you are running on a different platform, you may not need the `--container-architecture` flag.
+- Type
+  - OpenID Connect
+- Provider URL
+  - token.actions.githubusercontent.com
+- Audience
+  - sts.amazonaws.com
+
+#### Role Trust Relationship
+
+```json
+{
+  "Version": "2008-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Federated": "arn:aws:iam::<YOUR_ACCOUNT_ID>:oidc-provider/token.actions.githubusercontent.com"
+      },
+      "Action": "sts:AssumeRoleWithWebIdentity",
+      "Condition": {
+        "StringLike": {
+          "token.actions.githubusercontent.com:sub": "repo:declanlscott/fodder:*"
+        }
+      }
+    }
+  ]
+}
+```
+
+Don't forget to set the necessary [secrets](github-actions.secrets.example) and environment [variables](github-actions.variables) in GitHub Actions.
+
+### Terraform
+
+When running Terraform commands locally, you may need to set the `AWS_PROFILE` environment variable to the appropriate profile. For example:
 
 ```bash
-act --container-architecture linux/amd64 --var-file act.variables --secret-file act.secrets
+AWS_PROFILE=dev terraform plan
 ```
 
 ## Technologies
@@ -78,14 +109,9 @@ act --container-architecture linux/amd64 --var-file act.variables --secret-file 
   - TypeScript
   - Tailwind CSS
 
-## Terraform
-
-When running Terraform commands locally, you may need to set the `AWS_PROFILE` environment variable to the appropriate profile. For example:
-
-```bash
-export AWS_PROFILE=dev
 ```
 
 ## Architecture
 
 ![Architecture Diagram](architecture.png)
+```
