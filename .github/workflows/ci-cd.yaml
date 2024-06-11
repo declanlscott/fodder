@@ -23,7 +23,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: Setup node
         uses: actions/setup-node@v4
         with:
           node-version: "20.x"
@@ -81,7 +81,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: Setup node
         uses: actions/setup-node@v4
         with:
           node-version: "20.x"
@@ -137,30 +137,50 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
-      - name: Terraform Init
+      - name: Terraform init
         run: terraform init
         working-directory: ./infra
 
-      - name: Terraform Validate
+      - name: Terraform validate
         run: terraform validate
         working-directory: ./infra
 
-      - name: Terraform Format
+      - name: Terraform format
         run: terraform fmt -check
         working-directory: ./infra
 
-      - name: Terraform Plan
+      - name: Terraform plan
         if: github.event_name == 'pull_request'
         run: terraform plan -input=false
         working-directory: ./infra
 
-      - name: Terraform Apply
+      - name: Terraform apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: terraform apply -auto-approve -input=false
         working-directory: ./infra
 
-      - name: Deploy
-        run: pnpm run deploy
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        env:
-          AWS_PAGER: ""
+      - name: Terraform outputs
+        id: terraform
+        run: |
+          echo "API_FUNCTION_NAME=$(terraform output -raw api_function_name)" >> $GITHUB_OUTPUT
+          echo "API_DISTRIBUTION_ID=$(terraform output -raw api_distribution_id)" >> $GITHUB_OUTPUT
+          echo "APP_DISTRIBUTION_ID=$(terraform output -raw app_distribution_id)" >> $GITHUB_OUTPUT
+        working-directory: ./infra
+
+        # Deploy frontend and backend
+
+      - name: Update api lambda function code
+        run: aws lambda update-function-code --zip-file fileb://lambda.zip --function-name ${{ steps.terraform.outputs.API_FUNCTION_NAME }}
+        working-directory: ./apps/backend
+
+      - name: Invalidate api distribution
+        run: aws cloudfront create-invalidation --distribution-id ${{ steps.terraform.outputs.API_DISTRIBUTION_ID }} --paths "/**/*"
+        working-directory: ./apps/backend
+
+      - name: Sync app s3 bucket
+        run: aws s3 sync dist/ s3://fodder.declanlscott.com/ --delete --exclude ".DS_Store"
+        working-directory: ./apps/frontend
+
+      - name: Invalidate app distribution
+        run: aws cloudfront create-invalidation --distribution-id ${{ steps.terraform.outputs.APP_DISTRIBUTION_ID }} --paths "/**/*"
+        working-directory: ./apps/frontend
