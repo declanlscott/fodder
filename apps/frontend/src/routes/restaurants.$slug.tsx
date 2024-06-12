@@ -205,6 +205,8 @@ function UpcomingFodCard({ flavor }: UpcomingFodCardProps) {
 
   const date = new Date(flavor.date);
 
+  date.setMinutes(date.getMinutes() + date.getTimezoneOffset());
+
   return (
     <Card
       withHoverStyles
