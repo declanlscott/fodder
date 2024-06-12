@@ -54,7 +54,13 @@ export const FlavorProps = v.object({
   menuItemId: v.number(),
   onDate: v.pipe(
     v.string(),
-    v.transform((input) => new Date(input).toISOString()),
+    v.transform((input) => {
+      const date = new Date(input);
+
+      date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
+
+      return date.toISOString();
+    }),
   ),
   title: v.string(),
   urlSlug: v.string(),

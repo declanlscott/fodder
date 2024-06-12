@@ -24,6 +24,8 @@ export const queryOptionsFactory = {
             now.getDate(),
           );
 
+          today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
+
           return new Date(flavor.date).getTime() >= today.getTime();
         }),
       }),
