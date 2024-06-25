@@ -15,7 +15,7 @@
     "@repo/env": "workspace:*",
     "@repo/schemas": "workspace:*",
     "hono": "^4.4.8",
-    "valibot": "^0.34.0"
+    "valibot": "^0.35.0"
   },
   "devDependencies": {
     "@hono/node-server": "^1.11.4",
