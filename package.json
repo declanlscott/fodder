@@ -21,8 +21,8 @@
   "packageManager": "pnpm@9.3.0",
   "pnpm": {
     "patchedDependencies": {
-      "hono@4.4.8": "patches/hono@4.4.8.patch",
-      "valibot@0.35.0": "patches/valibot@0.35.0.patch"
+      "valibot@0.35.0": "patches/valibot@0.35.0.patch",
+      "hono@4.4.10": "patches/hono@4.4.10.patch"
     }
   }
 }
