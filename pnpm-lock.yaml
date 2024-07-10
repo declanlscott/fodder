@@ -5,12 +5,12 @@ settings:
   excludeLinksFromLockfile: false
 
 patchedDependencies:
-  hono@4.4.10:
-    hash: 6a2sqr3r55ddsgjgztpugazkdu
-    path: patches/hono@4.4.10.patch
-  valibot@0.35.0:
-    hash: sfctjbnzrz6gu3u3totj7yxwje
-    path: patches/valibot@0.35.0.patch
+  hono@4.4.12:
+    hash: gwouvarg6cqnqpv34ufg3steji
+    path: patches/hono@4.4.12.patch
+  valibot@0.36.0:
+    hash: 4nexe5rgfmxytsrk2cgqaxyqhu
+    path: patches/valibot@0.36.0.patch
 
 importers:
 
@@ -41,11 +41,11 @@ importers:
         specifier: workspace:*
         version: link:../../packages/schemas
       hono:
-        specifier: ^4.4.10
-        version: 4.4.10(patch_hash=6a2sqr3r55ddsgjgztpugazkdu)
+        specifier: ^4.4.12
+        version: 4.4.12(patch_hash=gwouvarg6cqnqpv34ufg3steji)
       valibot:
-        specifier: ^0.35.0
-        version: 0.35.0(patch_hash=sfctjbnzrz6gu3u3totj7yxwje)
+        specifier: ^0.36.0
+        version: 0.36.0(patch_hash=4nexe5rgfmxytsrk2cgqaxyqhu)
     devDependencies:
       '@hono/node-server':
         specifier: ^1.12.0
@@ -141,8 +141,8 @@ importers:
         specifier: ^1.0.7
         version: 1.0.7(tailwindcss@3.4.4)
       valibot:
-        specifier: ^0.35.0
-        version: 0.35.0(patch_hash=sfctjbnzrz6gu3u3totj7yxwje)
+        specifier: ^0.36.0
+        version: 0.36.0(patch_hash=4nexe5rgfmxytsrk2cgqaxyqhu)
     devDependencies:
       '@repo/eslint-config':
         specifier: workspace:*
@@ -234,8 +234,8 @@ importers:
   packages/env:
     dependencies:
       valibot:
-        specifier: ^0.35.0
-        version: 0.35.0(patch_hash=sfctjbnzrz6gu3u3totj7yxwje)
+        specifier: ^0.36.0
+        version: 0.36.0(patch_hash=4nexe5rgfmxytsrk2cgqaxyqhu)
     devDependencies:
       '@repo/eslint-config':
         specifier: workspace:*
@@ -259,8 +259,8 @@ importers:
   packages/schemas:
     dependencies:
       valibot:
-        specifier: ^0.35.0
-        version: 0.35.0(patch_hash=sfctjbnzrz6gu3u3totj7yxwje)
+        specifier: ^0.36.0
+        version: 0.36.0(patch_hash=4nexe5rgfmxytsrk2cgqaxyqhu)
     devDependencies:
       '@repo/eslint-config':
         specifier: workspace:*
@@ -2015,8 +2015,8 @@ packages:
     resolution: {integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==}
     engines: {node: '>= 0.4'}
 
-  hono@4.4.10:
-    resolution: {integrity: sha512-z6918u9rXRU5CCisMHd2uUVoQXcNyUrUMmYY7VH10v4HJG7+hqgMK/G8YNTd13C6s4rBfzF09iz8VpOip9qG3A==}
+  hono@4.4.12:
+    resolution: {integrity: sha512-Lx4Vwbws0IqFfXIVYychxUW0A4EE+7dn/jsjVeM34OXSA2Xs45MkDDP14Mzznp7LlDemUNHQG2uv2N5jQld0hA==}
     engines: {node: '>=16.0.0'}
 
   human-signals@2.1.0:
@@ -2854,8 +2854,8 @@ packages:
   util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
 
-  valibot@0.35.0:
-    resolution: {integrity: sha512-+i2aCRkReTrd5KBN/dW2BrPOvFnU5LXTV2xjZnjnqUIO8YUx6P2+MgRrkwF2FhkexgyKq/NIZdPdknhHf5A/Ww==}
+  valibot@0.36.0:
+    resolution: {integrity: sha512-CjF1XN4sUce8sBK9TixrDqFM7RwNkuXdJu174/AwmQUB62QbCQADg5lLe8ldBalFgtj1uKj+pKwDJiNo4Mn+eQ==}
 
   vite-node@2.0.1:
     resolution: {integrity: sha512-nVd6kyhPAql0s+xIVJzuF+RSRH8ZimNrm6U8ZvTA4MXv8CHI17TFaQwRaFiK75YX6XeFqZD4IoAaAfi9OR1XvQ==}
@@ -4647,7 +4647,7 @@ snapshots:
     dependencies:
       function-bind: 1.1.2
 
-  hono@4.4.10(patch_hash=6a2sqr3r55ddsgjgztpugazkdu): {}
+  hono@4.4.12(patch_hash=gwouvarg6cqnqpv34ufg3steji): {}
 
   human-signals@2.1.0: {}
 
@@ -5396,7 +5396,7 @@ snapshots:
 
   util-deprecate@1.0.2: {}
 
-  valibot@0.35.0(patch_hash=sfctjbnzrz6gu3u3totj7yxwje): {}
+  valibot@0.36.0(patch_hash=4nexe5rgfmxytsrk2cgqaxyqhu): {}
 
   vite-node@2.0.1(@types/node@20.14.10):
     dependencies:
