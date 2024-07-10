@@ -1,5 +1,5 @@
 diff --git a/dist/adapter/aws-lambda/handler.js b/dist/adapter/aws-lambda/handler.js
-index 85573985f261567ed1eef26d0c1278564b1aa237..f660a7bccfdf9e7ac845f7452d147bac9be18a3d 100644
+index 949ff63fffc4ee74f210ccba3ba5679157709f7b..a33e88d3c747a5be05523f9884ebe4e4326666bf 100644
 --- a/dist/adapter/aws-lambda/handler.js
 +++ b/dist/adapter/aws-lambda/handler.js
 @@ -251,10 +251,10 @@ var getProcessor = (event) => {
@@ -16,7 +16,7 @@ index 85573985f261567ed1eef26d0c1278564b1aa237..f660a7bccfdf9e7ac845f7452d147bac
  var isContentTypeBinary = (contentType) => {
    return !/^(text\/(plain|html|css|javascript|csv).*|application\/(.*json|.*xml).*|image\/svg\+xml.*)$/.test(
 diff --git a/dist/cjs/adapter/aws-lambda/handler.js b/dist/cjs/adapter/aws-lambda/handler.js
-index e402dfc79ae9dc1d7c7bf7e6a159f61caeb04503..581c039f497ca34503139f17dcc59f5c8a7161ad 100644
+index 7e1142cda5f78d1b3f3c59292e3a8964539496d6..589798d5bb61f5c6b14082632a147b6251a3b7fd 100644
 --- a/dist/cjs/adapter/aws-lambda/handler.js
 +++ b/dist/cjs/adapter/aws-lambda/handler.js
 @@ -283,10 +283,10 @@ const getProcessor = (event) => {
