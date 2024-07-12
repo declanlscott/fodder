@@ -89,7 +89,7 @@ export const ScrapedRestaurantNextData = v.object({
             latitude: v.number(),
             longitude: v.number(),
             onlineOrderUrl: v.string(),
-            ownerFriendlyName: v.string(),
+            ownerFriendlyName: v.nullable(v.string()),
             ownerMessage: v.nullable(v.string()),
             jobsApplyUrl: v.string(),
             flavorOfTheDay: v.array(FlavorProps),
