@@ -16,10 +16,10 @@ importers:
 
   .:
     devDependencies:
-      '@repo/eslint-config':
+      '@fodder/eslint-config':
         specifier: workspace:*
         version: link:configs/eslint
-      '@repo/prettier-config':
+      '@fodder/prettier-config':
         specifier: workspace:*
         version: link:configs/prettier
       prettier:
@@ -34,10 +34,10 @@ importers:
 
   apps/backend:
     dependencies:
-      '@repo/env':
+      '@fodder/env':
         specifier: workspace:*
         version: link:../../packages/env
-      '@repo/schemas':
+      '@fodder/schemas':
         specifier: workspace:*
         version: link:../../packages/schemas
       hono:
@@ -47,21 +47,18 @@ importers:
         specifier: ^0.36.0
         version: 0.36.0(patch_hash=4nexe5rgfmxytsrk2cgqaxyqhu)
     devDependencies:
+      '@fodder/eslint-config':
+        specifier: workspace:*
+        version: link:../../configs/eslint
+      '@fodder/prettier-config':
+        specifier: workspace:*
+        version: link:../../configs/prettier
+      '@fodder/typescript-config':
+        specifier: workspace:*
+        version: link:../../configs/typescript
       '@hono/node-server':
         specifier: ^1.12.0
         version: 1.12.0
-      '@repo/eslint-config':
-        specifier: workspace:*
-        version: link:../../configs/eslint
-      '@repo/prettier-config':
-        specifier: workspace:*
-        version: link:../../configs/prettier
-      '@repo/types':
-        specifier: workspace:*
-        version: link:../../packages/types
-      '@repo/typescript-config':
-        specifier: workspace:*
-        version: link:../../configs/typescript
       '@types/node':
         specifier: ^22.0.0
         version: 22.0.0
@@ -89,18 +86,18 @@ importers:
 
   apps/frontend:
     dependencies:
+      '@fodder/env':
+        specifier: workspace:*
+        version: link:../../packages/env
+      '@fodder/schemas':
+        specifier: workspace:*
+        version: link:../../packages/schemas
+      '@fodder/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
       '@icons-pack/react-simple-icons':
         specifier: ^9.6.0
         version: 9.6.0(react@18.3.1)
-      '@repo/env':
-        specifier: workspace:*
-        version: link:../../packages/env
-      '@repo/schemas':
-        specifier: workspace:*
-        version: link:../../packages/schemas
-      '@repo/ui':
-        specifier: workspace:*
-        version: link:../../packages/ui
       '@tanstack/react-query':
         specifier: ^5.51.15
         version: 5.51.15(react@18.3.1)
@@ -119,9 +116,6 @@ importers:
       date-fns:
         specifier: ^3.6.0
         version: 3.6.0
-      ky:
-        specifier: ^1.5.0
-        version: 1.5.0
       lucide-react:
         specifier: ^0.417.0
         version: 0.417.0(react@18.3.1)
@@ -144,16 +138,13 @@ importers:
         specifier: ^0.36.0
         version: 0.36.0(patch_hash=4nexe5rgfmxytsrk2cgqaxyqhu)
     devDependencies:
-      '@repo/eslint-config':
+      '@fodder/eslint-config':
         specifier: workspace:*
         version: link:../../configs/eslint
-      '@repo/prettier-config':
+      '@fodder/prettier-config':
         specifier: workspace:*
         version: link:../../configs/prettier
-      '@repo/types':
-        specifier: workspace:*
-        version: link:../../packages/types
-      '@repo/typescript-config':
+      '@fodder/typescript-config':
         specifier: workspace:*
         version: link:../../configs/typescript
       '@tanstack/eslint-plugin-query':
@@ -237,13 +228,13 @@ importers:
         specifier: ^0.36.0
         version: 0.36.0(patch_hash=4nexe5rgfmxytsrk2cgqaxyqhu)
     devDependencies:
-      '@repo/eslint-config':
+      '@fodder/eslint-config':
         specifier: workspace:*
         version: link:../../configs/eslint
-      '@repo/prettier-config':
+      '@fodder/prettier-config':
         specifier: workspace:*
         version: link:../../configs/prettier
-      '@repo/typescript-config':
+      '@fodder/typescript-config':
         specifier: workspace:*
         version: link:../../configs/typescript
       '@types/node':
@@ -262,33 +253,18 @@ importers:
         specifier: ^0.36.0
         version: 0.36.0(patch_hash=4nexe5rgfmxytsrk2cgqaxyqhu)
     devDependencies:
-      '@repo/eslint-config':
+      '@fodder/eslint-config':
         specifier: workspace:*
         version: link:../../configs/eslint
-      '@repo/prettier-config':
+      '@fodder/prettier-config':
         specifier: workspace:*
         version: link:../../configs/prettier
-      '@repo/typescript-config':
+      '@fodder/typescript-config':
         specifier: workspace:*
         version: link:../../configs/typescript
       tsup:
         specifier: ^8.2.3
         version: 8.2.3(@swc/core@1.6.5)(jiti@1.21.3)(postcss@8.4.40)(tsx@4.16.2)(typescript@5.5.4)(yaml@2.4.3)
-      typescript:
-        specifier: ^5.5.4
-        version: 5.5.4
-
-  packages/types:
-    devDependencies:
-      '@repo/eslint-config':
-        specifier: workspace:*
-        version: link:../../configs/eslint
-      '@repo/prettier-config':
-        specifier: workspace:*
-        version: link:../../configs/prettier
-      '@repo/typescript-config':
-        specifier: workspace:*
-        version: link:../../configs/typescript
       typescript:
         specifier: ^5.5.4
         version: 5.5.4
@@ -326,13 +302,13 @@ importers:
         specifier: ^1.0.7
         version: 1.0.7(tailwindcss@3.4.7)
     devDependencies:
-      '@repo/eslint-config':
+      '@fodder/eslint-config':
         specifier: workspace:*
         version: link:../../configs/eslint
-      '@repo/prettier-config':
+      '@fodder/prettier-config':
         specifier: workspace:*
         version: link:../../configs/prettier
-      '@repo/typescript-config':
+      '@fodder/typescript-config':
         specifier: workspace:*
         version: link:../../configs/typescript
       '@types/react':
@@ -2170,10 +2146,6 @@ packages:
 
   keyv@4.5.4:
     resolution: {integrity: sha512-oxVHkHR/EJf2CNXnWxRLW6mg7JyCCUcG0DtEGmL2ctUo1PNTin1PUil+r/+4r5MpVgC/fn1kjsx7mjSujKqIpw==}
-
-  ky@1.5.0:
-    resolution: {integrity: sha512-bkQo+UqryW6Zmo/DsixYZE4Z9t2mzvNMhceyIhuMuInb3knm5Q+GNGMKveydJAj+Z6piN1SwI6eR/V0G+Z0BtA==}
-    engines: {node: '>=18'}
 
   levn@0.4.1:
     resolution: {integrity: sha512-+bT2uH4E5LGE7h/n3evcS/sQlJXCpIp6ym8OWJ5eV6+67Dsql/LaaT7qJBAt2rzfoa/5QBGBhxDix1dMt2kQKQ==}
@@ -4861,8 +4833,6 @@ snapshots:
   keyv@4.5.4:
     dependencies:
       json-buffer: 3.0.1
-
-  ky@1.5.0: {}
 
   levn@0.4.1:
     dependencies:

@@ -7,14 +7,14 @@ import {
   CardTitle,
   cn,
   Skeleton,
-} from "@repo/ui";
+} from "@fodder/ui";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, notFound } from "@tanstack/react-router";
-import { HTTPError } from "ky";
 import { AlertTriangle } from "lucide-react";
 
 import { NotFound } from "~/components/not-found";
 import { useTitle } from "~/hooks/title";
+import { HttpError } from "~/lib/errors";
 import { queryOptionsFactory } from "~/lib/query-options-factory";
 
 export const Route = createFileRoute("/flavors/$slug")({
@@ -26,7 +26,7 @@ export const Route = createFileRoute("/flavors/$slug")({
 
       return data;
     } catch (error) {
-      if (error instanceof HTTPError && error.response.status === 404)
+      if (error instanceof HttpError && error.statusCode === 404)
         throw notFound();
 
       throw error;

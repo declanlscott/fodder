@@ -1,5 +1,5 @@
 {
-  "name": "@repo/prettier-config",
+  "name": "@fodder/prettier-config",
   "version": "0.0.0",
   "main": "index.json",
   "private": true,

@@ -6,7 +6,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@repo/ui";
+} from "@fodder/ui";
 import { Link, Outlet } from "@tanstack/react-router";
 import { Code2, IceCream, Locate, Menu, Moon, Sun, X } from "lucide-react";
 

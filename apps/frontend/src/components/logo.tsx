@@ -1,4 +1,4 @@
-import { cn } from "@repo/ui";
+import { cn } from "@fodder/ui";
 
 function Logo({ className, ...props }: React.ComponentPropsWithoutRef<"svg">) {
   return (

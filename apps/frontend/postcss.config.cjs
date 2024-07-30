@@ -1,1 +1,1 @@
-module.exports = require("@repo/ui/postcss.config");
+module.exports = require("@fodder/ui/postcss.config");

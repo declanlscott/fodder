@@ -1,5 +1,5 @@
 {
-  "name": "@repo/schemas",
+  "name": "@fodder/schemas",
   "version": "0.0.0",
   "license": "MIT",
   "main": "./dist/index.js",
@@ -16,11 +16,11 @@
     "valibot": "^0.36.0"
   },
   "devDependencies": {
-    "@repo/eslint-config": "workspace:*",
-    "@repo/prettier-config": "workspace:*",
-    "@repo/typescript-config": "workspace:*",
+    "@fodder/eslint-config": "workspace:*",
+    "@fodder/prettier-config": "workspace:*",
+    "@fodder/typescript-config": "workspace:*",
     "tsup": "^8.2.3",
     "typescript": "^5.5.4"
   },
-  "prettier": "@repo/prettier-config"
+  "prettier": "@fodder/prettier-config"
 }

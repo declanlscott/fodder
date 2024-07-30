@@ -12,17 +12,16 @@
     "deploy": "run-s update invalidate"
   },
   "dependencies": {
-    "@repo/env": "workspace:*",
-    "@repo/schemas": "workspace:*",
+    "@fodder/env": "workspace:*",
+    "@fodder/schemas": "workspace:*",
     "hono": "^4.5.1",
     "valibot": "^0.36.0"
   },
   "devDependencies": {
     "@hono/node-server": "^1.12.0",
-    "@repo/eslint-config": "workspace:*",
-    "@repo/prettier-config": "workspace:*",
-    "@repo/types": "workspace:*",
-    "@repo/typescript-config": "workspace:*",
+    "@fodder/eslint-config": "workspace:*",
+    "@fodder/prettier-config": "workspace:*",
+    "@fodder/typescript-config": "workspace:*",
     "@types/node": "^22.0.0",
     "dotenv": "^16.4.5",
     "esbuild": "^0.23.0",
@@ -32,5 +31,5 @@
     "vite-tsconfig-paths": "^4.3.2",
     "vitest": "^2.0.4"
   },
-  "prettier": "@repo/prettier-config"
+  "prettier": "@fodder/prettier-config"
 }

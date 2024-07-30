@@ -7,10 +7,10 @@ import {
   CardTitle,
   cn,
   Skeleton,
-} from "@repo/ui";
+} from "@fodder/ui";
 import { Link } from "@tanstack/react-router";
 
-import type { LocatedRestaurant } from "@repo/types";
+import type { LocatedRestaurant } from "@fodder/schemas";
 
 type FodCardProps = {
   restaurant: LocatedRestaurant;

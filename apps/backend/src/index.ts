@@ -21,8 +21,7 @@ api.use("*", async (c, next) => {
       allowMethods: ["GET"],
     });
 
-    await corsMiddleware(c, next);
-    return;
+    return await corsMiddleware(c, next);
   }
 
   await next();

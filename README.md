@@ -36,7 +36,7 @@ cp apps/frontend/.env.example apps/frontend/.env
 Build the monorepo packages and start the dev servers:
 
 ```bash
-pnpm --filter "@repo/*" build
+pnpm --filter "@fodder/*" build
 pnpm dev
 ```
 
