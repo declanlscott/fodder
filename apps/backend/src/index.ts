@@ -13,8 +13,11 @@ import type { Bindings } from "~/lib/bindings";
 
 const api = new Hono<{ Bindings: Bindings }>();
 
+api.use(logger());
+
 api.use("*", async (c, next) => {
   // Only enable CORS for HTTP bindings in Node.js for local development
+  // When deployed to AWS Lambda, API Gateway handles CORS
   if (isHttpBindings(c.env)) {
     const corsMiddleware = cors({
       origin: env.CORS_ORIGIN,
@@ -26,8 +29,6 @@ api.use("*", async (c, next) => {
 
   await next();
 });
-
-api.use(logger());
 
 api.route("/restaurants", restaurants);
 api.route("/flavors", flavors);
