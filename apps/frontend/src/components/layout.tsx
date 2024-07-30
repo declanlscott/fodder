@@ -1,5 +1,4 @@
 import { useLayoutEffect, useState } from "react";
-import { SiGithub } from "@icons-pack/react-simple-icons";
 import {
   Button,
   DropdownMenu,
@@ -7,6 +6,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@fodder/ui";
+import { SiGithub } from "@icons-pack/react-simple-icons";
 import { Link, Outlet } from "@tanstack/react-router";
 import { Code2, IceCream, Locate, Menu, Moon, Sun, X } from "lucide-react";
 
