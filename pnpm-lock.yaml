@@ -5,9 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 patchedDependencies:
-  hono@4.5.1:
+  hono@4.5.3:
     hash: gwouvarg6cqnqpv34ufg3steji
-    path: patches/hono@4.5.1.patch
+    path: patches/hono@4.5.3.patch
   valibot@0.36.0:
     hash: 4nexe5rgfmxytsrk2cgqaxyqhu
     path: patches/valibot@0.36.0.patch
@@ -41,8 +41,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/schemas
       hono:
-        specifier: ^4.5.1
-        version: 4.5.1(patch_hash=gwouvarg6cqnqpv34ufg3steji)
+        specifier: ^4.5.3
+        version: 4.5.3(patch_hash=gwouvarg6cqnqpv34ufg3steji)
       valibot:
         specifier: ^0.36.0
         version: 0.36.0(patch_hash=4nexe5rgfmxytsrk2cgqaxyqhu)
@@ -2030,8 +2030,8 @@ packages:
     resolution: {integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==}
     engines: {node: '>= 0.4'}
 
-  hono@4.5.1:
-    resolution: {integrity: sha512-6q8AugoWG5wlrjdGG8OFFiqEsPlPGjODjUik48sEJeko4Tae1UsLS2vUiYHLEJx1gJvOZa4BWkQC+urwDmkEvQ==}
+  hono@4.5.3:
+    resolution: {integrity: sha512-r26WwwbKD3BAYdfB294knNnegNda7VfV1tVn66D9Kvl9WQTdrR+5eKdoeaQNHQcC3Gr0KBikzAtjd6VsRGVSaw==}
     engines: {node: '>=16.0.0'}
 
   human-signals@2.1.0:
@@ -4750,7 +4750,7 @@ snapshots:
     dependencies:
       function-bind: 1.1.2
 
-  hono@4.5.1(patch_hash=gwouvarg6cqnqpv34ufg3steji): {}
+  hono@4.5.3(patch_hash=gwouvarg6cqnqpv34ufg3steji): {}
 
   human-signals@2.1.0: {}
 
