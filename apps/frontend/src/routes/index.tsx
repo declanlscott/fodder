@@ -12,7 +12,7 @@ import {
   Label,
   labelVariants,
   Toggle,
-} from "@repo/ui";
+} from "@fodder/ui";
 import { useIsFetching, useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Dessert, Loader2, MapPin, MapPinOff, Send } from "lucide-react";

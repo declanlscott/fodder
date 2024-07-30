@@ -1,4 +1,4 @@
-import { AddressSchema, CoordinatesSchema } from "@repo/schemas";
+import { AddressSchema, CoordinatesSchema } from "@fodder/schemas";
 import * as v from "valibot";
 
 export const LocateRestaurantsSchema = v.variant("type", [

@@ -8,7 +8,7 @@ import type {
   LocatedRestaurant,
   SluggedFlavor,
   SluggedRestaurant,
-} from "@repo/types";
+} from "@fodder/schemas";
 import type {
   FetchedRestaurants,
   FlavorsModule,
@@ -21,28 +21,30 @@ const imageWidth = 400;
 
 export function formatFetchedRestaurants(
   json: FetchedRestaurants,
-): LocatedRestaurant[] {
-  return json.data.geofences.reduce((acc, curr) => {
-    const fod: LocatedRestaurant["fod"] = {
-      name: curr.metadata.flavorOfDayName,
-      imageUrl: formatFlavorImageUrl(curr.metadata.flavorOfDaySlug).toString(),
-      slug: formatFlavorSlug(curr.metadata.flavorOfDayName),
-    };
-
-    const restaurant: LocatedRestaurant = {
-      name: `Culver's of ${curr.description}`,
-      address: curr.metadata.street,
-      city: curr.metadata.city,
-      state: curr.metadata.state,
-      zipCode: curr.metadata.postalCode,
-      longitude: curr.geometryCenter.coordinates[0],
-      latitude: curr.geometryCenter.coordinates[1],
-      slug: curr.metadata.slug,
-      fod,
-    };
-
-    return [...acc, restaurant];
-  }, [] as LocatedRestaurant[]);
+): Array<LocatedRestaurant> {
+  return json.data.geofences.reduce(
+    (restaurants, restaurant) => [
+      ...restaurants,
+      {
+        name: `Culver's of ${restaurant.description}`,
+        address: restaurant.metadata.street,
+        city: restaurant.metadata.city,
+        state: restaurant.metadata.state,
+        zipCode: restaurant.metadata.postalCode,
+        longitude: restaurant.geometryCenter.coordinates[0],
+        latitude: restaurant.geometryCenter.coordinates[1],
+        slug: restaurant.metadata.slug,
+        fod: {
+          name: restaurant.metadata.flavorOfDayName,
+          imageUrl: formatFlavorImageUrl(
+            restaurant.metadata.flavorOfDaySlug,
+          ).toString(),
+          slug: formatFlavorSlug(restaurant.metadata.flavorOfDayName),
+        },
+      },
+    ],
+    [] as Array<LocatedRestaurant>,
+  );
 }
 
 export function formatFlavorSlug(name: string) {
@@ -67,18 +69,19 @@ export function formatScrapedRestaurant(
 ): SluggedRestaurant {
   const flavors =
     nextData.props.pageProps.page.customData.restaurantCalendar.flavors.reduce(
-      (acc, curr) => {
-        const imageSlug = curr.image.src.split(`${imageWidth}/`)[1];
+      (flavors, flavor) => {
+        const imageSlug = flavor.image.src.split(`${imageWidth}/`)[1];
         const imageUrl = formatFlavorImageUrl(imageSlug, true).toString();
 
-        const flavor: SluggedRestaurant["flavors"][number] = {
-          date: curr.onDate,
-          name: curr.title,
-          imageUrl,
-          slug: curr.urlSlug,
-        };
-
-        return [...acc, flavor];
+        return [
+          ...flavors,
+          {
+            date: flavor.onDate,
+            name: flavor.title,
+            imageUrl,
+            slug: flavor.urlSlug,
+          },
+        ];
       },
       [] as SluggedRestaurant["flavors"],
     );
@@ -102,24 +105,25 @@ export function formatScrapedAllFlavors(
 ): AllFlavors {
   let data: FlavorsModule["customData"]["flavors"] | undefined;
 
-  for (const module of nextData.props.pageProps.page.zones.Content) {
+  for (const module of nextData.props.pageProps.page.zones.Content)
     if (isFlavorsModule(module)) data = module.customData.flavors;
-  }
 
   if (!data)
     throw new HTTPException(404, {
       message: "Flavors not found",
     });
 
-  return data.reduce((acc, curr) => {
-    const flavor = {
-      name: curr.flavorName,
-      imageUrl: formatFlavorImageUrl(curr.fotdImage, true).toString(),
-      slug: curr.fotdUrlSlug,
-    };
-
-    return [...acc, flavor];
-  }, [] as AllFlavors);
+  return data.reduce(
+    (flavors, flavor) => [
+      ...flavors,
+      {
+        name: flavor.flavorName,
+        imageUrl: formatFlavorImageUrl(flavor.fotdImage, true).toString(),
+        slug: flavor.fotdUrlSlug,
+      },
+    ],
+    [] as AllFlavors,
+  );
 }
 
 export function formatScrapedFlavor(
@@ -130,12 +134,10 @@ export function formatScrapedFlavor(
   if (!isFlavorFound(flavorDetails))
     throw new HTTPException(404, { message: "Flavor not found" });
 
-  const flavor = {
+  return {
     name: flavorDetails.name,
     imageUrl: formatFlavorImageUrl(flavorDetails.fotdImage).toString(),
     description: flavorDetails.description,
     allergens: flavorDetails.allergens.split(", "),
   };
-
-  return flavor;
 }

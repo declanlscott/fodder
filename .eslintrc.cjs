@@ -1,2 +1,2 @@
 /** @type {import("eslint").Linter.Config} */
-module.exports = { extends: ["@repo/eslint-config/base.js"] };
+module.exports = { extends: ["@fodder/eslint-config/base.js"] };

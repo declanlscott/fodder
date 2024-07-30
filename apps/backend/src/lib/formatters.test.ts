@@ -17,7 +17,7 @@ import type {
   LocatedRestaurant,
   SluggedFlavor,
   SluggedRestaurant,
-} from "@repo/types";
+} from "@fodder/schemas";
 import type {
   FetchedRestaurants,
   FlavorDetails,
@@ -88,7 +88,7 @@ describe("formatFetchedRestaurants", () => {
           slug: "flavor-of-day-name",
         },
       },
-    ] satisfies LocatedRestaurant[];
+    ] satisfies Array<LocatedRestaurant>;
     expect(output).toEqual(expected);
   });
 });

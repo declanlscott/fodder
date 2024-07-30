@@ -24,3 +24,55 @@ export const CoordinatesSchema = v.object({
   ),
 });
 export type CoordinatesSchema = v.InferOutput<typeof CoordinatesSchema>;
+
+export const LocatedRestaurant = v.object({
+  name: v.string(),
+  address: v.string(),
+  city: v.string(),
+  state: v.string(),
+  zipCode: v.string(),
+  latitude: v.number(),
+  longitude: v.number(),
+  slug: v.string(),
+  fod: v.object({
+    name: v.string(),
+    imageUrl: v.string(),
+    slug: v.string(),
+  }),
+});
+export type LocatedRestaurant = v.InferOutput<typeof LocatedRestaurant>;
+
+export const SluggedRestaurant = v.object({
+  name: v.string(),
+  address: v.string(),
+  city: v.string(),
+  state: v.string(),
+  zipCode: v.string(),
+  phoneNumber: v.string(),
+  flavors: v.array(
+    v.object({
+      date: v.string(),
+      name: v.string(),
+      imageUrl: v.string(),
+      slug: v.string(),
+    }),
+  ),
+});
+export type SluggedRestaurant = v.InferOutput<typeof SluggedRestaurant>;
+
+export const AllFlavors = v.array(
+  v.object({
+    name: v.string(),
+    imageUrl: v.string(),
+    slug: v.string(),
+  }),
+);
+export type AllFlavors = v.InferOutput<typeof AllFlavors>;
+
+export const SluggedFlavor = v.object({
+  name: v.string(),
+  description: v.string(),
+  imageUrl: v.string(),
+  allergens: v.array(v.string()),
+});
+export type SluggedFlavor = v.InferOutput<typeof SluggedFlavor>;

@@ -9,11 +9,10 @@ import {
   CardTitle,
   cn,
   Skeleton,
-} from "@repo/ui";
+} from "@fodder/ui";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { format, isToday } from "date-fns";
-import { HTTPError } from "ky";
 import { ChevronDown, ChevronUp, MapPin, Phone } from "lucide-react";
 
 import { DroppedCone } from "~/components/dropped-cone";
@@ -21,9 +20,10 @@ import { ErrorCard } from "~/components/error-card";
 import { FodCard, FodCardSkeleton } from "~/components/fod-card";
 import { NotFound } from "~/components/not-found";
 import { useTitle } from "~/hooks/title";
+import { HttpError } from "~/lib/errors";
 import { queryOptionsFactory } from "~/lib/query-options-factory";
 
-import type { SluggedRestaurant } from "@repo/types";
+import type { SluggedRestaurant } from "@fodder/schemas";
 
 export const Route = createFileRoute("/restaurants/$slug")({
   loader: async ({ context: { queryClient }, params }) => {
@@ -34,9 +34,8 @@ export const Route = createFileRoute("/restaurants/$slug")({
 
       return data;
     } catch (error) {
-      if (error instanceof HTTPError && error.response.status === 404) {
+      if (error instanceof HttpError && error.statusCode === 404)
         throw notFound();
-      }
 
       throw error;
     }

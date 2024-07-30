@@ -1,4 +1,4 @@
-import { cn } from "@repo/ui";
+import { cn } from "@fodder/ui";
 
 export function DroppedCone({
   className,

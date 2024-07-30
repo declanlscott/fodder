@@ -11,18 +11,18 @@
     "format:write": "prettier --write ."
   },
   "devDependencies": {
-    "@repo/eslint-config": "workspace:*",
-    "@repo/prettier-config": "workspace:*",
+    "@fodder/eslint-config": "workspace:*",
+    "@fodder/prettier-config": "workspace:*",
     "prettier": "^3.3.3",
     "turbo": "^2.0.9",
     "typescript": "^5.5.4"
   },
-  "prettier": "@repo/prettier-config",
+  "prettier": "@fodder/prettier-config",
   "packageManager": "pnpm@9.3.0",
   "pnpm": {
     "patchedDependencies": {
       "valibot@0.36.0": "patches/valibot@0.36.0.patch",
-      "hono@4.5.1": "patches/hono@4.5.1.patch"
+      "hono@4.5.3": "patches/hono@4.5.3.patch"
     }
   }
 }

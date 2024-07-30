@@ -1,4 +1,4 @@
-import { createEnv } from "@repo/env";
+import { createEnv } from "@fodder/env";
 import * as v from "valibot";
 
 export const env = createEnv({

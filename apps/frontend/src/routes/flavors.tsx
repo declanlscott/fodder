@@ -6,7 +6,7 @@ import {
   CardTitle,
   cn,
   Skeleton,
-} from "@repo/ui";
+} from "@fodder/ui";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 
@@ -14,7 +14,7 @@ import { NotFound } from "~/components/not-found";
 import { useTitle } from "~/hooks/title";
 import { queryOptionsFactory } from "~/lib/query-options-factory";
 
-import type { AllFlavors } from "@repo/types";
+import type { AllFlavors } from "@fodder/schemas";
 
 export const Route = createFileRoute("/flavors")({
   loader: ({ context: { queryClient } }) =>
