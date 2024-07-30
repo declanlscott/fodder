@@ -17,7 +17,7 @@ api.use(logger());
 
 api.use("*", async (c, next) => {
   // Only enable CORS for HTTP bindings in Node.js for local development
-  // When deployed to AWS Lambda, API Gateway handles CORS
+  // When deployed to AWS Lambda, Cloudfront handles CORS
   if (isHttpBindings(c.env)) {
     const corsMiddleware = cors({
       origin: env.CORS_ORIGIN,
