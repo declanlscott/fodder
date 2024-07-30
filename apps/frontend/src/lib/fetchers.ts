@@ -21,13 +21,7 @@ export async function locate(data: LocateRestaurantsSchema) {
   );
   url.search = params.toString();
 
-  const res = await fetch(url, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-
+  const res = await fetch(url, { method: "GET" });
   if (res.status === 404) return [];
   if (!res.ok) throw new Error(res.statusText);
 
@@ -37,10 +31,7 @@ export async function locate(data: LocateRestaurantsSchema) {
 export async function getRestaurant(slug: string) {
   const url = new URL(`${env.VITE_API_BASE_URL}/restaurants/${slug}`);
 
-  const res = await fetch(url, {
-    method: "GET",
-    headers: { "Content-Type": "application/json" },
-  });
+  const res = await fetch(url, { method: "GET" });
   if (!res.ok) throw new Error(res.statusText);
 
   return v.parse(SluggedRestaurant, await res.json());
@@ -49,10 +40,7 @@ export async function getRestaurant(slug: string) {
 export async function getAllFlavors() {
   const url = new URL(`${env.VITE_API_BASE_URL}/flavors`);
 
-  const res = await fetch(url, {
-    method: "GET",
-    headers: { "Content-Type": "application/json" },
-  });
+  const res = await fetch(url, { method: "GET" });
   if (!res.ok) throw new Error(res.statusText);
 
   return v.parse(AllFlavors, await res.json());
@@ -61,10 +49,7 @@ export async function getAllFlavors() {
 export async function getFlavor(slug: string) {
   const url = new URL(`${env.VITE_API_BASE_URL}/flavors/${slug}`);
 
-  const res = await fetch(url, {
-    method: "GET",
-    headers: { "Content-Type": "application/json" },
-  });
+  const res = await fetch(url, { method: "GET" });
   if (!res.ok) throw new Error(res.statusText);
 
   return v.parse(SluggedFlavor, await res.json());
