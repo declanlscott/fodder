@@ -19,9 +19,10 @@ export function parseNextData<TSchema extends v.GenericSchema>(
   schema: TSchema,
   body: string,
 ) {
-  const matches = body.match(
-    /<script id="__NEXT_DATA__" type="application\/json">(.*?)<\/script>/,
-  );
+  const matches =
+    /<script id="__NEXT_DATA__" type="application\/json">(.*?)<\/script>/.exec(
+      body,
+    );
 
   if (matches?.length !== 2)
     throw new HTTPException(500, {
