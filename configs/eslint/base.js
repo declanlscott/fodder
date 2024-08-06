@@ -38,5 +38,7 @@ module.exports = {
         checksVoidReturn: { attributes: false },
       },
     ],
+
+    "@typescript-eslint/only-throw-error": "off",
   },
 };
