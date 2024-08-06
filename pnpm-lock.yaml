@@ -8,9 +8,9 @@ patchedDependencies:
   hono@4.5.3:
     hash: gwouvarg6cqnqpv34ufg3steji
     path: patches/hono@4.5.3.patch
-  valibot@0.36.0:
-    hash: 4nexe5rgfmxytsrk2cgqaxyqhu
-    path: patches/valibot@0.36.0.patch
+  valibot@0.37.0:
+    hash: ngs4pngtb2qsb3qn4s2scfvnxi
+    path: patches/valibot@0.37.0.patch
 
 importers:
 
@@ -44,8 +44,8 @@ importers:
         specifier: ^4.5.3
         version: 4.5.3(patch_hash=gwouvarg6cqnqpv34ufg3steji)
       valibot:
-        specifier: ^0.36.0
-        version: 0.36.0(patch_hash=4nexe5rgfmxytsrk2cgqaxyqhu)
+        specifier: ^0.37.0
+        version: 0.37.0(patch_hash=ngs4pngtb2qsb3qn4s2scfvnxi)(typescript@5.5.4)
     devDependencies:
       '@fodder/eslint-config':
         specifier: workspace:*
@@ -135,8 +135,8 @@ importers:
         specifier: ^1.0.7
         version: 1.0.7(tailwindcss@3.4.7)
       valibot:
-        specifier: ^0.36.0
-        version: 0.36.0(patch_hash=4nexe5rgfmxytsrk2cgqaxyqhu)
+        specifier: ^0.37.0
+        version: 0.37.0(patch_hash=ngs4pngtb2qsb3qn4s2scfvnxi)(typescript@5.5.4)
     devDependencies:
       '@fodder/eslint-config':
         specifier: workspace:*
@@ -225,8 +225,8 @@ importers:
   packages/env:
     dependencies:
       valibot:
-        specifier: ^0.36.0
-        version: 0.36.0(patch_hash=4nexe5rgfmxytsrk2cgqaxyqhu)
+        specifier: ^0.37.0
+        version: 0.37.0(patch_hash=ngs4pngtb2qsb3qn4s2scfvnxi)(typescript@5.5.4)
     devDependencies:
       '@fodder/eslint-config':
         specifier: workspace:*
@@ -250,8 +250,8 @@ importers:
   packages/schemas:
     dependencies:
       valibot:
-        specifier: ^0.36.0
-        version: 0.36.0(patch_hash=4nexe5rgfmxytsrk2cgqaxyqhu)
+        specifier: ^0.37.0
+        version: 0.37.0(patch_hash=ngs4pngtb2qsb3qn4s2scfvnxi)(typescript@5.5.4)
     devDependencies:
       '@fodder/eslint-config':
         specifier: workspace:*
@@ -2876,8 +2876,13 @@ packages:
   util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
 
-  valibot@0.36.0:
-    resolution: {integrity: sha512-CjF1XN4sUce8sBK9TixrDqFM7RwNkuXdJu174/AwmQUB62QbCQADg5lLe8ldBalFgtj1uKj+pKwDJiNo4Mn+eQ==}
+  valibot@0.37.0:
+    resolution: {integrity: sha512-FQz52I8RXgFgOHym3XHYSREbNtkgSjF9prvMFH1nBsRyfL6SfCzoT1GuSDTlbsuPubM7/6Kbw0ZMQb8A+V+VsQ==}
+    peerDependencies:
+      typescript: '>=5'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
 
   vite-node@2.0.5:
     resolution: {integrity: sha512-LdsW4pxj0Ot69FAoXZ1yTnA9bjGohr2yNBU7QKRxpz8ITSkhuDl6h3zS/tvgz4qrNjeRnvrWeXQ8ZF7Um4W00Q==}
@@ -5469,7 +5474,9 @@ snapshots:
 
   util-deprecate@1.0.2: {}
 
-  valibot@0.36.0(patch_hash=4nexe5rgfmxytsrk2cgqaxyqhu): {}
+  valibot@0.37.0(patch_hash=ngs4pngtb2qsb3qn4s2scfvnxi)(typescript@5.5.4):
+    optionalDependencies:
+      typescript: 5.5.4
 
   vite-node@2.0.5(@types/node@22.1.0):
     dependencies:
