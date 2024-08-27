@@ -14,8 +14,8 @@
   "dependencies": {
     "@fodder/env": "workspace:*",
     "@fodder/schemas": "workspace:*",
-    "hono": "^4.5.6",
-    "valibot": "^0.37.0"
+    "hono": "^4.5.9",
+    "valibot": "^0.39.0"
   },
   "devDependencies": {
     "@hono/node-server": "^1.12.1",
