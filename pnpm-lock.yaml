@@ -5,12 +5,12 @@ settings:
   excludeLinksFromLockfile: false
 
 patchedDependencies:
-  hono@4.5.9:
+  hono@4.5.10:
     hash: gwouvarg6cqnqpv34ufg3steji
-    path: patches/hono@4.5.9.patch
-  valibot@0.39.0:
-    hash: 3yhuolph6f3g6pr2z2kkzxoufa
-    path: patches/valibot@0.39.0.patch
+    path: patches/hono@4.5.10.patch
+  valibot@0.41.0:
+    hash: zfvood7ovtmyxy7vdzrpnxrxli
+    path: patches/valibot@0.41.0.patch
 
 importers:
 
@@ -41,11 +41,11 @@ importers:
         specifier: workspace:*
         version: link:../../packages/schemas
       hono:
-        specifier: ^4.5.9
-        version: 4.5.9(patch_hash=gwouvarg6cqnqpv34ufg3steji)
+        specifier: ^4.5.10
+        version: 4.5.10(patch_hash=gwouvarg6cqnqpv34ufg3steji)
       valibot:
-        specifier: ^0.39.0
-        version: 0.39.0(patch_hash=3yhuolph6f3g6pr2z2kkzxoufa)(typescript@5.5.4)
+        specifier: ^0.41.0
+        version: 0.41.0(patch_hash=zfvood7ovtmyxy7vdzrpnxrxli)(typescript@5.5.4)
     devDependencies:
       '@fodder/eslint-config':
         specifier: workspace:*
@@ -58,7 +58,7 @@ importers:
         version: link:../../configs/typescript
       '@hono/node-server':
         specifier: ^1.12.2
-        version: 1.12.2(hono@4.5.9(patch_hash=gwouvarg6cqnqpv34ufg3steji))
+        version: 1.12.2(hono@4.5.10(patch_hash=gwouvarg6cqnqpv34ufg3steji))
       '@types/node':
         specifier: ^22.5.2
         version: 22.5.2
@@ -99,26 +99,26 @@ importers:
         specifier: ^10.0.0
         version: 10.0.0(react@18.3.1)
       '@tanstack/react-query':
-        specifier: ^5.52.2
-        version: 5.52.2(react@18.3.1)
+        specifier: ^5.53.3
+        version: 5.53.3(react@18.3.1)
       '@tanstack/react-query-devtools':
-        specifier: ^5.52.2
-        version: 5.52.2(@tanstack/react-query@5.52.2(react@18.3.1))(react@18.3.1)
+        specifier: ^5.54.0
+        version: 5.54.0(@tanstack/react-query@5.53.3(react@18.3.1))(react@18.3.1)
       '@tanstack/react-router':
-        specifier: ^1.50.1
-        version: 1.50.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^1.52.4
+        version: 1.52.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tanstack/router-devtools':
-        specifier: ^1.50.1
-        version: 1.50.1(@tanstack/react-router@1.50.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(csstype@3.1.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^1.52.4
+        version: 1.52.4(@tanstack/react-router@1.52.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(csstype@3.1.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tanstack/router-vite-plugin':
-        specifier: ^1.49.3
-        version: 1.49.3(vite@5.4.2(@types/node@22.5.2))
+        specifier: ^1.52.0
+        version: 1.52.0(vite@5.4.2(@types/node@22.5.2))
       date-fns:
         specifier: ^3.6.0
         version: 3.6.0
       lucide-react:
-        specifier: ^0.436.0
-        version: 0.436.0(react@18.3.1)
+        specifier: ^0.438.0
+        version: 0.438.0(react@18.3.1)
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -129,14 +129,14 @@ importers:
         specifier: ^4.0.13
         version: 4.0.13(react@18.3.1)
       remeda:
-        specifier: ^2.11.0
-        version: 2.11.0
+        specifier: ^2.12.0
+        version: 2.12.0
       tailwindcss-animate:
         specifier: ^1.0.7
         version: 1.0.7(tailwindcss@3.4.10)
       valibot:
-        specifier: ^0.39.0
-        version: 0.39.0(patch_hash=3yhuolph6f3g6pr2z2kkzxoufa)(typescript@5.5.4)
+        specifier: ^0.41.0
+        version: 0.41.0(patch_hash=zfvood7ovtmyxy7vdzrpnxrxli)(typescript@5.5.4)
     devDependencies:
       '@fodder/eslint-config':
         specifier: workspace:*
@@ -225,8 +225,8 @@ importers:
   packages/env:
     dependencies:
       valibot:
-        specifier: ^0.39.0
-        version: 0.39.0(patch_hash=3yhuolph6f3g6pr2z2kkzxoufa)(typescript@5.5.4)
+        specifier: ^0.41.0
+        version: 0.41.0(patch_hash=zfvood7ovtmyxy7vdzrpnxrxli)(typescript@5.5.4)
     devDependencies:
       '@fodder/eslint-config':
         specifier: workspace:*
@@ -242,7 +242,7 @@ importers:
         version: 22.5.2
       tsup:
         specifier: ^8.2.4
-        version: 8.2.4(@swc/core@1.7.18)(jiti@1.21.6)(postcss@8.4.44)(tsx@4.19.0)(typescript@5.5.4)(yaml@2.5.0)
+        version: 8.2.4(@swc/core@1.7.18(@swc/helpers@0.5.12))(jiti@1.21.6)(postcss@8.4.44)(tsx@4.19.0)(typescript@5.5.4)(yaml@2.5.0)
       typescript:
         specifier: ^5.5.4
         version: 5.5.4
@@ -250,8 +250,8 @@ importers:
   packages/schemas:
     dependencies:
       valibot:
-        specifier: ^0.39.0
-        version: 0.39.0(patch_hash=3yhuolph6f3g6pr2z2kkzxoufa)(typescript@5.5.4)
+        specifier: ^0.41.0
+        version: 0.41.0(patch_hash=zfvood7ovtmyxy7vdzrpnxrxli)(typescript@5.5.4)
     devDependencies:
       '@fodder/eslint-config':
         specifier: workspace:*
@@ -264,7 +264,7 @@ importers:
         version: link:../../configs/typescript
       tsup:
         specifier: ^8.2.4
-        version: 8.2.4(@swc/core@1.7.18)(jiti@1.21.6)(postcss@8.4.44)(tsx@4.19.0)(typescript@5.5.4)(yaml@2.5.0)
+        version: 8.2.4(@swc/core@1.7.18(@swc/helpers@0.5.12))(jiti@1.21.6)(postcss@8.4.44)(tsx@4.19.0)(typescript@5.5.4)(yaml@2.5.0)
       typescript:
         specifier: ^5.5.4
         version: 5.5.4
@@ -290,8 +290,8 @@ importers:
         specifier: npm:class-variance-authority@^0.7.0
         version: class-variance-authority@0.7.0
       lucide-react:
-        specifier: ^0.436.0
-        version: 0.436.0(react@18.3.1)
+        specifier: ^0.438.0
+        version: 0.438.0(react@18.3.1)
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -319,7 +319,7 @@ importers:
         version: 3.4.10
       tsup:
         specifier: ^8.2.4
-        version: 8.2.4(@swc/core@1.7.18)(jiti@1.21.6)(postcss@8.4.44)(tsx@4.19.0)(typescript@5.5.4)(yaml@2.5.0)
+        version: 8.2.4(@swc/core@1.7.18(@swc/helpers@0.5.12))(jiti@1.21.6)(postcss@8.4.44)(tsx@4.19.0)(typescript@5.5.4)(yaml@2.5.0)
       typescript:
         specifier: ^5.5.4
         version: 5.5.4
@@ -1263,29 +1263,29 @@ packages:
     peerDependencies:
       eslint: ^8.57.0 || ^9.0.0
 
-  '@tanstack/history@1.49.7':
-    resolution: {integrity: sha512-9e9e+QFeWve6rB5BWK9MR8/1BmQYd1LFmM5BYh1Ht15yLcyU0FoiPG4Iun9Coc3Obo1mA+NbYCoOYoSZ+h+9yw==}
+  '@tanstack/history@1.51.7':
+    resolution: {integrity: sha512-y25aH3NDbdUp5Gk6Fnb77LsHTT2JrzVgI44ZiyEOf8i2j14Ma3oJ80fCw7rT/iV4xa4IN2Yex9flAsZQdh1i4A==}
     engines: {node: '>=12'}
 
-  '@tanstack/query-core@5.52.2':
-    resolution: {integrity: sha512-9vvbFecK4A0nDnrc/ks41e3UHONF1DAnGz8Tgbxkl59QcvKWmc0ewhYuIKRh8NC4ja5LTHT9EH16KHbn2AIYWA==}
+  '@tanstack/query-core@5.53.3':
+    resolution: {integrity: sha512-ZfjAgd7NpqDx0e4aYBt7EmS2enbulPrJwowTy+mayRE93WUUH+sIYHun1TdRjpGwDPMNNZ5D6goh7n3CwoO+HA==}
 
-  '@tanstack/query-devtools@5.51.16':
-    resolution: {integrity: sha512-ajwuq4WnkNCMj/Hy3KR8d3RtZ6PSKc1dD2vs2T408MdjgKzQ3klVoL6zDgVO7X+5jlb5zfgcO3thh4ojPhfIaw==}
+  '@tanstack/query-devtools@5.54.0':
+    resolution: {integrity: sha512-B8Sa6mh7/4m2fyk2/YnUXeOZ1/us7G/C/i1It8YcCbieXc8vf1AdSYjR+mZIoJeKOKLqA741hZqfj8d4F1NCVg==}
 
-  '@tanstack/react-query-devtools@5.52.2':
-    resolution: {integrity: sha512-QI3jsi8sVA805F9NRdL/sVGgCUzVD8lr6/ts9v3ZtECG864YDW3GJwEWH030U+4aPvxMtxaJz7ctbtE7Wkxh1g==}
+  '@tanstack/react-query-devtools@5.54.0':
+    resolution: {integrity: sha512-0GoijDWrCxB8CnWbu8U2xeg7XYeT0yhI6dPbAz7KHr2nyXELsdBZGHrr6PlfLR5jAHJ2OBpK2vu6blwkAjkuOA==}
     peerDependencies:
-      '@tanstack/react-query': ^5.52.2
+      '@tanstack/react-query': ^5.53.3
       react: ^18 || ^19
 
-  '@tanstack/react-query@5.52.2':
-    resolution: {integrity: sha512-d4OwmobpP+6+SvuAxW1RzAY95Pv87Gu+0GjtErzFOUXo+n0FGcwxKvzhswCsXKxsgnAr3bU2eJ2u+GXQAutkCQ==}
+  '@tanstack/react-query@5.53.3':
+    resolution: {integrity: sha512-286mN/91CeM7vC6CZFLKYDHSw+WyMX6ekIvzoTbpM4xyPb99VSyCKPLyPgaOatKqYm6ooMBquSq9NGRdKgsJfg==}
     peerDependencies:
       react: ^18 || ^19
 
-  '@tanstack/react-router@1.50.1':
-    resolution: {integrity: sha512-h59prj8Wu1uXibDT/s9tZT30X8Y6ovAOwwXivIwZ8jNRcMxUL49fZdnWPNlcsKN7JlK9/H4yJvBz6TNWcfYQnw==}
+  '@tanstack/react-router@1.52.4':
+    resolution: {integrity: sha512-9pfkyfMiPByBjkkoRScrUUz+pxSlM15TSYTnUGLNyYaDGPoFg5x3KnZVkMojsYW6+2v55LePrl/+CVO4g2R4xw==}
     engines: {node: '>=12'}
     peerDependencies:
       react: '>=18'
@@ -1297,20 +1297,20 @@ packages:
       react: ^17.0.0 || ^18.0.0
       react-dom: ^17.0.0 || ^18.0.0
 
-  '@tanstack/router-devtools@1.50.1':
-    resolution: {integrity: sha512-xY/0rW0JGfcbWnvGPuekzZO1hTqkOtekQ0dxFikc+pcCdkeDCtzmKF6hD1z29hU5QB6Aqm1wmIOIb8BVHk9g9A==}
+  '@tanstack/router-devtools@1.52.4':
+    resolution: {integrity: sha512-PsRDBcl2fT/T8j6dYZG6paAAfb2yzmbWN0cvMNUunkIvCHM/bydEAw7iusrwtOWWuMHrB1BbbYIdXEX5HGHCTg==}
     engines: {node: '>=12'}
     peerDependencies:
-      '@tanstack/react-router': ^1.50.1
+      '@tanstack/react-router': ^1.52.4
       react: '>=18'
       react-dom: '>=18'
 
-  '@tanstack/router-generator@1.49.3':
-    resolution: {integrity: sha512-2AkCpg14XngUMHQBFjBGLPgPzJyGAOLX7vA1chBxd0ghOdnXiqXv5x2Md4ZZ7q10VkHWdhv9krU3mkyRtEXCfw==}
+  '@tanstack/router-generator@1.52.0':
+    resolution: {integrity: sha512-p1q+pGt5kh9a2d0I3inoRCEaqL1NXPOKarcvNrwn8wP4K6IXXSipZiXIsC4bribVdzBlBwhiyCkDjAUVV0l0xg==}
     engines: {node: '>=12'}
 
-  '@tanstack/router-plugin@1.49.3':
-    resolution: {integrity: sha512-8p9TVbQMLScyQi5hhhKu49GC+W5k6cL7YkepEeJPd4E22AYKr0XC3Ih0D7igPm7sm9b4vAdtziPMG1DuZIercw==}
+  '@tanstack/router-plugin@1.52.0':
+    resolution: {integrity: sha512-CfZL2MeNquohnSuUUvfYNl3QGl1jD1JH/3lTnlx8TY4JMdz1tWuDhNfuJuPh32mNAT0ueFzgUnrEHDEjMRxq7Q==}
     engines: {node: '>=12'}
     peerDependencies:
       '@rsbuild/core': '>=1.0.0'
@@ -1324,8 +1324,8 @@ packages:
       webpack:
         optional: true
 
-  '@tanstack/router-vite-plugin@1.49.3':
-    resolution: {integrity: sha512-hJb5O1cnW6EwzhwWzL7Qmn8VbApnfNZHtXNO9OOkd7QJ0xUveYL/P/RTj7dOEKM9JXxSAUarb+VzqRT0/wTk/A==}
+  '@tanstack/router-vite-plugin@1.52.0':
+    resolution: {integrity: sha512-TI8R3WX6s7qgcU58zg73hovypqcOPGC9HGwE/5dcmleRLDzJnoDZQPMhVM30WKPT6qdKOZI7pZLmhCp/zd8hSQ==}
     engines: {node: '>=12'}
 
   '@tanstack/store@0.5.5':
@@ -1952,8 +1952,8 @@ packages:
     resolution: {integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==}
     engines: {node: '>= 0.4'}
 
-  hono@4.5.9:
-    resolution: {integrity: sha512-zz8ktqMDRrZETjxBrv8C5PQRFbrTRCLNVAjD1SNQyOzv4VjmX68Uxw83xQ6oxdAB60HiWnGEatiKA8V3SZLDkQ==}
+  hono@4.5.10:
+    resolution: {integrity: sha512-az6tdU1U8o/l0v8O37FIQuc+ER/TeD9vHt/qs8JnBDgMxw6Zu5L2AixUyHeXZNcu87r7iYo8Ey85R7IogOINKA==}
     engines: {node: '>=16.0.0'}
 
   human-signals@2.1.0:
@@ -2111,8 +2111,8 @@ packages:
   lru-cache@5.1.1:
     resolution: {integrity: sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w==}
 
-  lucide-react@0.436.0:
-    resolution: {integrity: sha512-N292bIxoqm1aObAg0MzFtvhYwgQE6qnIOWx/GLj5ONgcTPH6N0fD9bVq/GfdeC9ZORBXozt/XeEKDpiB3x3vlQ==}
+  lucide-react@0.438.0:
+    resolution: {integrity: sha512-uq6yCB+IzVfgIPMK8ibkecXSWTTSOMs9UjUgZigfrDCVqgdwkpIgYg1fSYnf0XXF2AoSyCJZhoZXQwzoai7VGw==}
     peerDependencies:
       react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0-rc
 
@@ -2445,8 +2445,8 @@ packages:
     resolution: {integrity: sha512-iETxpjK6YoRWJG5o6hXLwvjYAoW+FEZn9os0PD/b6AP6xQwsa/Y7lCVgIixBbUPMfhu+i2LtdeAqVTgGlQarfA==}
     hasBin: true
 
-  remeda@2.11.0:
-    resolution: {integrity: sha512-rQO+zcuNvnTcB2vBctblBARZakY0+wMNtrFGqU1+h4jm5p2APcDKQxUZG2CmMPkSQxa2nauU55GBVS/3Fo83fA==}
+  remeda@2.12.0:
+    resolution: {integrity: sha512-VAlyhh1os8boCA9/7yN9sXzo0tfCeOwScGXztwBspS0DXQmbIN8xTBfEABvbAW8rMJMPzqxQ1UymHquuESh/pg==}
 
   resolve-from@4.0.0:
     resolution: {integrity: sha512-pb/MYmXstAkysRFx8piNI1tGFNQIFA3vkE3Gq4EuA1dF6gHp/+vgZqsCGJapvy8N3Q+4o7FwvquPJcnZ7RYy4g==}
@@ -2797,8 +2797,8 @@ packages:
   util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
 
-  valibot@0.39.0:
-    resolution: {integrity: sha512-d+vE8SDRNy9zKg6No5MHz2tdz8H6CW8X3OdqYdmlhnoqQmEoM6Hu0hJUrZv3tPSVrzZkIIMCtdCQtMzcM6NCWw==}
+  valibot@0.41.0:
+    resolution: {integrity: sha512-igDBb8CTYr8YTQlOKgaN9nSS0Be7z+WRuaeYqGf3Cjz3aKmSnqEmYnkfVjzIuumGqfHpa3fLIvMEAfhrpqN8ng==}
     peerDependencies:
       typescript: '>=5'
     peerDependenciesMeta:
@@ -3261,9 +3261,9 @@ snapshots:
 
   '@floating-ui/utils@0.2.7': {}
 
-  '@hono/node-server@1.12.2(hono@4.5.9(patch_hash=gwouvarg6cqnqpv34ufg3steji))':
+  '@hono/node-server@1.12.2(hono@4.5.10(patch_hash=gwouvarg6cqnqpv34ufg3steji))':
     dependencies:
-      hono: 4.5.9(patch_hash=gwouvarg6cqnqpv34ufg3steji)
+      hono: 4.5.10(patch_hash=gwouvarg6cqnqpv34ufg3steji)
 
   '@humanwhocodes/config-array@0.11.14':
     dependencies:
@@ -3699,26 +3699,26 @@ snapshots:
       - supports-color
       - typescript
 
-  '@tanstack/history@1.49.7': {}
+  '@tanstack/history@1.51.7': {}
 
-  '@tanstack/query-core@5.52.2': {}
+  '@tanstack/query-core@5.53.3': {}
 
-  '@tanstack/query-devtools@5.51.16': {}
+  '@tanstack/query-devtools@5.54.0': {}
 
-  '@tanstack/react-query-devtools@5.52.2(@tanstack/react-query@5.52.2(react@18.3.1))(react@18.3.1)':
+  '@tanstack/react-query-devtools@5.54.0(@tanstack/react-query@5.53.3(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@tanstack/query-devtools': 5.51.16
-      '@tanstack/react-query': 5.52.2(react@18.3.1)
+      '@tanstack/query-devtools': 5.54.0
+      '@tanstack/react-query': 5.53.3(react@18.3.1)
       react: 18.3.1
 
-  '@tanstack/react-query@5.52.2(react@18.3.1)':
+  '@tanstack/react-query@5.53.3(react@18.3.1)':
     dependencies:
-      '@tanstack/query-core': 5.52.2
+      '@tanstack/query-core': 5.53.3
       react: 18.3.1
 
-  '@tanstack/react-router@1.50.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@tanstack/react-router@1.52.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@tanstack/history': 1.49.7
+      '@tanstack/history': 1.51.7
       '@tanstack/react-store': 0.5.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
@@ -3732,9 +3732,9 @@ snapshots:
       react-dom: 18.3.1(react@18.3.1)
       use-sync-external-store: 1.2.2(react@18.3.1)
 
-  '@tanstack/router-devtools@1.50.1(@tanstack/react-router@1.50.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(csstype@3.1.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@tanstack/router-devtools@1.52.4(@tanstack/react-router@1.52.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(csstype@3.1.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@tanstack/react-router': 1.50.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tanstack/react-router': 1.52.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       clsx: 2.1.1
       goober: 2.1.14(csstype@3.1.3)
       react: 18.3.1
@@ -3742,12 +3742,12 @@ snapshots:
     transitivePeerDependencies:
       - csstype
 
-  '@tanstack/router-generator@1.49.3':
+  '@tanstack/router-generator@1.52.0':
     dependencies:
       prettier: 3.3.3
       zod: 3.23.8
 
-  '@tanstack/router-plugin@1.49.3(vite@5.4.2(@types/node@22.5.2))':
+  '@tanstack/router-plugin@1.52.0(vite@5.4.2(@types/node@22.5.2))':
     dependencies:
       '@babel/core': 7.25.2
       '@babel/generator': 7.25.5
@@ -3757,7 +3757,7 @@ snapshots:
       '@babel/template': 7.25.0
       '@babel/traverse': 7.25.4
       '@babel/types': 7.25.4
-      '@tanstack/router-generator': 1.49.3
+      '@tanstack/router-generator': 1.52.0
       '@types/babel__core': 7.20.5
       '@types/babel__generator': 7.6.8
       '@types/babel__template': 7.4.4
@@ -3771,9 +3771,9 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@tanstack/router-vite-plugin@1.49.3(vite@5.4.2(@types/node@22.5.2))':
+  '@tanstack/router-vite-plugin@1.52.0(vite@5.4.2(@types/node@22.5.2))':
     dependencies:
-      '@tanstack/router-plugin': 1.49.3(vite@5.4.2(@types/node@22.5.2))
+      '@tanstack/router-plugin': 1.52.0(vite@5.4.2(@types/node@22.5.2))
     transitivePeerDependencies:
       - '@rsbuild/core'
       - supports-color
@@ -4535,7 +4535,7 @@ snapshots:
     dependencies:
       function-bind: 1.1.2
 
-  hono@4.5.9(patch_hash=gwouvarg6cqnqpv34ufg3steji): {}
+  hono@4.5.10(patch_hash=gwouvarg6cqnqpv34ufg3steji): {}
 
   human-signals@2.1.0: {}
 
@@ -4654,7 +4654,7 @@ snapshots:
     dependencies:
       yallist: 3.1.1
 
-  lucide-react@0.436.0(react@18.3.1):
+  lucide-react@0.438.0(react@18.3.1):
     dependencies:
       react: 18.3.1
 
@@ -4938,7 +4938,7 @@ snapshots:
 
   regexp-tree@0.1.27: {}
 
-  remeda@2.11.0:
+  remeda@2.12.0:
     dependencies:
       type-fest: 4.25.0
 
@@ -5151,7 +5151,7 @@ snapshots:
 
   tslib@2.7.0: {}
 
-  tsup@8.2.4(@swc/core@1.7.18)(jiti@1.21.6)(postcss@8.4.44)(tsx@4.19.0)(typescript@5.5.4)(yaml@2.5.0):
+  tsup@8.2.4(@swc/core@1.7.18(@swc/helpers@0.5.12))(jiti@1.21.6)(postcss@8.4.44)(tsx@4.19.0)(typescript@5.5.4)(yaml@2.5.0):
     dependencies:
       bundle-require: 5.0.0(esbuild@0.23.1)
       cac: 6.7.14
@@ -5277,7 +5277,7 @@ snapshots:
 
   util-deprecate@1.0.2: {}
 
-  valibot@0.39.0(patch_hash=3yhuolph6f3g6pr2z2kkzxoufa)(typescript@5.5.4):
+  valibot@0.41.0(patch_hash=zfvood7ovtmyxy7vdzrpnxrxli)(typescript@5.5.4):
     optionalDependencies:
       typescript: 5.5.4
 
