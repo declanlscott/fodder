@@ -121,7 +121,7 @@ function LocateForm() {
 
     if (!success) return inputRef.current?.focus();
 
-    await navigate({ search: output });
+    await navigate({ to: "/", search: output });
   }
 
   function hasError(formErrors: FormErrors, key: string) {
