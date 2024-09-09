@@ -75,12 +75,54 @@ declare module '@tanstack/react-router' {
 
 // Create and export the route tree
 
-export const routeTree = rootRoute.addChildren({
-  IndexRoute,
-  FlavorsRoute,
-  FlavorsSlugRoute,
-  RestaurantsSlugRoute,
-})
+export interface FileRoutesByFullPath {
+  '/': typeof IndexRoute
+  '/flavors': typeof FlavorsRoute
+  '/flavors/$slug': typeof FlavorsSlugRoute
+  '/restaurants/$slug': typeof RestaurantsSlugRoute
+}
+
+export interface FileRoutesByTo {
+  '/': typeof IndexRoute
+  '/flavors': typeof FlavorsRoute
+  '/flavors/$slug': typeof FlavorsSlugRoute
+  '/restaurants/$slug': typeof RestaurantsSlugRoute
+}
+
+export interface FileRoutesById {
+  __root__: typeof rootRoute
+  '/': typeof IndexRoute
+  '/flavors': typeof FlavorsRoute
+  '/flavors/$slug': typeof FlavorsSlugRoute
+  '/restaurants/$slug': typeof RestaurantsSlugRoute
+}
+
+export interface FileRouteTypes {
+  fileRoutesByFullPath: FileRoutesByFullPath
+  fullPaths: '/' | '/flavors' | '/flavors/$slug' | '/restaurants/$slug'
+  fileRoutesByTo: FileRoutesByTo
+  to: '/' | '/flavors' | '/flavors/$slug' | '/restaurants/$slug'
+  id: '__root__' | '/' | '/flavors' | '/flavors/$slug' | '/restaurants/$slug'
+  fileRoutesById: FileRoutesById
+}
+
+export interface RootRouteChildren {
+  IndexRoute: typeof IndexRoute
+  FlavorsRoute: typeof FlavorsRoute
+  FlavorsSlugRoute: typeof FlavorsSlugRoute
+  RestaurantsSlugRoute: typeof RestaurantsSlugRoute
+}
+
+const rootRouteChildren: RootRouteChildren = {
+  IndexRoute: IndexRoute,
+  FlavorsRoute: FlavorsRoute,
+  FlavorsSlugRoute: FlavorsSlugRoute,
+  RestaurantsSlugRoute: RestaurantsSlugRoute,
+}
+
+export const routeTree = rootRoute
+  ._addFileChildren(rootRouteChildren)
+  ._addFileTypes<FileRouteTypes>()
 
 /* prettier-ignore-end */
 
