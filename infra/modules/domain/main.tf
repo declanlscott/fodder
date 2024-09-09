@@ -35,7 +35,7 @@ resource "cloudflare_record" "subdomain" {
 
   name    = var.subdomain
   type    = "CNAME"
-  value   = var.cloudfront_distribution_domain_name
+  content = var.cloudfront_distribution_domain_name
   proxied = true
 }
 
@@ -50,9 +50,9 @@ resource "cloudflare_record" "validation" {
     }
   }
 
-  name  = each.value.name
-  type  = each.value.type
-  value = each.value.record
+  name    = each.value.name
+  type    = each.value.type
+  content = each.value.record
 }
 
 resource "aws_acm_certificate_validation" "validation" {
