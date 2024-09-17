@@ -18,18 +18,18 @@
     "valibot": "^0.41.0"
   },
   "devDependencies": {
-    "@hono/node-server": "^1.12.2",
+    "@hono/node-server": "^1.13.0",
     "@fodder/eslint-config": "workspace:*",
     "@fodder/prettier-config": "workspace:*",
     "@fodder/typescript-config": "workspace:*",
-    "@types/node": "^22.5.4",
+    "@types/node": "^22.5.5",
     "dotenv": "^16.4.5",
     "esbuild": "^0.23.1",
-    "npm-run-all2": "^6.2.2",
-    "tsx": "^4.19.0",
+    "npm-run-all2": "^6.2.3",
+    "tsx": "^4.19.1",
     "typescript": "^5.6.2",
     "vite-tsconfig-paths": "^5.0.1",
-    "vitest": "^2.0.5"
+    "vitest": "^2.1.1"
   },
   "prettier": "@fodder/prettier-config"
 }
