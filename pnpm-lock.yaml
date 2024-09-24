@@ -8,9 +8,9 @@ patchedDependencies:
   hono@4.6.2:
     hash: gwouvarg6cqnqpv34ufg3steji
     path: patches/hono@4.6.2.patch
-  valibot@0.42.0:
-    hash: qk5vr5xupsfn6i6jb2sz6fdece
-    path: patches/valibot@0.42.0.patch
+  valibot@0.42.1:
+    hash: olcdhe54rd4abgrkzov4r6crga
+    path: patches/valibot@0.42.1.patch
 
 importers:
 
@@ -44,8 +44,8 @@ importers:
         specifier: ^4.6.2
         version: 4.6.2(patch_hash=gwouvarg6cqnqpv34ufg3steji)
       valibot:
-        specifier: ^0.42.0
-        version: 0.42.0(patch_hash=qk5vr5xupsfn6i6jb2sz6fdece)(typescript@5.6.2)
+        specifier: ^0.42.1
+        version: 0.42.1(patch_hash=olcdhe54rd4abgrkzov4r6crga)(typescript@5.6.2)
     devDependencies:
       '@fodder/eslint-config':
         specifier: workspace:*
@@ -135,8 +135,8 @@ importers:
         specifier: ^1.0.7
         version: 1.0.7(tailwindcss@3.4.13)
       valibot:
-        specifier: ^0.42.0
-        version: 0.42.0(patch_hash=qk5vr5xupsfn6i6jb2sz6fdece)(typescript@5.6.2)
+        specifier: ^0.42.1
+        version: 0.42.1(patch_hash=olcdhe54rd4abgrkzov4r6crga)(typescript@5.6.2)
     devDependencies:
       '@fodder/eslint-config':
         specifier: workspace:*
@@ -225,8 +225,8 @@ importers:
   packages/env:
     dependencies:
       valibot:
-        specifier: ^0.42.0
-        version: 0.42.0(patch_hash=qk5vr5xupsfn6i6jb2sz6fdece)(typescript@5.6.2)
+        specifier: ^0.42.1
+        version: 0.42.1(patch_hash=olcdhe54rd4abgrkzov4r6crga)(typescript@5.6.2)
     devDependencies:
       '@fodder/eslint-config':
         specifier: workspace:*
@@ -242,7 +242,7 @@ importers:
         version: 22.6.1
       tsup:
         specifier: ^8.3.0
-        version: 8.3.0(@swc/core@1.7.18)(jiti@1.21.6)(postcss@8.4.47)(tsx@4.19.1)(typescript@5.6.2)(yaml@2.5.0)
+        version: 8.3.0(@swc/core@1.7.18(@swc/helpers@0.5.12))(jiti@1.21.6)(postcss@8.4.47)(tsx@4.19.1)(typescript@5.6.2)(yaml@2.5.0)
       typescript:
         specifier: ^5.6.2
         version: 5.6.2
@@ -250,8 +250,8 @@ importers:
   packages/schemas:
     dependencies:
       valibot:
-        specifier: ^0.42.0
-        version: 0.42.0(patch_hash=qk5vr5xupsfn6i6jb2sz6fdece)(typescript@5.6.2)
+        specifier: ^0.42.1
+        version: 0.42.1(patch_hash=olcdhe54rd4abgrkzov4r6crga)(typescript@5.6.2)
     devDependencies:
       '@fodder/eslint-config':
         specifier: workspace:*
@@ -264,7 +264,7 @@ importers:
         version: link:../../configs/typescript
       tsup:
         specifier: ^8.3.0
-        version: 8.3.0(@swc/core@1.7.18)(jiti@1.21.6)(postcss@8.4.47)(tsx@4.19.1)(typescript@5.6.2)(yaml@2.5.0)
+        version: 8.3.0(@swc/core@1.7.18(@swc/helpers@0.5.12))(jiti@1.21.6)(postcss@8.4.47)(tsx@4.19.1)(typescript@5.6.2)(yaml@2.5.0)
       typescript:
         specifier: ^5.6.2
         version: 5.6.2
@@ -319,7 +319,7 @@ importers:
         version: 3.4.13
       tsup:
         specifier: ^8.3.0
-        version: 8.3.0(@swc/core@1.7.18)(jiti@1.21.6)(postcss@8.4.47)(tsx@4.19.1)(typescript@5.6.2)(yaml@2.5.0)
+        version: 8.3.0(@swc/core@1.7.18(@swc/helpers@0.5.12))(jiti@1.21.6)(postcss@8.4.47)(tsx@4.19.1)(typescript@5.6.2)(yaml@2.5.0)
       typescript:
         specifier: ^5.6.2
         version: 5.6.2
@@ -2949,8 +2949,8 @@ packages:
   util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
 
-  valibot@0.42.0:
-    resolution: {integrity: sha512-igMdmHXxDiQY714ssh9bGisMqJ2yg7sko1KOmv/omnrIacGtP6mGrbvVT1IuV1bDrHyG9ybgpHwG1UElDiDCLg==}
+  valibot@0.42.1:
+    resolution: {integrity: sha512-3keXV29Ar5b//Hqi4MbSdV7lfVp6zuYLZuA9V1PvQUsXqogr+u5lvLPLk3A4f74VUXDnf/JfWMN6sB+koJ/FFw==}
     peerDependencies:
       typescript: '>=5'
     peerDependenciesMeta:
@@ -5440,7 +5440,7 @@ snapshots:
 
   tslib@2.7.0: {}
 
-  tsup@8.3.0(@swc/core@1.7.18)(jiti@1.21.6)(postcss@8.4.47)(tsx@4.19.1)(typescript@5.6.2)(yaml@2.5.0):
+  tsup@8.3.0(@swc/core@1.7.18(@swc/helpers@0.5.12))(jiti@1.21.6)(postcss@8.4.47)(tsx@4.19.1)(typescript@5.6.2)(yaml@2.5.0):
     dependencies:
       bundle-require: 5.0.0(esbuild@0.23.1)
       cac: 6.7.14
@@ -5566,7 +5566,7 @@ snapshots:
 
   util-deprecate@1.0.2: {}
 
-  valibot@0.42.0(patch_hash=qk5vr5xupsfn6i6jb2sz6fdece)(typescript@5.6.2):
+  valibot@0.42.1(patch_hash=olcdhe54rd4abgrkzov4r6crga)(typescript@5.6.2):
     optionalDependencies:
       typescript: 5.6.2
 
