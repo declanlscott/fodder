@@ -13,7 +13,7 @@
     "build": "tsup src/index.ts --format esm,cjs --dts"
   },
   "dependencies": {
-    "valibot": "^0.42.0"
+    "valibot": "^0.42.1"
   },
   "devDependencies": {
     "@fodder/eslint-config": "workspace:*",
