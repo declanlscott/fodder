@@ -31,9 +31,9 @@
     "@fodder/eslint-config": "workspace:*",
     "@fodder/prettier-config": "workspace:*",
     "@fodder/typescript-config": "workspace:*",
-    "@types/react": "^18.3.6",
-    "tailwindcss": "^3.4.11",
-    "tsup": "^8.2.4",
+    "@types/react": "^18.3.8",
+    "tailwindcss": "^3.4.13",
+    "tsup": "^8.3.0",
     "typescript": "^5.6.2"
   },
   "prettier": "@fodder/prettier-config"
