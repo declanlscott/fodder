@@ -70,15 +70,20 @@ export function formatScrapedRestaurant(
   const flavors =
     nextData.props.pageProps.page.customData.restaurantCalendar.flavors.reduce(
       (flavors, flavor) => {
-        const imageSlug = flavor.image.src.split(`${imageWidth}/`)[1];
-        const imageUrl = formatFlavorImageUrl(imageSlug, true).toString();
+        let imageUrl: URL;
+        if (flavor.image.src) {
+          imageUrl = new URL(flavor.image.src);
+          imageUrl.searchParams.set("w", imageWidth.toString());
+        } else {
+          imageUrl = new URL(env.LOGO_SVG_URL);
+        }
 
         return [
           ...flavors,
           {
             date: flavor.onDate,
             name: flavor.title,
-            imageUrl,
+            imageUrl: imageUrl.toString(),
             slug: flavor.urlSlug,
           },
         ];

@@ -169,7 +169,7 @@ describe("formatScrapedRestaurant", () => {
                     urlSlug: "urlSlug",
                     image: {
                       useWhiteBackground: true,
-                      src: "https://example.com/400/slug.png",
+                      src: "https://cdn.culvers.com/menu-item-detail/slug.png",
                     },
                   },
                 ],
