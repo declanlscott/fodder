@@ -18,16 +18,16 @@
     "valibot": "^0.42.1"
   },
   "devDependencies": {
-    "@hono/node-server": "^1.13.1",
     "@fodder/eslint-config": "workspace:*",
     "@fodder/prettier-config": "workspace:*",
     "@fodder/typescript-config": "workspace:*",
+    "@hono/node-server": "^1.13.1",
     "@types/node": "^22.7.5",
     "dotenv": "^16.4.5",
     "esbuild": "^0.24.0",
     "npm-run-all2": "^6.2.3",
     "tsx": "^4.19.1",
-    "typescript": "^5.6.2",
+    "typescript": "^5.6.3",
     "vite-tsconfig-paths": "^5.0.1",
     "vitest": "^2.1.2"
   },
