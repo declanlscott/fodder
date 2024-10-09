@@ -81,7 +81,7 @@ export const Route = createFileRoute("/restaurants/$slug")({
                 <FodCardSkeleton key={index} />
               ))}
             >
-              <NearbyFods source={{ slug, address }} />
+              <NearbyFods source={{ slug, address: data.zipCode }} />
             </Suspense>
           </div>
         </ErrorBoundary>
