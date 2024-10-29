@@ -19,21 +19,25 @@ import { Route as FlavorsSlugImport } from './routes/flavors_.$slug'
 // Create/Update Routes
 
 const FlavorsRoute = FlavorsImport.update({
+  id: '/flavors',
   path: '/flavors',
   getParentRoute: () => rootRoute,
 } as any)
 
 const IndexRoute = IndexImport.update({
+  id: '/',
   path: '/',
   getParentRoute: () => rootRoute,
 } as any)
 
 const RestaurantsSlugRoute = RestaurantsSlugImport.update({
+  id: '/restaurants/$slug',
   path: '/restaurants/$slug',
   getParentRoute: () => rootRoute,
 } as any)
 
 const FlavorsSlugRoute = FlavorsSlugImport.update({
+  id: '/flavors_/$slug',
   path: '/flavors/$slug',
   getParentRoute: () => rootRoute,
 } as any)
@@ -56,8 +60,8 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FlavorsImport
       parentRoute: typeof rootRoute
     }
-    '/flavors/$slug': {
-      id: '/flavors/$slug'
+    '/flavors_/$slug': {
+      id: '/flavors_/$slug'
       path: '/flavors/$slug'
       fullPath: '/flavors/$slug'
       preLoaderRoute: typeof FlavorsSlugImport
@@ -93,7 +97,7 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/flavors': typeof FlavorsRoute
-  '/flavors/$slug': typeof FlavorsSlugRoute
+  '/flavors_/$slug': typeof FlavorsSlugRoute
   '/restaurants/$slug': typeof RestaurantsSlugRoute
 }
 
@@ -102,7 +106,7 @@ export interface FileRouteTypes {
   fullPaths: '/' | '/flavors' | '/flavors/$slug' | '/restaurants/$slug'
   fileRoutesByTo: FileRoutesByTo
   to: '/' | '/flavors' | '/flavors/$slug' | '/restaurants/$slug'
-  id: '__root__' | '/' | '/flavors' | '/flavors/$slug' | '/restaurants/$slug'
+  id: '__root__' | '/' | '/flavors' | '/flavors_/$slug' | '/restaurants/$slug'
   fileRoutesById: FileRoutesById
 }
 
@@ -134,7 +138,7 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/flavors",
-        "/flavors/$slug",
+        "/flavors_/$slug",
         "/restaurants/$slug"
       ]
     },
@@ -144,7 +148,7 @@ export const routeTree = rootRoute
     "/flavors": {
       "filePath": "flavors.tsx"
     },
-    "/flavors/$slug": {
+    "/flavors_/$slug": {
       "filePath": "flavors_.$slug.tsx"
     },
     "/restaurants/$slug": {
