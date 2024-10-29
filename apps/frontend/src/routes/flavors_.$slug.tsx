@@ -17,7 +17,7 @@ import { useTitle } from "~/hooks/title";
 import { HttpError } from "~/lib/errors";
 import { queryOptionsFactory } from "~/lib/query-options-factory";
 
-export const Route = createFileRoute("/flavors/$slug")({
+export const Route = createFileRoute("/flavors_/$slug")({
   loader: async ({ context: { queryClient }, params }) => {
     try {
       const data = await queryClient.ensureQueryData(
