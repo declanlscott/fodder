@@ -37,7 +37,7 @@ export const CardHeader = ({ className, ref, ...props }: CardHeaderProps) => (
 
 export interface CardTitleProps
   extends React.HTMLAttributes<HTMLHeadingElement> {
-  ref?: React.RefObject<HTMLDivElement | null>;
+  ref?: React.RefObject<HTMLHeadingElement | null>;
 }
 export const CardTitle = ({ className, ref, ...props }: CardTitleProps) => (
   <h3
@@ -52,7 +52,7 @@ export const CardTitle = ({ className, ref, ...props }: CardTitleProps) => (
 
 export interface CardDescriptionProps
   extends React.HTMLAttributes<HTMLParagraphElement> {
-  ref?: React.RefObject<HTMLDivElement | null>;
+  ref?: React.RefObject<HTMLParagraphElement | null>;
 }
 export const CardDescription = ({
   className,
