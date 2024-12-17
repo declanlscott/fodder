@@ -5,9 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 patchedDependencies:
-  hono@4.6.13:
+  hono@4.6.14:
     hash: qcszdw4itb3oeyo7oupzyhbgpu
-    path: patches/hono@4.6.13.patch
+    path: patches/hono@4.6.14.patch
   valibot@0.42.1:
     hash: olcdhe54rd4abgrkzov4r6crga
     path: patches/valibot@0.42.1.patch
@@ -41,8 +41,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/schemas
       hono:
-        specifier: ^4.6.13
-        version: 4.6.13(patch_hash=qcszdw4itb3oeyo7oupzyhbgpu)
+        specifier: ^4.6.14
+        version: 4.6.14(patch_hash=qcszdw4itb3oeyo7oupzyhbgpu)
       valibot:
         specifier: ^0.42.1
         version: 0.42.1(patch_hash=olcdhe54rd4abgrkzov4r6crga)(typescript@5.7.2)
@@ -58,7 +58,7 @@ importers:
         version: link:../../configs/typescript
       '@hono/node-server':
         specifier: ^1.13.7
-        version: 1.13.7(hono@4.6.13(patch_hash=qcszdw4itb3oeyo7oupzyhbgpu))
+        version: 1.13.7(hono@4.6.14(patch_hash=qcszdw4itb3oeyo7oupzyhbgpu))
       '@types/node':
         specifier: ^22.10.2
         version: 22.10.2
@@ -242,7 +242,7 @@ importers:
         version: 22.10.2
       tsup:
         specifier: ^8.3.5
-        version: 8.3.5(@swc/core@1.7.26)(jiti@1.21.6)(postcss@8.4.49)(tsx@4.19.2)(typescript@5.7.2)(yaml@2.5.0)
+        version: 8.3.5(@swc/core@1.7.26(@swc/helpers@0.5.13))(jiti@1.21.6)(postcss@8.4.49)(tsx@4.19.2)(typescript@5.7.2)(yaml@2.5.0)
       typescript:
         specifier: ^5.7.2
         version: 5.7.2
@@ -264,7 +264,7 @@ importers:
         version: link:../../configs/typescript
       tsup:
         specifier: ^8.3.5
-        version: 8.3.5(@swc/core@1.7.26)(jiti@1.21.6)(postcss@8.4.49)(tsx@4.19.2)(typescript@5.7.2)(yaml@2.5.0)
+        version: 8.3.5(@swc/core@1.7.26(@swc/helpers@0.5.13))(jiti@1.21.6)(postcss@8.4.49)(tsx@4.19.2)(typescript@5.7.2)(yaml@2.5.0)
       typescript:
         specifier: ^5.7.2
         version: 5.7.2
@@ -319,7 +319,7 @@ importers:
         version: 3.4.16
       tsup:
         specifier: ^8.3.5
-        version: 8.3.5(@swc/core@1.7.26)(jiti@1.21.6)(postcss@8.4.49)(tsx@4.19.2)(typescript@5.7.2)(yaml@2.5.0)
+        version: 8.3.5(@swc/core@1.7.26(@swc/helpers@0.5.13))(jiti@1.21.6)(postcss@8.4.49)(tsx@4.19.2)(typescript@5.7.2)(yaml@2.5.0)
       typescript:
         specifier: ^5.7.2
         version: 5.7.2
@@ -2102,8 +2102,8 @@ packages:
     resolution: {integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==}
     engines: {node: '>= 0.4'}
 
-  hono@4.6.13:
-    resolution: {integrity: sha512-haV0gaMdSjy9URCRN9hxBPlqHa7fMm/T72kAImIxvw4eQLbNz1rgjN4hHElLJSieDiNuiIAXC//cC6YGz2KCbg==}
+  hono@4.6.14:
+    resolution: {integrity: sha512-j4VkyUp2xazGJ8eCCLN1Vm/bxdvm/j5ZuU9AIjLu9vapn2M44p9L3Ktr9Vnb2RN2QtcR/wVjZVMlT5k7GJQgPw==}
     engines: {node: '>=16.9.0'}
 
   ignore@5.3.2:
@@ -3492,9 +3492,9 @@ snapshots:
 
   '@floating-ui/utils@0.2.8': {}
 
-  '@hono/node-server@1.13.7(hono@4.6.13(patch_hash=qcszdw4itb3oeyo7oupzyhbgpu))':
+  '@hono/node-server@1.13.7(hono@4.6.14(patch_hash=qcszdw4itb3oeyo7oupzyhbgpu))':
     dependencies:
-      hono: 4.6.13(patch_hash=qcszdw4itb3oeyo7oupzyhbgpu)
+      hono: 4.6.14(patch_hash=qcszdw4itb3oeyo7oupzyhbgpu)
 
   '@humanwhocodes/config-array@0.13.0':
     dependencies:
@@ -4759,7 +4759,7 @@ snapshots:
     dependencies:
       function-bind: 1.1.2
 
-  hono@4.6.13(patch_hash=qcszdw4itb3oeyo7oupzyhbgpu): {}
+  hono@4.6.14(patch_hash=qcszdw4itb3oeyo7oupzyhbgpu): {}
 
   ignore@5.3.2: {}
 
@@ -5331,7 +5331,7 @@ snapshots:
 
   tslib@2.7.0: {}
 
-  tsup@8.3.5(@swc/core@1.7.26)(jiti@1.21.6)(postcss@8.4.49)(tsx@4.19.2)(typescript@5.7.2)(yaml@2.5.0):
+  tsup@8.3.5(@swc/core@1.7.26(@swc/helpers@0.5.13))(jiti@1.21.6)(postcss@8.4.49)(tsx@4.19.2)(typescript@5.7.2)(yaml@2.5.0):
     dependencies:
       bundle-require: 5.0.0(esbuild@0.24.0)
       cac: 6.7.14
