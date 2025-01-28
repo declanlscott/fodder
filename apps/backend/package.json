@@ -22,14 +22,14 @@
     "@fodder/prettier-config": "workspace:*",
     "@fodder/typescript-config": "workspace:*",
     "@hono/node-server": "^1.13.7",
-    "@types/node": "^22.10.7",
+    "@types/node": "^22.10.10",
     "dotenv": "^16.4.7",
     "esbuild": "^0.24.2",
     "npm-run-all2": "^7.0.2",
     "tsx": "^4.19.2",
     "typescript": "^5.7.3",
     "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "^3.0.2"
+    "vitest": "^3.0.4"
   },
   "prettier": "@fodder/prettier-config"
 }
