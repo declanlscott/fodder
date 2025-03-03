@@ -19,8 +19,8 @@
     "@fodder/eslint-config": "workspace:*",
     "@fodder/prettier-config": "workspace:*",
     "@fodder/typescript-config": "workspace:*",
-    "tsup": "^8.3.6",
-    "typescript": "^5.7.3"
+    "tsup": "^8.4.0",
+    "typescript": "^5.8.2"
   },
   "prettier": "@fodder/prettier-config"
 }
