@@ -18,7 +18,7 @@
     "typescript": "^5.8.2"
   },
   "prettier": "@fodder/prettier-config",
-  "packageManager": "pnpm@10.5.2",
+  "packageManager": "pnpm@9.3.0",
   "pnpm": {
     "patchedDependencies": {
       "valibot@0.42.1": "patches/valibot@0.42.1.patch",

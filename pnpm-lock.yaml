@@ -6,10 +6,10 @@ settings:
 
 patchedDependencies:
   hono@4.6.19:
-    hash: b9d3c76f9cc47b534d6c33e8bc3b20b063fc37df0970a9ec29de41f0a108950c
+    hash: qcszdw4itb3oeyo7oupzyhbgpu
     path: patches/hono@4.6.19.patch
   valibot@0.42.1:
-    hash: d0a726e7c6af520f11bbdb27b5ba4cd4d5abdef025469ea0723d0928e5ab63ef
+    hash: olcdhe54rd4abgrkzov4r6crga
     path: patches/valibot@0.42.1.patch
 
 importers:
@@ -42,10 +42,10 @@ importers:
         version: link:../../packages/schemas
       hono:
         specifier: ^4.6.19
-        version: 4.6.19(patch_hash=b9d3c76f9cc47b534d6c33e8bc3b20b063fc37df0970a9ec29de41f0a108950c)
+        version: 4.6.19(patch_hash=qcszdw4itb3oeyo7oupzyhbgpu)
       valibot:
         specifier: ^0.42.1
-        version: 0.42.1(patch_hash=d0a726e7c6af520f11bbdb27b5ba4cd4d5abdef025469ea0723d0928e5ab63ef)(typescript@5.8.2)
+        version: 0.42.1(patch_hash=olcdhe54rd4abgrkzov4r6crga)(typescript@5.8.2)
     devDependencies:
       '@fodder/eslint-config':
         specifier: workspace:*
@@ -58,7 +58,7 @@ importers:
         version: link:../../configs/typescript
       '@hono/node-server':
         specifier: ^1.13.8
-        version: 1.13.8(hono@4.6.19(patch_hash=b9d3c76f9cc47b534d6c33e8bc3b20b063fc37df0970a9ec29de41f0a108950c))
+        version: 1.13.8(hono@4.6.19(patch_hash=qcszdw4itb3oeyo7oupzyhbgpu))
       '@types/node':
         specifier: ^22.13.9
         version: 22.13.9
@@ -136,7 +136,7 @@ importers:
         version: 1.0.7(tailwindcss@3.4.17)
       valibot:
         specifier: ^0.42.1
-        version: 0.42.1(patch_hash=d0a726e7c6af520f11bbdb27b5ba4cd4d5abdef025469ea0723d0928e5ab63ef)(typescript@5.8.2)
+        version: 0.42.1(patch_hash=olcdhe54rd4abgrkzov4r6crga)(typescript@5.8.2)
     devDependencies:
       '@fodder/eslint-config':
         specifier: workspace:*
@@ -226,7 +226,7 @@ importers:
     dependencies:
       valibot:
         specifier: ^0.42.1
-        version: 0.42.1(patch_hash=d0a726e7c6af520f11bbdb27b5ba4cd4d5abdef025469ea0723d0928e5ab63ef)(typescript@5.8.2)
+        version: 0.42.1(patch_hash=olcdhe54rd4abgrkzov4r6crga)(typescript@5.8.2)
     devDependencies:
       '@fodder/eslint-config':
         specifier: workspace:*
@@ -242,7 +242,7 @@ importers:
         version: 22.13.9
       tsup:
         specifier: ^8.4.0
-        version: 8.4.0(@swc/core@1.10.18(@swc/helpers@0.5.13))(jiti@1.21.6)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.2)(yaml@2.5.0)
+        version: 8.4.0(@swc/core@1.10.18)(jiti@1.21.6)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.2)(yaml@2.5.0)
       typescript:
         specifier: ^5.8.2
         version: 5.8.2
@@ -251,7 +251,7 @@ importers:
     dependencies:
       valibot:
         specifier: ^0.42.1
-        version: 0.42.1(patch_hash=d0a726e7c6af520f11bbdb27b5ba4cd4d5abdef025469ea0723d0928e5ab63ef)(typescript@5.8.2)
+        version: 0.42.1(patch_hash=olcdhe54rd4abgrkzov4r6crga)(typescript@5.8.2)
     devDependencies:
       '@fodder/eslint-config':
         specifier: workspace:*
@@ -264,7 +264,7 @@ importers:
         version: link:../../configs/typescript
       tsup:
         specifier: ^8.4.0
-        version: 8.4.0(@swc/core@1.10.18(@swc/helpers@0.5.13))(jiti@1.21.6)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.2)(yaml@2.5.0)
+        version: 8.4.0(@swc/core@1.10.18)(jiti@1.21.6)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.2)(yaml@2.5.0)
       typescript:
         specifier: ^5.8.2
         version: 5.8.2
@@ -319,7 +319,7 @@ importers:
         version: 3.4.17
       tsup:
         specifier: ^8.4.0
-        version: 8.4.0(@swc/core@1.10.18(@swc/helpers@0.5.13))(jiti@1.21.6)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.2)(yaml@2.5.0)
+        version: 8.4.0(@swc/core@1.10.18)(jiti@1.21.6)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.2)(yaml@2.5.0)
       typescript:
         specifier: ^5.8.2
         version: 5.8.2
@@ -3525,9 +3525,9 @@ snapshots:
 
   '@floating-ui/utils@0.2.9': {}
 
-  '@hono/node-server@1.13.8(hono@4.6.19(patch_hash=b9d3c76f9cc47b534d6c33e8bc3b20b063fc37df0970a9ec29de41f0a108950c))':
+  '@hono/node-server@1.13.8(hono@4.6.19(patch_hash=qcszdw4itb3oeyo7oupzyhbgpu))':
     dependencies:
-      hono: 4.6.19(patch_hash=b9d3c76f9cc47b534d6c33e8bc3b20b063fc37df0970a9ec29de41f0a108950c)
+      hono: 4.6.19(patch_hash=qcszdw4itb3oeyo7oupzyhbgpu)
 
   '@humanwhocodes/config-array@0.13.0':
     dependencies:
@@ -4872,7 +4872,7 @@ snapshots:
     dependencies:
       function-bind: 1.1.2
 
-  hono@4.6.19(patch_hash=b9d3c76f9cc47b534d6c33e8bc3b20b063fc37df0970a9ec29de41f0a108950c): {}
+  hono@4.6.19(patch_hash=qcszdw4itb3oeyo7oupzyhbgpu): {}
 
   ignore@5.3.2: {}
 
@@ -5480,7 +5480,7 @@ snapshots:
 
   tslib@2.8.1: {}
 
-  tsup@8.4.0(@swc/core@1.10.18(@swc/helpers@0.5.13))(jiti@1.21.6)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.2)(yaml@2.5.0):
+  tsup@8.4.0(@swc/core@1.10.18)(jiti@1.21.6)(postcss@8.5.3)(tsx@4.19.3)(typescript@5.8.2)(yaml@2.5.0):
     dependencies:
       bundle-require: 5.1.0(esbuild@0.25.0)
       cac: 6.7.14
@@ -5617,7 +5617,7 @@ snapshots:
 
   util-deprecate@1.0.2: {}
 
-  valibot@0.42.1(patch_hash=d0a726e7c6af520f11bbdb27b5ba4cd4d5abdef025469ea0723d0928e5ab63ef)(typescript@5.8.2):
+  valibot@0.42.1(patch_hash=olcdhe54rd4abgrkzov4r6crga)(typescript@5.8.2):
     optionalDependencies:
       typescript: 5.8.2
 
