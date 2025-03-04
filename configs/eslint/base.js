@@ -5,7 +5,7 @@ module.exports = {
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended-type-checked",
     "plugin:@typescript-eslint/stylistic-type-checked",
-    "turbo",
+    "plugin:turbo/recommended",
     "prettier",
   ],
   ignorePatterns: [
