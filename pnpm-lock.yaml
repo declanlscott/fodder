@@ -172,7 +172,7 @@ importers:
         specifier: ^8.5.3
         version: 8.5.3
       tailwindcss:
-        specifier: ^3.4.17
+        specifier: 3.4.17
         version: 3.4.17
       typescript:
         specifier: ^5.8.2
@@ -315,7 +315,7 @@ importers:
         specifier: ^19.0.11
         version: 19.0.11
       tailwindcss:
-        specifier: ^3.4.17
+        specifier: 3.4.17
         version: 3.4.17
       tsup:
         specifier: ^8.4.0
