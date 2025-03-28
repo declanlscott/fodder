@@ -22,9 +22,9 @@
     "@radix-ui/react-toggle": "^1.1.2",
     "clsx": "^2.1.1",
     "cva": "npm:class-variance-authority@^0.7.1",
-    "lucide-react": "^0.482.0",
+    "lucide-react": "^0.485.0",
     "react": "^19.0.0",
-    "tailwind-merge": "2.6.0",
+    "tailwind-merge": "3.0.2",
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
