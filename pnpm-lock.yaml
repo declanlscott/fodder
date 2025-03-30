@@ -5,9 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 patchedDependencies:
-  hono@4.7.4:
-    hash: 57rqq7fcykusxdo3sm3gvrpeqm
-    path: patches/hono@4.7.4.patch
+  hono@4.7.5:
+    hash: w3ggxhotf5m2yvcrhcjtuwuapy
+    path: patches/hono@4.7.5.patch
   valibot@1.0.0:
     hash: usfsglxmfwdbyivws5tpbvhwvu
     path: patches/valibot@1.0.0.patch
@@ -41,8 +41,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/schemas
       hono:
-        specifier: ^4.7.4
-        version: 4.7.4(patch_hash=57rqq7fcykusxdo3sm3gvrpeqm)
+        specifier: ^4.7.5
+        version: 4.7.5(patch_hash=w3ggxhotf5m2yvcrhcjtuwuapy)
       valibot:
         specifier: ^1.0.0
         version: 1.0.0(patch_hash=usfsglxmfwdbyivws5tpbvhwvu)(typescript@5.8.2)
@@ -58,7 +58,7 @@ importers:
         version: link:../../configs/typescript
       '@hono/node-server':
         specifier: ^1.14.0
-        version: 1.14.0(hono@4.7.4(patch_hash=57rqq7fcykusxdo3sm3gvrpeqm))
+        version: 1.14.0(hono@4.7.5(patch_hash=w3ggxhotf5m2yvcrhcjtuwuapy))
       '@types/node':
         specifier: ^22.13.13
         version: 22.13.13
@@ -296,8 +296,8 @@ importers:
         specifier: ^19.0.0
         version: 19.0.0
       tailwind-merge:
-        specifier: 3.0.2
-        version: 3.0.2
+        specifier: 2.6.0
+        version: 2.6.0
       tailwindcss-animate:
         specifier: ^1.0.7
         version: 1.0.7(tailwindcss@3.4.17)
@@ -2097,8 +2097,8 @@ packages:
     resolution: {integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==}
     engines: {node: '>= 0.4'}
 
-  hono@4.7.4:
-    resolution: {integrity: sha512-Pst8FuGqz3L7tFF+u9Pu70eI0xa5S3LPUmrNd5Jm8nTHze9FxLTK9Kaj5g/k4UcwuJSXTP65SyHOPLrffpcAJg==}
+  hono@4.7.5:
+    resolution: {integrity: sha512-fDOK5W2C1vZACsgLONigdZTRZxuBqFtcKh7bUQ5cVSbwI2RWjloJDcgFOVzbQrlI6pCmhlTsVYZ7zpLj4m4qMQ==}
     engines: {node: '>=16.9.0'}
 
   ignore@5.3.2:
@@ -2690,8 +2690,8 @@ packages:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
 
-  tailwind-merge@3.0.2:
-    resolution: {integrity: sha512-l7z+OYZ7mu3DTqrL88RiKrKIqO3NcpEO8V/Od04bNpvk0kiIFndGEoqfuzvj4yuhRkHKjRkII2z+KS2HfPcSxw==}
+  tailwind-merge@2.6.0:
+    resolution: {integrity: sha512-P+Vu1qXfzediirmHOC3xKGAYeZtPcV9g76X+xg2FD4tYgR71ewMA35Y3sCz3zhiN/dwefRpJX0yBcgwi1fXNQA==}
 
   tailwindcss-animate@1.0.7:
     resolution: {integrity: sha512-bl6mpH3T7I3UFxuvDEXLxy/VuFxBk5bbzplh7tXI68mwMokNYd1t9qPBHlnyTwfa4JGC4zP516I1hYYtQ/vspA==}
@@ -3410,9 +3410,9 @@ snapshots:
 
   '@floating-ui/utils@0.2.9': {}
 
-  '@hono/node-server@1.14.0(hono@4.7.4(patch_hash=57rqq7fcykusxdo3sm3gvrpeqm))':
+  '@hono/node-server@1.14.0(hono@4.7.5(patch_hash=w3ggxhotf5m2yvcrhcjtuwuapy))':
     dependencies:
-      hono: 4.7.4(patch_hash=57rqq7fcykusxdo3sm3gvrpeqm)
+      hono: 4.7.5(patch_hash=w3ggxhotf5m2yvcrhcjtuwuapy)
 
   '@humanwhocodes/config-array@0.13.0':
     dependencies:
@@ -4805,7 +4805,7 @@ snapshots:
     dependencies:
       function-bind: 1.1.2
 
-  hono@4.7.4(patch_hash=57rqq7fcykusxdo3sm3gvrpeqm): {}
+  hono@4.7.5(patch_hash=w3ggxhotf5m2yvcrhcjtuwuapy): {}
 
   ignore@5.3.2: {}
 
@@ -5357,7 +5357,7 @@ snapshots:
 
   supports-preserve-symlinks-flag@1.0.0: {}
 
-  tailwind-merge@3.0.2: {}
+  tailwind-merge@2.6.0: {}
 
   tailwindcss-animate@1.0.7(tailwindcss@3.4.17):
     dependencies:
