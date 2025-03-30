@@ -1,8 +1,8 @@
 diff --git a/dist/adapter/aws-lambda/handler.js b/dist/adapter/aws-lambda/handler.js
-index bac308f9f67dfeacac07e9752a506f28e0000bdf..19a429cf4e8fe550373b28545bacc76990165681 100644
+index e7cb73df408898ad699df3edc99e4f8d45385fe6..d760c0ac0d054e647f38245807ff5ed6404444c4 100644
 --- a/dist/adapter/aws-lambda/handler.js
 +++ b/dist/adapter/aws-lambda/handler.js
-@@ -254,12 +254,12 @@ var getProcessor = (event) => {
+@@ -260,12 +260,12 @@ var getProcessor = (event) => {
  };
  var isProxyEventALB = (event) => {
    if (event.requestContext) {
@@ -18,10 +18,10 @@ index bac308f9f67dfeacac07e9752a506f28e0000bdf..19a429cf4e8fe550373b28545bacc769
  var isContentTypeBinary = (contentType) => {
    return !/^(text\/(plain|html|css|javascript|csv).*|application\/(.*json|.*xml).*|image\/svg\+xml.*)$/.test(
 diff --git a/dist/cjs/adapter/aws-lambda/handler.js b/dist/cjs/adapter/aws-lambda/handler.js
-index 7a07e8c474550ce3cadc20f4309f7e15a40e0bb4..5628773c094a98c9a675396547be8e6a52d6d0b1 100644
+index e423d099f33f355fcc598b43e5728e16d7a2284b..2538fbf7b47b6a03b2da1c24795f11861fa7f11e 100644
 --- a/dist/cjs/adapter/aws-lambda/handler.js
 +++ b/dist/cjs/adapter/aws-lambda/handler.js
-@@ -284,12 +284,12 @@ const getProcessor = (event) => {
+@@ -290,12 +290,12 @@ const getProcessor = (event) => {
  };
  const isProxyEventALB = (event) => {
    if (event.requestContext) {
