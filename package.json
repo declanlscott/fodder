@@ -14,8 +14,8 @@
     "@fodder/eslint-config": "workspace:*",
     "@fodder/prettier-config": "workspace:*",
     "prettier": "^3.5.3",
-    "turbo": "^2.4.4",
-    "typescript": "^5.8.2"
+    "turbo": "^2.5.0",
+    "typescript": "^5.8.3"
   },
   "prettier": "@fodder/prettier-config",
   "packageManager": "pnpm@9.3.0",
