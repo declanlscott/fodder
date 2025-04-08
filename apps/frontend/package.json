@@ -37,7 +37,7 @@
     "@fodder/eslint-config": "workspace:*",
     "@fodder/prettier-config": "workspace:*",
     "@fodder/typescript-config": "workspace:*",
-    "@tanstack/eslint-plugin-query": "^5.72.0",
+    "@tanstack/eslint-plugin-query": "^5.71.5",
     "@types/react": "^19.0.12",
     "@types/react-dom": "^19.0.4",
     "@vitejs/plugin-react-swc": "^3.8.1",
