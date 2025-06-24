@@ -8,76 +8,32 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-// Import Routes
+import { Route as rootRouteImport } from './routes/__root'
+import { Route as FlavorsRouteImport } from './routes/flavors'
+import { Route as IndexRouteImport } from './routes/index'
+import { Route as RestaurantsSlugRouteImport } from './routes/restaurants.$slug'
+import { Route as FlavorsSlugRouteImport } from './routes/flavors_.$slug'
 
-import { Route as rootRoute } from './routes/__root'
-import { Route as FlavorsImport } from './routes/flavors'
-import { Route as IndexImport } from './routes/index'
-import { Route as RestaurantsSlugImport } from './routes/restaurants.$slug'
-import { Route as FlavorsSlugImport } from './routes/flavors_.$slug'
-
-// Create/Update Routes
-
-const FlavorsRoute = FlavorsImport.update({
+const FlavorsRoute = FlavorsRouteImport.update({
   id: '/flavors',
   path: '/flavors',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const IndexRoute = IndexImport.update({
+const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const RestaurantsSlugRoute = RestaurantsSlugImport.update({
+const RestaurantsSlugRoute = RestaurantsSlugRouteImport.update({
   id: '/restaurants/$slug',
   path: '/restaurants/$slug',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const FlavorsSlugRoute = FlavorsSlugImport.update({
+const FlavorsSlugRoute = FlavorsSlugRouteImport.update({
   id: '/flavors_/$slug',
   path: '/flavors/$slug',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-// Populate the FileRoutesByPath interface
-
-declare module '@tanstack/react-router' {
-  interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/flavors': {
-      id: '/flavors'
-      path: '/flavors'
-      fullPath: '/flavors'
-      preLoaderRoute: typeof FlavorsImport
-      parentRoute: typeof rootRoute
-    }
-    '/flavors_/$slug': {
-      id: '/flavors_/$slug'
-      path: '/flavors/$slug'
-      fullPath: '/flavors/$slug'
-      preLoaderRoute: typeof FlavorsSlugImport
-      parentRoute: typeof rootRoute
-    }
-    '/restaurants/$slug': {
-      id: '/restaurants/$slug'
-      path: '/restaurants/$slug'
-      fullPath: '/restaurants/$slug'
-      preLoaderRoute: typeof RestaurantsSlugImport
-      parentRoute: typeof rootRoute
-    }
-  }
-}
-
-// Create and export the route tree
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -85,22 +41,19 @@ export interface FileRoutesByFullPath {
   '/flavors/$slug': typeof FlavorsSlugRoute
   '/restaurants/$slug': typeof RestaurantsSlugRoute
 }
-
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/flavors': typeof FlavorsRoute
   '/flavors/$slug': typeof FlavorsSlugRoute
   '/restaurants/$slug': typeof RestaurantsSlugRoute
 }
-
 export interface FileRoutesById {
-  __root__: typeof rootRoute
+  __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/flavors': typeof FlavorsRoute
   '/flavors_/$slug': typeof FlavorsSlugRoute
   '/restaurants/$slug': typeof RestaurantsSlugRoute
 }
-
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths: '/' | '/flavors' | '/flavors/$slug' | '/restaurants/$slug'
@@ -109,12 +62,44 @@ export interface FileRouteTypes {
   id: '__root__' | '/' | '/flavors' | '/flavors_/$slug' | '/restaurants/$slug'
   fileRoutesById: FileRoutesById
 }
-
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   FlavorsRoute: typeof FlavorsRoute
   FlavorsSlugRoute: typeof FlavorsSlugRoute
   RestaurantsSlugRoute: typeof RestaurantsSlugRoute
+}
+
+declare module '@tanstack/react-router' {
+  interface FileRoutesByPath {
+    '/flavors': {
+      id: '/flavors'
+      path: '/flavors'
+      fullPath: '/flavors'
+      preLoaderRoute: typeof FlavorsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/restaurants/$slug': {
+      id: '/restaurants/$slug'
+      path: '/restaurants/$slug'
+      fullPath: '/restaurants/$slug'
+      preLoaderRoute: typeof RestaurantsSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/flavors_/$slug': {
+      id: '/flavors_/$slug'
+      path: '/flavors/$slug'
+      fullPath: '/flavors/$slug'
+      preLoaderRoute: typeof FlavorsSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+  }
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -123,35 +108,6 @@ const rootRouteChildren: RootRouteChildren = {
   FlavorsSlugRoute: FlavorsSlugRoute,
   RestaurantsSlugRoute: RestaurantsSlugRoute,
 }
-
-export const routeTree = rootRoute
+export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-/* ROUTE_MANIFEST_START
-{
-  "routes": {
-    "__root__": {
-      "filePath": "__root.tsx",
-      "children": [
-        "/",
-        "/flavors",
-        "/flavors_/$slug",
-        "/restaurants/$slug"
-      ]
-    },
-    "/": {
-      "filePath": "index.tsx"
-    },
-    "/flavors": {
-      "filePath": "flavors.tsx"
-    },
-    "/flavors_/$slug": {
-      "filePath": "flavors_.$slug.tsx"
-    },
-    "/restaurants/$slug": {
-      "filePath": "restaurants.$slug.tsx"
-    }
-  }
-}
-ROUTE_MANIFEST_END */
