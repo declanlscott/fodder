@@ -77,22 +77,12 @@ export const ScrapedRestaurantNextData = v.object({
       page: v.object({
         customData: v.object({
           restaurantDetails: v.object({
-            id: v.number(),
-            number: v.string(),
-            title: v.string(),
-            slug: v.string(),
-            phoneNumber: v.string(),
-            address: v.string(),
+            name: v.string(),
+            streetAddress: v.string(),
             city: v.string(),
             state: v.string(),
-            postalCode: v.string(),
-            latitude: v.number(),
-            longitude: v.number(),
-            onlineOrderUrl: v.string(),
-            ownerFriendlyName: v.nullable(v.string()),
-            ownerMessage: v.nullable(v.string()),
-            jobsApplyUrl: v.string(),
-            flavorOfTheDay: v.array(FlavorProps),
+            zip: v.string(),
+            telephone: v.string(),
           }),
           restaurantCalendar: v.object({
             restaurant: v.object({

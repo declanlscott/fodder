@@ -137,22 +137,108 @@ describe("formatScrapedRestaurant", () => {
           page: {
             customData: {
               restaurantDetails: {
-                id: 0,
-                number: "number",
-                title: "title",
-                slug: "slug",
-                phoneNumber: "phoneNumber",
-                address: "address",
+                // country: "country",
+                name: "name",
+                // olorestaurantid: 0,
+                // restaurantId: "0",
+                // restaurantNumber: "0",
+                // onlineOrderUrl: "onlineOrderUrl",
+                // ownerMessage: "ownerMessage",
+                // ownerFriendlyName: "ownerFriendlyName",
+                // jobsApplyUrl: "jobsApplyUrl",
+                telephone: "telephone",
+                streetAddress: "streetAddress",
                 city: "city",
                 state: "state",
-                postalCode: "postalCode",
-                latitude: 0,
-                longitude: 0,
-                onlineOrderUrl: "onlineOrderUrl",
-                ownerFriendlyName: "ownerFriendlyName",
-                ownerMessage: "ownerMessage",
-                jobsApplyUrl: "jobsApplyUrl",
-                flavorOfTheDay: [],
+                zip: "zip",
+                // latitude: 0,
+                // longitude: 0,
+                // labels: [
+                //   {
+                //     key: "key",
+                //     value: "value",
+                //   },
+                // ],
+                // customerFacingMessage: "customerFacingMessage",
+                // urlSlug: "urlSlug",
+                // timeZoneOffset: 0,
+                // isTemporaryClosed: false,
+                // openDate: "1/1/1970",
+                // openTime: "1970-01-01T00:00:00Z",
+                // closeTime: "1970-01-01T00:00:00Z",
+                // isOpenNow: false,
+                // upcomingEvents: [],
+                // handoffOptions: ["handoffOptions"],
+                // flavors: [
+                //   {
+                //     flavorId: 0,
+                //     description: "description",
+                //     menuItemId: 0,
+                //     calendarDate: "1970-01-01T00:00:00",
+                //     name: "name",
+                //     urlSlug: "urlSlug",
+                //     image: {
+                //       useWhiteBackground: false,
+                //       imagePath: "imagePath",
+                //     },
+                //   },
+                // ],
+                // currentTimes: {
+                //   dineInTimes: [
+                //     {
+                //       opens: "opens",
+                //       closes: "closes",
+                //       dayOfWeek: "dayOfWeek",
+                //       day: "day",
+                //     },
+                //   ],
+                //   driveThruTimes: [
+                //     {
+                //       opens: "opens",
+                //       closes: "closes",
+                //       dayOfWeek: "dayOfWeek",
+                //       day: "day",
+                //     },
+                //   ],
+                //   curdSideTimes: [
+                //     {
+                //       opens: "opens",
+                //       closes: "closes",
+                //       dayOfWeek: "dayOfWeek",
+                //       day: "day",
+                //     },
+                //   ],
+                //   deliveryTimes: [
+                //     {
+                //       opens: "opens",
+                //       closes: "closes",
+                //       dayOfWeek: "dayOfWeek",
+                //       day: "day",
+                //     },
+                //   ],
+                //   lateNightDriveThruTimes: null,
+                // },
+                // hoursTimeBlocks: {
+                //   dineInTimes: [{ days: "days", times: "times" }],
+                //   driveThruTimes: [{ days: "days", times: "times" }],
+                //   curdSideTimes: [{ days: "days", times: "times" }],
+                //   lateNightDriveThruTimes: null,
+                //   deliveryTimes: [{ days: "days", times: "times" }],
+                // },
+                // temporalClosures: [],
+                // onlineOrderStatus: "0",
+                // isDiningRoomClosed: false,
+                // isLobbyClosed: false,
+                // isDriveThruClosed: false,
+                // isCurdsideUnavailable: false,
+                // groupedHours: {
+                //   hoursByDestination: [
+                //     {
+                //       destination: "destination",
+                //       hoursTimeBlocks: [{ days: "days", times: "times" }],
+                //     },
+                //   ],
+                // },
               },
               restaurantCalendar: {
                 restaurant: {
@@ -183,14 +269,14 @@ describe("formatScrapedRestaurant", () => {
     const output = formatScrapedRestaurant(input);
 
     const expected = {
-      name: input.props.pageProps.page.customData.restaurantDetails.title,
-      address: input.props.pageProps.page.customData.restaurantDetails.address,
+      name: input.props.pageProps.page.customData.restaurantDetails.name,
+      address:
+        input.props.pageProps.page.customData.restaurantDetails.streetAddress,
       city: input.props.pageProps.page.customData.restaurantDetails.city,
       state: input.props.pageProps.page.customData.restaurantDetails.state,
-      zipCode:
-        input.props.pageProps.page.customData.restaurantDetails.postalCode,
+      zipCode: input.props.pageProps.page.customData.restaurantDetails.zip,
       phoneNumber:
-        input.props.pageProps.page.customData.restaurantDetails.phoneNumber,
+        input.props.pageProps.page.customData.restaurantDetails.telephone,
       flavors: [
         {
           date: input.props.pageProps.page.customData.restaurantCalendar

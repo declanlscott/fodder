@@ -95,12 +95,12 @@ export function formatScrapedRestaurant(
     nextData.props.pageProps.page.customData.restaurantDetails;
 
   return {
-    name: restaurantProps.title,
-    address: restaurantProps.address,
+    name: restaurantProps.name,
+    address: restaurantProps.streetAddress,
     city: restaurantProps.city,
     state: restaurantProps.state,
-    zipCode: restaurantProps.postalCode,
-    phoneNumber: restaurantProps.phoneNumber,
+    zipCode: restaurantProps.zip,
+    phoneNumber: restaurantProps.telephone,
     flavors,
   };
 }
