@@ -38,7 +38,7 @@
     "@fodder/prettier-config": "workspace:*",
     "@fodder/typescript-config": "workspace:*",
     "@tanstack/eslint-plugin-query": "^5.83.1",
-    "@types/react": "^19.1.10",
+    "@types/react": "^19.1.11",
     "@types/react-dom": "^19.1.7",
     "@vitejs/plugin-react-swc": "^4.0.1",
     "autoprefixer": "^10.4.21",
