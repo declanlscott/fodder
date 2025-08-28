@@ -32,7 +32,7 @@
     "@fodder/prettier-config": "workspace:*",
     "@fodder/typescript-config": "workspace:*",
     "@types/react": "^19.1.11",
-    "tailwindcss": "4.1.12",
+    "tailwindcss": "3.4.17",
     "tsup": "^8.5.0",
     "typescript": "^5.9.2"
   },
