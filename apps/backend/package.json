@@ -21,7 +21,7 @@
     "@fodder/eslint-config": "workspace:*",
     "@fodder/prettier-config": "workspace:*",
     "@fodder/typescript-config": "workspace:*",
-    "@hono/node-server": "^1.19.0",
+    "@hono/node-server": "^1.19.1",
     "@types/node": "^24.3.0",
     "dotenv": "^17.2.1",
     "esbuild": "^0.25.9",
