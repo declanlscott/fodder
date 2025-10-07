@@ -5,9 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 patchedDependencies:
-  hono@4.9.9:
-    hash: 6kaaba6p46fshlbjit4ja4vfty
-    path: patches/hono@4.9.9.patch
+  hono@4.9.10:
+    hash: 7k2xlepscfviwnkcul24kmsb7e
+    path: patches/hono@4.9.10.patch
   valibot@1.1.0:
     hash: bjo7v5eeo2br4xxw2eznckvrou
     path: patches/valibot@1.1.0.patch
@@ -41,8 +41,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/schemas
       hono:
-        specifier: ^4.9.9
-        version: 4.9.9(patch_hash=6kaaba6p46fshlbjit4ja4vfty)
+        specifier: ^4.9.10
+        version: 4.9.10(patch_hash=7k2xlepscfviwnkcul24kmsb7e)
       valibot:
         specifier: ^1.1.0
         version: 1.1.0(patch_hash=bjo7v5eeo2br4xxw2eznckvrou)(typescript@5.9.3)
@@ -58,7 +58,7 @@ importers:
         version: link:../../configs/typescript
       '@hono/node-server':
         specifier: ^1.19.5
-        version: 1.19.5(hono@4.9.9(patch_hash=6kaaba6p46fshlbjit4ja4vfty))
+        version: 1.19.5(hono@4.9.10(patch_hash=7k2xlepscfviwnkcul24kmsb7e))
       '@types/node':
         specifier: ^24.7.0
         version: 24.7.0
@@ -79,7 +79,7 @@ importers:
         version: 5.9.3
       vite-tsconfig-paths:
         specifier: ^5.1.4
-        version: 5.1.4(typescript@5.9.3)(vite@7.1.3(@types/node@24.7.0)(jiti@1.21.7)(tsx@4.20.6)(yaml@2.8.1))
+        version: 5.1.4(typescript@5.9.3)(vite@7.1.9(@types/node@24.7.0)(jiti@1.21.7)(tsx@4.20.6)(yaml@2.8.1))
       vitest:
         specifier: ^3.2.4
         version: 3.2.4(@types/node@24.7.0)(jiti@1.21.7)(tsx@4.20.6)(yaml@2.8.1)
@@ -2230,8 +2230,8 @@ packages:
     resolution: {integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==}
     engines: {node: '>= 0.4'}
 
-  hono@4.9.9:
-    resolution: {integrity: sha512-Hxw4wT6zjJGZJdkJzAx9PyBdf7ZpxaTSA0NfxqjLghwMrLBX8p33hJBzoETRakF3UJu6OdNQBZAlNSkGqKFukw==}
+  hono@4.9.10:
+    resolution: {integrity: sha512-AlI15ijFyKTXR7eHo7QK7OR4RoKIedZvBuRjO8iy4zrxvlY5oFCdiRG/V/lFJHCNXJ0k72ATgnyzx8Yqa5arug==}
     engines: {node: '>=16.9.0'}
 
   ignore@5.3.2:
@@ -3593,9 +3593,9 @@ snapshots:
 
   '@floating-ui/utils@0.2.10': {}
 
-  '@hono/node-server@1.19.5(hono@4.9.9(patch_hash=6kaaba6p46fshlbjit4ja4vfty))':
+  '@hono/node-server@1.19.5(hono@4.9.10(patch_hash=7k2xlepscfviwnkcul24kmsb7e))':
     dependencies:
-      hono: 4.9.9(patch_hash=6kaaba6p46fshlbjit4ja4vfty)
+      hono: 4.9.10(patch_hash=7k2xlepscfviwnkcul24kmsb7e)
 
   '@humanwhocodes/config-array@0.13.0':
     dependencies:
@@ -5125,7 +5125,7 @@ snapshots:
     dependencies:
       function-bind: 1.1.2
 
-  hono@4.9.9(patch_hash=6kaaba6p46fshlbjit4ja4vfty): {}
+  hono@4.9.10(patch_hash=7k2xlepscfviwnkcul24kmsb7e): {}
 
   ignore@5.3.2: {}
 
@@ -5957,17 +5957,6 @@ snapshots:
       - terser
       - tsx
       - yaml
-
-  vite-tsconfig-paths@5.1.4(typescript@5.9.3)(vite@7.1.3(@types/node@24.7.0)(jiti@1.21.7)(tsx@4.20.6)(yaml@2.8.1)):
-    dependencies:
-      debug: 4.3.7
-      globrex: 0.1.2
-      tsconfck: 3.1.3(typescript@5.9.3)
-    optionalDependencies:
-      vite: 7.1.3(@types/node@24.7.0)(jiti@1.21.7)(tsx@4.20.6)(yaml@2.8.1)
-    transitivePeerDependencies:
-      - supports-color
-      - typescript
 
   vite-tsconfig-paths@5.1.4(typescript@5.9.3)(vite@7.1.9(@types/node@24.7.0)(jiti@1.21.7)(tsx@4.20.6)(yaml@2.8.1)):
     dependencies:
