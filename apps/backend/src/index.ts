@@ -24,6 +24,7 @@ api.use("*", async (c, next) => {
       allowMethods: ["GET"],
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     return await corsMiddleware(c, next);
   }
 
