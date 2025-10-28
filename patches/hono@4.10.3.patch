@@ -1,5 +1,5 @@
 diff --git a/dist/adapter/aws-lambda/handler.js b/dist/adapter/aws-lambda/handler.js
-index 3db684b46edb05ad94c3df4c8d9b644e7d0c9477..9afa3056bb374c5cdd02023fbc0aedd234e7b8f8 100644
+index 430fb47c34543e173082690c2bf7791ce4dbbd8c..9a2cc919413d2b684b4dd0a8abf508762331c443 100644
 --- a/dist/adapter/aws-lambda/handler.js
 +++ b/dist/adapter/aws-lambda/handler.js
 @@ -274,12 +274,12 @@ var getProcessor = (event) => {
@@ -16,9 +16,9 @@ index 3db684b46edb05ad94c3df4c8d9b644e7d0c9477..9afa3056bb374c5cdd02023fbc0aedd2
 +  return Object.prototype.hasOwnProperty.call(event, "rawPath");
  };
  var defaultIsContentTypeBinary = (contentType) => {
-   return !/^(text\/(plain|html|css|javascript|csv).*|application\/(.*json|.*xml).*|image\/svg\+xml.*)$/.test(
+   return !/^text\/(?:plain|html|css|javascript|csv)|(?:\/|\+)(?:json|xml)\s*(?:;|$)/.test(
 diff --git a/dist/cjs/adapter/aws-lambda/handler.js b/dist/cjs/adapter/aws-lambda/handler.js
-index bf42b18f23d80afd9099f66bd1434374017efd52..184cb098d13459059938daeeae0619c74f8ef90a 100644
+index c5c112f2123c53641f9fce55d5657bdc07c2880d..ebb4e9c9a33d6b3f81b708b62fecd141565e5fec 100644
 --- a/dist/cjs/adapter/aws-lambda/handler.js
 +++ b/dist/cjs/adapter/aws-lambda/handler.js
 @@ -304,12 +304,12 @@ const getProcessor = (event) => {
@@ -35,4 +35,4 @@ index bf42b18f23d80afd9099f66bd1434374017efd52..184cb098d13459059938daeeae0619c7
 +  return Object.prototype.hasOwnProperty.call(event, "rawPath");
  };
  const defaultIsContentTypeBinary = (contentType) => {
-   return !/^(text\/(plain|html|css|javascript|csv).*|application\/(.*json|.*xml).*|image\/svg\+xml.*)$/.test(
+   return !/^text\/(?:plain|html|css|javascript|csv)|(?:\/|\+)(?:json|xml)\s*(?:;|$)/.test(
