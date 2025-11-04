@@ -5,9 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 patchedDependencies:
-  hono@4.10.3:
+  hono@4.10.4:
     hash: piub74lhuw2ik4tqmxub7qqufi
-    path: patches/hono@4.10.3.patch
+    path: patches/hono@4.10.4.patch
   valibot@1.1.0:
     hash: bjo7v5eeo2br4xxw2eznckvrou
     path: patches/valibot@1.1.0.patch
@@ -41,8 +41,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/schemas
       hono:
-        specifier: ^4.10.3
-        version: 4.10.3(patch_hash=piub74lhuw2ik4tqmxub7qqufi)
+        specifier: ^4.10.4
+        version: 4.10.4(patch_hash=piub74lhuw2ik4tqmxub7qqufi)
       valibot:
         specifier: ^1.1.0
         version: 1.1.0(patch_hash=bjo7v5eeo2br4xxw2eznckvrou)(typescript@5.9.3)
@@ -58,7 +58,7 @@ importers:
         version: link:../../configs/typescript
       '@hono/node-server':
         specifier: ^1.19.6
-        version: 1.19.6(hono@4.10.3(patch_hash=piub74lhuw2ik4tqmxub7qqufi))
+        version: 1.19.6(hono@4.10.4(patch_hash=piub74lhuw2ik4tqmxub7qqufi))
       '@types/node':
         specifier: ^24.10.0
         version: 24.10.0
@@ -2140,8 +2140,8 @@ packages:
     resolution: {integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==}
     engines: {node: '>= 0.4'}
 
-  hono@4.10.3:
-    resolution: {integrity: sha512-2LOYWUbnhdxdL8MNbNg9XZig6k+cZXm5IjHn2Aviv7honhBMOHb+jxrKIeJRZJRmn+htUCKhaicxwXuUDlchRA==}
+  hono@4.10.4:
+    resolution: {integrity: sha512-YG/fo7zlU3KwrBL5vDpWKisLYiM+nVstBQqfr7gCPbSYURnNEP9BDxEMz8KfsDR9JX0lJWDRNc6nXX31v7ZEyg==}
     engines: {node: '>=16.9.0'}
 
   ignore@5.3.2:
@@ -3469,9 +3469,9 @@ snapshots:
 
   '@floating-ui/utils@0.2.10': {}
 
-  '@hono/node-server@1.19.6(hono@4.10.3(patch_hash=piub74lhuw2ik4tqmxub7qqufi))':
+  '@hono/node-server@1.19.6(hono@4.10.4(patch_hash=piub74lhuw2ik4tqmxub7qqufi))':
     dependencies:
-      hono: 4.10.3(patch_hash=piub74lhuw2ik4tqmxub7qqufi)
+      hono: 4.10.4(patch_hash=piub74lhuw2ik4tqmxub7qqufi)
 
   '@humanwhocodes/config-array@0.13.0':
     dependencies:
@@ -4928,7 +4928,7 @@ snapshots:
     dependencies:
       function-bind: 1.1.2
 
-  hono@4.10.3(patch_hash=piub74lhuw2ik4tqmxub7qqufi): {}
+  hono@4.10.4(patch_hash=piub74lhuw2ik4tqmxub7qqufi): {}
 
   ignore@5.3.2: {}
 

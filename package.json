@@ -22,7 +22,7 @@
   "pnpm": {
     "patchedDependencies": {
       "valibot@1.1.0": "patches/valibot@1.1.0.patch",
-      "hono@4.10.3": "patches/hono@4.10.3.patch"
+      "hono@4.10.4": "patches/hono@4.10.4.patch"
     }
   }
 }
