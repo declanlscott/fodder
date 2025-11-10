@@ -24,12 +24,12 @@
     "@hono/node-server": "^1.19.6",
     "@types/node": "^24.10.0",
     "dotenv": "^17.2.3",
-    "esbuild": "^0.25.12",
+    "esbuild": "^0.27.0",
     "npm-run-all2": "^8.0.4",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3",
     "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "^4.0.6"
+    "vitest": "^4.0.8"
   },
   "prettier": "@fodder/prettier-config"
 }
