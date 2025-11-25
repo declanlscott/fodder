@@ -15,7 +15,7 @@
     "@fodder/env": "workspace:*",
     "@fodder/schemas": "workspace:*",
     "hono": "^4.10.6",
-    "valibot": "^1.1.0"
+    "valibot": "^1.2.0"
   },
   "devDependencies": {
     "@fodder/eslint-config": "workspace:*",
