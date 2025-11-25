@@ -1,8 +1,8 @@
 diff --git a/dist/adapter/aws-lambda/handler.js b/dist/adapter/aws-lambda/handler.js
-index 430fb47c34543e173082690c2bf7791ce4dbbd8c..9a2cc919413d2b684b4dd0a8abf508762331c443 100644
+index f469bf662fa8ee92bc14a914f3aee50d9e614b02..13f6d3e2de7a9ff2cb6d9945f79cf06665df99a2 100644
 --- a/dist/adapter/aws-lambda/handler.js
 +++ b/dist/adapter/aws-lambda/handler.js
-@@ -274,12 +274,12 @@ var getProcessor = (event) => {
+@@ -328,16 +328,16 @@ var getProcessor = (event) => {
  };
  var isProxyEventALB = (event) => {
    if (event.requestContext) {
@@ -15,13 +15,18 @@ index 430fb47c34543e173082690c2bf7791ce4dbbd8c..9a2cc919413d2b684b4dd0a8abf50876
 -  return Object.hasOwn(event, "rawPath");
 +  return Object.prototype.hasOwnProperty.call(event, "rawPath");
  };
- var defaultIsContentTypeBinary = (contentType) => {
-   return !/^text\/(?:plain|html|css|javascript|csv)|(?:\/|\+)(?:json|xml)\s*(?:;|$)/.test(
+ var isLatticeEventV2 = (event) => {
+   if (event.requestContext) {
+-    return Object.hasOwn(event.requestContext, "serviceArn");
++    return Object.prototype.hasOwnProperty.call(event.requestContext, "serviceArn");
+   }
+   return false;
+ };
 diff --git a/dist/cjs/adapter/aws-lambda/handler.js b/dist/cjs/adapter/aws-lambda/handler.js
-index c5c112f2123c53641f9fce55d5657bdc07c2880d..ebb4e9c9a33d6b3f81b708b62fecd141565e5fec 100644
+index 4194a95222b90e9c14fb4a7d1ca44ceeac2ab643..14da56f2a3bb1cf4313d4814e8d47dfd92c026be 100644
 --- a/dist/cjs/adapter/aws-lambda/handler.js
 +++ b/dist/cjs/adapter/aws-lambda/handler.js
-@@ -304,12 +304,12 @@ const getProcessor = (event) => {
+@@ -359,16 +359,16 @@ const getProcessor = (event) => {
  };
  const isProxyEventALB = (event) => {
    if (event.requestContext) {
@@ -34,5 +39,10 @@ index c5c112f2123c53641f9fce55d5657bdc07c2880d..ebb4e9c9a33d6b3f81b708b62fecd141
 -  return Object.hasOwn(event, "rawPath");
 +  return Object.prototype.hasOwnProperty.call(event, "rawPath");
  };
- const defaultIsContentTypeBinary = (contentType) => {
-   return !/^text\/(?:plain|html|css|javascript|csv)|(?:\/|\+)(?:json|xml)\s*(?:;|$)/.test(
+ const isLatticeEventV2 = (event) => {
+   if (event.requestContext) {
+-    return Object.hasOwn(event.requestContext, "serviceArn");
++    return Object.prototype.hasOwnProperty.call(event.requestContext, "serviceArn");
+   }
+   return false;
+ };
