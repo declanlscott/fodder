@@ -16,8 +16,9 @@ export const DropdownMenuSub = DropdownMenuPrimitive.Sub;
 
 export const DropdownMenuRadioGroup = DropdownMenuPrimitive.RadioGroup;
 
-interface DropdownMenuSubTriggerProps
-  extends React.ComponentProps<typeof DropdownMenuPrimitive.SubTrigger> {
+interface DropdownMenuSubTriggerProps extends React.ComponentProps<
+  typeof DropdownMenuPrimitive.SubTrigger
+> {
   inset?: boolean;
 }
 export const DropdownMenuSubTrigger = ({
@@ -75,8 +76,9 @@ export const DropdownMenuContent = ({
   </DropdownMenuPrimitive.Portal>
 );
 
-interface DropdownMenuItemProps
-  extends React.ComponentProps<typeof DropdownMenuPrimitive.Item> {
+interface DropdownMenuItemProps extends React.ComponentProps<
+  typeof DropdownMenuPrimitive.Item
+> {
   inset?: boolean;
 }
 export const DropdownMenuItem = ({
@@ -144,8 +146,9 @@ export const DropdownMenuRadioItem = ({
   </DropdownMenuPrimitive.RadioItem>
 );
 
-interface DropdownMenuLabelProps
-  extends React.ComponentProps<typeof DropdownMenuPrimitive.Label> {
+interface DropdownMenuLabelProps extends React.ComponentProps<
+  typeof DropdownMenuPrimitive.Label
+> {
   inset?: boolean;
 }
 export const DropdownMenuLabel = ({
