@@ -7,8 +7,7 @@ import { buttonVariants } from "../variants/button";
 import type { VariantProps } from "cva";
 
 interface ButtonProps
-  extends React.ComponentProps<"button">,
-    VariantProps<typeof buttonVariants> {
+  extends React.ComponentProps<"button">, VariantProps<typeof buttonVariants> {
   asChild?: boolean;
 }
 
