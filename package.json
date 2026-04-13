@@ -13,9 +13,9 @@
   "devDependencies": {
     "@fodder/eslint-config": "workspace:*",
     "@fodder/prettier-config": "workspace:*",
-    "prettier": "^3.8.1",
-    "turbo": "^2.7.6",
-    "typescript": "^5.9.3"
+    "prettier": "^3.8.2",
+    "turbo": "^2.9.6",
+    "typescript": "^6.0.2"
   },
   "prettier": "@fodder/prettier-config",
   "packageManager": "pnpm@9.3.0",
